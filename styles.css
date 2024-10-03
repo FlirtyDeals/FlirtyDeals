@@ -230,13 +230,6 @@ em {
     }
 }
 
-#my-video {
-    width: 100%; /* Full width */
-    max-width: 1280px; /* Max width for the video */
-    height: auto; /* Maintain aspect ratio */
-    margin-top: 20px; /* Space above the video */
-    margin-bottom: 20px; /* Space below the video */
-}
 
 
 
