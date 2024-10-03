@@ -2,11 +2,159 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="3;url=https://flirtydeals.com/information/contactus">
-    <title>Redirecting...</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FlirtyDeals.com - CONTACT SUPPORT</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 50px auto;
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="email"],
+        textarea {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box; /* Ensures padding and border are included in the element's total width */
+        }
+
+        button {
+            width: 100%;
+            padding: 10px;
+            background-color: #ff00a8; /* Changed button color */
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+        }
+
+        button:hover {
+            background-color: #e60095; /* Darker shade for hover effect */
+        }
+
+        .email {
+            display: none; /* Hide the email for bots */
+        }
+
+        .contact-info {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 16px;
+        }
+
+        .tiny-link {
+            margin-top: 10px; /* Reduced space above the tiny link */
+            font-size: 12px; /* Smaller font size */
+            color: #007bff; /* Blue color for the tiny link */
+            text-decoration: none; /* Remove underline */
+            display: block; /* Make it a block element for full width */
+            text-align: center; /* Center-align the link */
+        }
+
+        .tiny-link:hover {
+            text-decoration: underline; /* Underline on hover for clarity */
+        }
+
+        .copy-email {
+            margin-top: 20px; /* Increased space above the copy email link */
+            font-size: 12px; /* Smaller font size */
+            color: #007bff; /* Blue color for the link */
+            text-decoration: none; /* Remove underline */
+            text-align: center; /* Center-align the link */
+            display: block; /* Make it a block element for full width */
+        }
+
+        .copy-email:hover {
+            text-decoration: underline; /* Underline on hover for clarity */
+        }
+
+        /* Responsive adjustments */
+        @media (max-width: 600px) {
+            .container {
+                margin: 20px;
+                padding: 15px;
+            }
+        }
+    </style>
 </head>
 <body>
-    <h1>Redirecting...</h1>
-    <p>You will be redirected in 3 seconds. If not, <a href="https://flirtydeals.com/information/contactus">click here</a>.</p>
+    <div class="container">
+        <h1>Contact Support</h1>
+        <form id="contactForm">
+            <label for="name">Your Name:</label>
+            <input type="text" id="name" name="name" required>
+
+            <label for="email">Your Email:</label>
+            <input type="email" id="email" name="email" required>
+
+            <label for="subject">Your Subject:</label>
+            <input type="text" id="subject" name="subject" required>
+
+            <label for="message">Your Message:</label>
+            <textarea id="message" name="message" rows="5" required></textarea>
+
+            <button type="submit">Send Message</button>
+
+            <!-- Link to copy email address -->
+            <a href="#" class="copy-email" id="copyEmailLink">[ Copy Email Address ]</a>
+        </form>
+    </div>
+
+    <!-- Tiny link now outside the contact support card and centered -->
+    <a href="https://flirtydeals.com" class="tiny-link">Go back to FlirtyDeals.com</a>
+
+    <script>
+        // Function to decode the email address
+        function decodeEmail(user, domain) {
+            return `${user}@${domain}`;
+        }
+
+        // Set the email address for copying
+        const emailAddress = decodeEmail('support', 'flirtydeals.com');
+
+        // Handle the copy email link click
+        document.getElementById('copyEmailLink').addEventListener('click', function(e) {
+            e.preventDefault(); // Prevent the default anchor behavior
+            navigator.clipboard.writeText(emailAddress).then(() => {
+                alert('Email address copied to clipboard: ' + emailAddress);
+            }).catch(err => {
+                alert('Failed to copy email address: ', err);
+            });
+        });
+
+        // Handle form submission
+        document.getElementById('contactForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            alert('Thank you for your message! We will get back to you shortly.');
+            this.reset(); // Clear the form
+        });
+    </script>
 </body>
 </html>

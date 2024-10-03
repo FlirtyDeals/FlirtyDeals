@@ -21,9 +21,3 @@ acceptCookiesButton.addEventListener('click', function() {
     localStorage.setItem('cookiesAccepted', 'true');
     hidePopup();
 });
-
-// Optional: Event listener for the learn more link
-document.getElementById('learn-more').addEventListener('click', function(event) {
-    event.preventDefault(); // Prevent default link behavior
-    alert('Learn more about cookies at [your cookie policy link].'); // Replace with your actual link
-});
