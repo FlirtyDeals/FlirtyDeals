@@ -40,62 +40,51 @@
             margin-bottom: 15px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            box-sizing: border-box; /* Ensures padding and border are included in the element's total width */
+            box-sizing: border-box;
         }
 
         button {
             width: 100%;
             padding: 10px;
-            background-color: #ff00a8; /* Changed button color */
+            background-color: #ff00a8;
             border: none;
             color: white;
             font-size: 16px;
             border-radius: 4px;
             cursor: pointer;
-            transition: background-color 0.3s ease; /* Smooth transition for hover effect */
+            transition: background-color 0.3s ease;
         }
 
         button:hover {
-            background-color: #e60095; /* Darker shade for hover effect */
-        }
-
-        .email {
-            display: none; /* Hide the email for bots */
-        }
-
-        .contact-info {
-            text-align: center;
-            margin-top: 20px;
-            font-size: 16px;
-        }
-
-        .tiny-link {
-            margin-top: 10px; /* Reduced space above the tiny link */
-            font-size: 12px; /* Smaller font size */
-            color: #007bff; /* Blue color for the tiny link */
-            text-decoration: none; /* Remove underline */
-            display: block; /* Make it a block element for full width */
-            text-align: center; /* Center-align the link */
-        }
-
-        .tiny-link:hover {
-            text-decoration: underline; /* Underline on hover for clarity */
+            background-color: #e60095;
         }
 
         .copy-email {
-            margin-top: 20px; /* Increased space above the copy email link */
-            font-size: 12px; /* Smaller font size */
-            color: #007bff; /* Blue color for the link */
-            text-decoration: none; /* Remove underline */
-            text-align: center; /* Center-align the link */
-            display: block; /* Make it a block element for full width */
+            margin-top: 20px;
+            font-size: 12px;
+            color: #007bff;
+            text-decoration: none;
+            text-align: center;
+            display: block;
         }
 
         .copy-email:hover {
-            text-decoration: underline; /* Underline on hover for clarity */
+            text-decoration: underline;
         }
 
-        /* Responsive adjustments */
+        .tiny-link {
+            margin-top: 10px;
+            font-size: 12px;
+            color: #007bff;
+            text-decoration: none;
+            text-align: center;
+            display: block;
+        }
+
+        .tiny-link:hover {
+            text-decoration: underline;
+        }
+
         @media (max-width: 600px) {
             .container {
                 margin: 20px;
@@ -107,7 +96,7 @@
 <body>
     <div class="container">
         <h1>Contact Support</h1>
-        <form id="contactForm">
+        <form id="contactForm" action="https://formspree.io/f/xgvewvwe" method="POST">
             <label for="name">Your Name:</label>
             <input type="text" id="name" name="name" required>
 
@@ -127,7 +116,6 @@
         </form>
     </div>
 
-    <!-- Tiny link now outside the contact support card and centered -->
     <a href="https://flirtydeals.com" class="tiny-link">Go back to FlirtyDeals.com</a>
 
     <script>
@@ -141,19 +129,12 @@
 
         // Handle the copy email link click
         document.getElementById('copyEmailLink').addEventListener('click', function(e) {
-            e.preventDefault(); // Prevent the default anchor behavior
+            e.preventDefault();
             navigator.clipboard.writeText(emailAddress).then(() => {
                 alert('Email address copied to clipboard: ' + emailAddress);
             }).catch(err => {
                 alert('Failed to copy email address: ', err);
             });
-        });
-
-        // Handle form submission
-        document.getElementById('contactForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            alert('Thank you for your message! We will get back to you shortly.');
-            this.reset(); // Clear the form
         });
     </script>
 </body>
