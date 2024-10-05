@@ -1249,3 +1249,49 @@ footer {
         font-size: 11px; /* Smaller button font size for mobile */
     }
 }
+
+.faq-section {
+    margin: 40px 0; /* Margin for spacing */
+    padding: 20px; /* Padding for inner spacing */
+    background-color: #f9f9f9; /* Light background color */
+    border-radius: 8px; /* Rounded corners */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Subtle shadow */
+    outline: 2px solid #ff00a8; /* 2px outline in the specified color */
+}
+
+
+.faq-title {
+    font-size: 28px; /* Title font size */
+    font-weight: bold; /* Title font weight */
+    color: #333; /* Dark color for title */
+    margin-bottom: 20px; /* Space below the title */
+    text-align: center; /* Center the title */
+}
+
+.faq-item {
+    margin-bottom: 15px; /* Space between FAQ items */
+    padding: 10px; /* Inner padding for each item */
+    border-bottom: 1px solid #ccc; /* Bottom border */
+}
+
+.faq-item-end {
+    margin-bottom: 0px; /* Space between FAQ items */
+    padding: 10px; /* Inner padding for each item */
+}
+
+.faq-question {
+    font-size: 20px; /* Question font size */
+    color: #ff00a8; /* Color for questions */
+    cursor: pointer; /* Pointer cursor on hover */
+    transition: color 0.3s; /* Transition effect for color change */
+}
+
+.faq-question:hover {
+    color: #0056b3; /* Darker blue on hover */
+}
+
+.faq-answer {
+    font-size: 16px; /* Answer font size */
+    color: #555; /* Color for answers */
+    margin-top: 5px; /* Space above answer */
+}
