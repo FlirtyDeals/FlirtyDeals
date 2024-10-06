@@ -1,0 +1,8 @@
+Disallow: /
+Allow: /
+Disallow: /information/
+Disallow: /support/
+Disallow: /compliance/
+Disallow: /follow/
+
+Sitemap: https://flirtydeals.com/sitemap.xml
