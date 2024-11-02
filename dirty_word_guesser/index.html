@@ -43,6 +43,9 @@
 
     <a href="https://flirtydeals.com" class="link2"><i class="fas fa-arrow-left"></i> Return to FlirtyDeals.com</a>
 
+    <!-- Hidden input to trigger the keyboard -->
+    <input type="text" id="hidden-input" style="position: absolute; opacity: 0; width: 1px; height: 1px;">
+
     <div id="game-board"></div>
     <div id="keyboard">
         <div class="row">
@@ -58,6 +61,13 @@
         </div>
     </div>
     <div id="message"></div>
+
+    <script>
+        // Focus on the hidden input to trigger the keyboard
+        window.onload = function() {
+            document.getElementById('hidden-input').focus();
+        };
+    </script>
     <script src="script.js"></script>
 </body>
 </html>
