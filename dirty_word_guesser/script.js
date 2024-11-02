@@ -7,13 +7,14 @@ const maxGuesses = 6;
 
 document.addEventListener("DOMContentLoaded", () => {
     createGameBoard();
-    setupKeyboard(); // Always set up the keyboard for mobile users
-    document.getElementById('focus-input').focus(); // Focus on the hidden input field to trigger keyboard
+    if (!isMobileDevice()) {
+        setupKeyboard(); // Only set up the keyboard if not on mobile
+    }
 });
 
 // Function to check if the device is mobile
 function isMobileDevice() {
-    return /Mobi|Android/i.test(navigator.userAgent);
+    return /Mobi|Android/i.test(navigator.userAgent); // Check user agent for mobile devices
 }
 
 function createGameBoard() {
@@ -24,6 +25,20 @@ function createGameBoard() {
             tile.classList.add("tile");
             tile.setAttribute("id", `row-${i}-col-${j}`);
             gameBoard.appendChild(tile);
+
+            // Focus on the first tile to trigger the keyboard on mobile
+            if (i === 0 && j === 0) {
+                tile.addEventListener("click", () => {
+                    tile.contentEditable = true; // Make tile editable to trigger keyboard
+                    tile.focus(); // Focus on the tile
+                    tile.addEventListener("input", (event) => {
+                        const input = event.target.textContent.toLowerCase();
+                        if (/^[a-z]$/.test(input)) {
+                            handleKeyPress(input); // Process input
+                        }
+                    });
+                });
+            }
         }
     }
 }
@@ -87,7 +102,7 @@ function checkGuess() {
     // Check for cheat or loser special cases
     if (guessWord === "cheat") {
         highlightWin();
-        showWinPopup();
+        showWinPopup(); // Show win message when typing "cheat"
         return;
     }
 
@@ -98,9 +113,9 @@ function checkGuess() {
 
     // Check if the guess is the correct word
     if (guessWord === targetWord) {
-        highlightWin();
-        showWinPopup();
-        return;
+        highlightWin(); // Highlight all tiles as correct
+        showWinPopup(); // Show win message
+        return; // Exit function
     }
 
     // Store which letters have been marked to avoid double counting
@@ -122,7 +137,7 @@ function checkGuess() {
         const tile = document.getElementById(`row-${currentRow}-col-${i}`);
         const letter = guess[i];
 
-        if (!checkedIndices[i]) {
+        if (!checkedIndices[i]) { // Only check letters that haven't been marked as correct
             if (targetWord.includes(letter) && !checkedIndices[targetWord.indexOf(letter)]) {
                 tile.classList.add("present");
             } else {
@@ -157,14 +172,14 @@ function endGame(message) {
 
 function createPopup(messageText, icon, type) {
     const popup = document.createElement("div");
-    popup.classList.add("popup", type);
+    popup.classList.add("popup", type); // Add class for styling
 
     const messageIcon = document.createElement("div");
     messageIcon.classList.add("message-icon");
     messageIcon.textContent = icon;
     popup.appendChild(messageIcon);
 
-    const message = document.createElement("h1");
+    const message = document.createElement("h1"); // Create an h1 element for the message
     message.innerText = messageText;
     popup.appendChild(message);
 
