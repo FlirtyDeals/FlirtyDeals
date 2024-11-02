@@ -1,8 +1,0 @@
-User-agent: *
-Disallow: /information/
-Disallow: /support/
-Disallow: /compliance/
-Disallow: /follow/
-Disallow: /rank/
-
-Sitemap: https://flirtydeals.com/sitemap.xml
