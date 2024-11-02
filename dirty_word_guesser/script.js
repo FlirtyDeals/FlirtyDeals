@@ -1,5 +1,5 @@
-const words = ["Adult", "Blows", "Cocks", "Cream", "Dicks", "Dildo", "Flirt", "Girth", "Horny", "Kinky", "Lusty", "Milfs", "Moans", "Naked", "Nasty", "Rides", "Sassy", "Sluts", "Smut", "Sperm", "Spicy", "Taint", "Tasty", "Tease", "Thong", "Wives", "Blush", "Boobs", "Bimbo", "Choke", "Piped", "Prick", "Risen", "Shags", "Spank", "Stiff", "Twink", "Jacks", "Licks", "Scent", "Twats", "Porno", "Juicy", "Angel", "Beast", "Peach", "Melon"];
-const targetWord = words[Math.floor(Math.random() * words.length)].toLowerCase();
+const words = ["Adult", "Blows", "Cocks", "Cream", "Dicks", "Dildo", "Flirt", "Girth", "Horny", "Kinky", "Lusty", "Milfs", "Moans", "Naked", "Nasty", "Rides", "Sassy", "Sluts", "Smut", "Sperm", "Spicy", "Taint", "Tasty", "Tease", "Thong", "Wives", "Blush", "Boobs", "Bimbo", "Choke", "Piped", "Prick", "Risen", "Shags", "Spank", "Stiff", "Twink", "Jacks", "Licks", "Scent", "Twats", "Porno", "Juicy", "Angel", "Beast", "Peach", "Melon"]; // Updated word list
+const targetWord = words[Math.floor(Math.random() * words.length)].toLowerCase(); // Ensure targetWord is lowercase
 
 let currentRow = 0;
 let currentCol = 0;
@@ -7,10 +7,16 @@ const maxGuesses = 6;
 
 document.addEventListener("DOMContentLoaded", () => {
     createGameBoard();
-    setupKeyboard(); // Setup keyboard for both mobile and desktop
+    if (!isMobileDevice()) {
+        setupKeyboard(); // Only set up the keyboard if not on mobile
+    }
 });
 
-// Create the game board
+// Function to check if the device is mobile
+function isMobileDevice() {
+    return /Mobi|Android/i.test(navigator.userAgent); // Check user agent for mobile devices
+}
+
 function createGameBoard() {
     const gameBoard = document.getElementById("game-board");
     for (let i = 0; i < maxGuesses; i++) {
@@ -19,31 +25,10 @@ function createGameBoard() {
             tile.classList.add("tile");
             tile.setAttribute("id", `row-${i}-col-${j}`);
             gameBoard.appendChild(tile);
-
-            // Mobile: make tile editable on touch
-            tile.addEventListener("click", () => {
-                tile.contentEditable = true; // Make tile editable
-                tile.focus(); // Focus on the tile
-            });
-
-            // Handle input for mobile
-            tile.addEventListener("input", (event) => {
-                const input = event.target.textContent.toLowerCase();
-                if (/^[a-z]$/.test(input)) {
-                    handleKeyPress(input); // Process valid input
-                    tile.contentEditable = false; // Make tile non-editable after input
-                    focusNextTile(); // Move to the next tile
-                } else {
-                    tile.textContent = ""; // Clear invalid input
-                }
-            });
         }
     }
-    // Focus on the first tile
-    document.getElementById("row-0-col-0").focus();
 }
 
-// Setup keyboard events
 function setupKeyboard() {
     // Handle physical keyboard input
     document.addEventListener("keydown", (event) => {
@@ -57,7 +42,7 @@ function setupKeyboard() {
         }
     });
 
-    // Handle on-screen keyboard input
+    // Handle on-screen keyboard input only for non-mobile devices
     const keys = document.querySelectorAll(".key");
     keys.forEach((key) => {
         key.addEventListener("click", (event) => {
@@ -67,30 +52,30 @@ function setupKeyboard() {
     });
 }
 
-// Handle key presses
 function handleKeyPress(key) {
     if (key === "enter") {
         if (currentCol === 5) {
             checkGuess();
         }
+        animateKey("enter-key");
     } else if (key === "backspace") {
         if (currentCol > 0) {
             currentCol--;
-            updateTile(""); // Clear the last letter
+            updateTile("");
         }
+        animateKey("backspace-key");
     } else if (/^[a-z]$/.test(key) && currentCol < 5) {
         updateTile(key);
         currentCol++;
+        animateKeyByLetter(key);
     }
 }
 
-// Update the current tile with the letter
 function updateTile(letter) {
     const tile = document.getElementById(`row-${currentRow}-col-${currentCol}`);
     tile.textContent = letter.toUpperCase();
 }
 
-// Check the guessed word against the target word
 function checkGuess() {
     const guess = [];
     for (let i = 0; i < 5; i++) {
@@ -98,34 +83,23 @@ function checkGuess() {
         guess.push(tile.textContent.toLowerCase());
     }
 
-    const guessWord = guess.join('');
-
-    // Special cases for "cheat" and "loser"
-    if (guessWord === "cheat") {
-        highlightWin();
-        showWinPopup();
-        return;
+    // Check if the guess is the correct word
+    if (guess.join('') === targetWord) {
+        highlightWin(); // Highlight all tiles as correct
+        showWinPopup(); // Show win message
+        return; // Exit function
     }
 
-    if (guessWord === "loser") {
-        endGame(`You triggered a loss! The word was: ${targetWord}`);
-        return;
-    }
-
-    // Check if the guess is correct
-    if (guessWord === targetWord) {
-        highlightWin();
-        showWinPopup();
-        return;
-    }
-
-    // Array to keep track of correct letters
+    // Store which letters have been marked to avoid double counting
     const checkedIndices = Array(5).fill(false);
 
-    // Check for correct letters in the correct position
+    // First pass: check for correct letters in the correct position
     for (let i = 0; i < 5; i++) {
         const tile = document.getElementById(`row-${currentRow}-col-${i}`);
         const letter = guess[i];
+
+        // Debugging log
+        console.log(`Comparing: ${targetWord[i]} with ${letter}`);
 
         if (targetWord[i] === letter) {
             tile.classList.add("correct");
@@ -133,7 +107,7 @@ function checkGuess() {
         }
     }
 
-    // Check for present letters (in the wrong position)
+    // Second pass: check for present letters (in the wrong position)
     for (let i = 0; i < 5; i++) {
         const tile = document.getElementById(`row-${currentRow}-col-${i}`);
         const letter = guess[i];
@@ -155,7 +129,6 @@ function checkGuess() {
     }
 }
 
-// Highlight the winning tiles
 function highlightWin() {
     for (let i = 0; i < 5; i++) {
         const tile = document.getElementById(`row-${currentRow}-col-${i}`);
@@ -163,18 +136,15 @@ function highlightWin() {
     }
 }
 
-// Show a winning popup
 function showWinPopup() {
     createPopup("Congratulations! You've guessed the word!", "🎉", "win");
 }
 
-// End the game with a message
 function endGame(message) {
-    createPopup(message, "😢", "game-over");
+    createPopup(`Game Over! The word was: ${targetWord}`, "😢", "game-over");
     document.removeEventListener("keydown", handleKeyPress);
 }
 
-// Create a popup for game messages
 function createPopup(messageText, icon, type) {
     const popup = document.createElement("div");
     popup.classList.add("popup", type); // Add class for styling
@@ -184,7 +154,7 @@ function createPopup(messageText, icon, type) {
     messageIcon.textContent = icon;
     popup.appendChild(messageIcon);
 
-    const message = document.createElement("h1");
+    const message = document.createElement("h1"); // Create an h1 element for the message
     message.innerText = messageText;
     popup.appendChild(message);
 
@@ -198,10 +168,88 @@ function createPopup(messageText, icon, type) {
     document.body.appendChild(popup);
 }
 
-// Focus the next tile after entering a letter
-function focusNextTile() {
-    if (currentCol < 5) {
-        const nextTile = document.getElementById(`row-${currentRow}-col-${currentCol}`);
-        nextTile.focus();
+
+function animateKey(keyId) {
+    const key = document.getElementById(keyId);
+    if (key) {
+        key.classList.add("pressed");
+        setTimeout(() => key.classList.remove("pressed"), 150);
+    }
+}
+
+function animateKeyByLetter(letter) {
+    const keys = document.querySelectorAll(".key");
+    keys.forEach((key) => {
+        if (key.textContent.toLowerCase() === letter) {
+            key.classList.add("pressed");
+            setTimeout(() => key.classList.remove("pressed"), 150);
+        }
+    });
+}
+
+function checkGuess() {
+    const guess = [];
+    for (let i = 0; i < 5; i++) {
+        const tile = document.getElementById(`row-${currentRow}-col-${i}`);
+        guess.push(tile.textContent.toLowerCase());
+    }
+
+    const guessWord = guess.join('');
+
+    // Check for cheat or loser special cases
+    if (guessWord === "cheat") {
+        highlightWin();
+        showWinPopup(); // Show win message when typing "cheat"
+        return;
+    }
+
+    if (guessWord === "loser") {
+        endGame(`You triggered a loss! The word was: ${targetWord}`);
+        return;
+    }
+
+    // Check if the guess is the correct word
+    if (guessWord === targetWord) {
+        highlightWin(); // Highlight all tiles as correct
+        showWinPopup(); // Show win message
+        return; // Exit function
+    }
+
+    // Store which letters have been marked to avoid double counting
+    const checkedIndices = Array(5).fill(false);
+
+    // First pass: check for correct letters in the correct position
+    for (let i = 0; i < 5; i++) {
+        const tile = document.getElementById(`row-${currentRow}-col-${i}`);
+        const letter = guess[i];
+
+        // Debugging log
+        console.log(`Comparing: ${targetWord[i]} with ${letter}`);
+
+        if (targetWord[i] === letter) {
+            tile.classList.add("correct");
+            checkedIndices[i] = true; // Mark this index as checked
+        }
+    }
+
+    // Second pass: check for present letters (in the wrong position)
+    for (let i = 0; i < 5; i++) {
+        const tile = document.getElementById(`row-${currentRow}-col-${i}`);
+        const letter = guess[i];
+
+        if (!checkedIndices[i]) { // Only check letters that haven't been marked as correct
+            if (targetWord.includes(letter) && !checkedIndices[targetWord.indexOf(letter)]) {
+                tile.classList.add("present");
+            } else {
+                tile.classList.add("absent");
+            }
+        }
+    }
+
+    currentRow++;
+    currentCol = 0;
+
+    if (currentRow === maxGuesses) {
+        endGame(`Game Over! The word was: ${targetWord}`);
     }
 }
