@@ -7,16 +7,8 @@ const maxGuesses = 6;
 
 document.addEventListener("DOMContentLoaded", () => {
     createGameBoard();
-    // Set up the keyboard only if not on mobile
-    if (!isMobileDevice()) {
-        setupKeyboard();
-    }
+    setupKeyboard(); // Setup keyboard for both mobile and desktop
 });
-
-// Function to check if the device is mobile
-function isMobileDevice() {
-    return /Mobi|Android/i.test(navigator.userAgent); // Check user agent for mobile devices
-}
 
 // Create the game board
 function createGameBoard() {
@@ -28,33 +20,30 @@ function createGameBoard() {
             tile.setAttribute("id", `row-${i}-col-${j}`);
             gameBoard.appendChild(tile);
 
-            // Make the tile editable and focusable for mobile
+            // Mobile: make tile editable on touch
             tile.addEventListener("click", () => {
                 tile.contentEditable = true; // Make tile editable
                 tile.focus(); // Focus on the tile
-                tile.addEventListener("input", (event) => {
-                    const input = event.target.textContent.toLowerCase();
-                    if (/^[a-z]$/.test(input)) {
-                        handleKeyPress(input); // Process input
-                    } else {
-                        tile.textContent = ""; // Clear invalid input
-                    }
-                });
+            });
 
-                // Ensure focus is set for the next tile when a letter is entered
-                tile.addEventListener("blur", () => {
-                    tile.contentEditable = false; // Make tile non-editable on blur
+            // Handle input for mobile
+            tile.addEventListener("input", (event) => {
+                const input = event.target.textContent.toLowerCase();
+                if (/^[a-z]$/.test(input)) {
+                    handleKeyPress(input); // Process valid input
+                    tile.contentEditable = false; // Make tile non-editable after input
                     focusNextTile(); // Move to the next tile
-                });
+                } else {
+                    tile.textContent = ""; // Clear invalid input
+                }
             });
         }
     }
-
-    // Focus on the first tile to trigger the keyboard on mobile
+    // Focus on the first tile
     document.getElementById("row-0-col-0").focus();
 }
 
-// Setup keyboard events for non-mobile devices
+// Setup keyboard events
 function setupKeyboard() {
     // Handle physical keyboard input
     document.addEventListener("keydown", (event) => {
@@ -84,17 +73,14 @@ function handleKeyPress(key) {
         if (currentCol === 5) {
             checkGuess();
         }
-        animateKey("enter-key");
     } else if (key === "backspace") {
         if (currentCol > 0) {
             currentCol--;
             updateTile(""); // Clear the last letter
         }
-        animateKey("backspace-key");
     } else if (/^[a-z]$/.test(key) && currentCol < 5) {
         updateTile(key);
         currentCol++;
-        animateKeyByLetter(key);
     }
 }
 
@@ -210,26 +196,6 @@ function createPopup(messageText, icon, type) {
 
     popup.appendChild(closeButton);
     document.body.appendChild(popup);
-}
-
-// Animate the key press for visual feedback
-function animateKey(keyId) {
-    const key = document.getElementById(keyId);
-    if (key) {
-        key.classList.add("pressed");
-        setTimeout(() => key.classList.remove("pressed"), 150);
-    }
-}
-
-// Animate the key press by letter for visual feedback
-function animateKeyByLetter(letter) {
-    const keys = document.querySelectorAll(".key");
-    keys.forEach((key) => {
-        if (key.textContent.toLowerCase() === letter) {
-            key.classList.add("pressed");
-            setTimeout(() => key.classList.remove("pressed"), 150);
-        }
-    });
 }
 
 // Focus the next tile after entering a letter
