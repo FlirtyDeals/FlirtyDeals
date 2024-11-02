@@ -8,7 +8,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const img = card.querySelector('img');
         
         // Ensure the image starts blurred
-        img.classList.add('blurred');
+        img.classList.add('blurred2');
 
         // Select the ribbon within the card
         const ribbon = card.querySelector('.ribbon, .ribbon2, .ribbon3');
@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault(); // Prevent default link behavior
             
             // Toggle the blur class to reveal/hide the image
-            img.classList.toggle('blurred');
+            img.classList.toggle('blurred2');
         });
     });
 });

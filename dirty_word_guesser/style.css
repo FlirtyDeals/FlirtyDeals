@@ -1,0 +1,345 @@
+/* Font Face Declarations */
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Regular.woff2') format('woff2'),
+         url('../fonts/Poppins-Regular.woff') format('woff');
+    font-weight: 400; /* Regular */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Medium.woff2') format('woff2'),
+         url('../fonts/Poppins-Medium.woff') format('woff');
+    font-weight: 500; /* Medium */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-SemiBold.woff2') format('woff2'),
+         url('../fonts/Poppins-SemiBold.woff') format('woff');
+    font-weight: 600; /* Semi Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Bold.woff2') format('woff2'),
+         url('../fonts/Poppins-Bold.woff') format('woff');
+    font-weight: 700; /* Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-ExtraBold.woff2') format('woff2'),
+         url('../fonts/Poppins-ExtraBold.woff') format('woff');
+    font-weight: 800; /* Extra Bold */
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Poppins';
+    src: url('../fonts/Poppins-Italic.woff2') format('woff2'),
+         url('../fonts/Poppins-Italic.woff') format('woff');
+    font-weight: 400; /* Italic - Regular weight */
+    font-style: italic;
+}
+
+h1 {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 700; /* Bold */
+}
+
+h2 {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 600; /* Semi Bold */
+}
+
+h3 {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 600; /* Changed to Semi Bold */
+}
+
+h4 {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 400; /* Regular */
+}
+
+h5 {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 300; /* Light (if needed) */
+}
+
+h6 {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 400; /* Regular */
+}
+
+p {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 400; /* Regular */
+}
+
+small {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 300; /* Light (if needed) */
+}
+
+strong {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 700; /* Bold */
+}
+
+em {
+    font-family: 'Poppins', Arial, sans-serif;
+    font-weight: 400; /* Italic - Regular weight */
+    font-style: italic;
+}
+
+/* Add this to style.css */
+body {
+    font-family: 'Poppins', sans-serif;
+    background-color: #f9f9f9;
+    text-align: center;
+    margin: 0;
+    padding: 0;
+    background-color: #f5f5f5; /* Light background for contrast */
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack items vertically */
+    align-items: center; /* Center items horizontally */
+    min-height: 100vh; /* Ensure body takes at least full height of viewport */
+}
+
+/* Game board styles */
+#game-board {
+    display: grid;
+    grid-template-columns: repeat(5, 70px); /* Smaller tiles */
+    gap: 8px; /* Reduced gap */
+    margin: 20px auto;
+    justify-content: center;
+    max-width: calc(5 * 70px + 32px); /* Adjust max width for smaller tiles */
+    padding: 15px; /* Reduced padding */
+    background-color: #ffffff; /* White background for the game board */
+    border-radius: 10px; /* Rounded corners */
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); /* Soft shadow */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+    #game-board {
+        grid-template-columns: repeat(5, 1fr);
+        gap: 8px;
+        width: 90%; /* Slightly smaller width for mobile */
+        margin: 10px auto;
+    }
+}
+
+/* Tile styles */
+.tile {
+    border: 2px solid #ddd;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 30px; /* Smaller font size for tiles */
+    font-weight: bold;
+    text-transform: uppercase;
+    height: 70px; /* Reduced height */
+    background-color: #ffe6f0; /* Faint pink background for tiles */
+    color: black; /* Black text for visibility */
+    border-radius: 8px; /* Rounded corners for tiles */
+    transition: transform 0.2s ease, box-shadow 0.2s ease; /* Smooth transitions */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+    .tile {
+        font-size: 36px; /* Adjust font size for mobile */
+        height: 60px; /* Further reduce height */
+    }
+}
+
+.correct {
+    background-color: green; /* Green for correct tiles */
+    color: white; /* White text for contrast */
+}
+
+.present {
+    background-color: orange; /* Orange for present tiles */
+    color: white; /* White text for contrast */
+}
+
+.absent {
+    background-color: grey; /* Grey for absent tiles */
+    color: white; /* White text for contrast */
+}
+
+/* Keyboard styles */
+#keyboard {
+    display: flex;
+    flex-direction: column; /* Stack keyboard rows vertically */
+    align-items: center; /* Center keyboard horizontally */
+    margin: 10px 0; /* Adjust margins above and below the keyboard */
+    position: relative; /* Ensures it stays in view */
+    z-index: 1; /* Keeps it on top if necessary */
+}
+
+#keyboard .row {
+    display: flex; /* Align keys in a row */
+    justify-content: center; /* Center keys */
+}
+
+.key {
+    margin: 3px; /* Space between keys */
+    padding: 15px; /* Reduced padding inside keys */
+    font-size: 24px; /* Smaller font size for keys */
+    background-color: #ff00a8; /* Background for keys (inverted) */
+    color: #ffffff; /* White text */
+    border: 2px solid #9b005e; /* Darker pink outline around buttons */
+    border-radius: 8px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor for buttons */
+    transition: transform 0.1s ease, background-color 0.3s ease; /* Smooth transitions */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+    .key {
+        padding: 10px; /* Adjust padding for smaller screens */
+        font-size: 20px; /* Adjust font size for smaller screens */
+    }
+}
+
+.key:hover {
+    background-color: #ff8fd1; /* Lighter pink on hover */
+}
+
+/* When key is pressed, show faded pink */
+.key:active,
+.key.pressed {
+    transform: scale(0.95); /* Slightly scale down when pressed */
+    background-color: rgba(255, 143, 209, 0.7); /* Faded pink on press */
+}
+
+/* Message styles */
+#message {
+    margin-top: 15px; /* Space above the message */
+    font-size: 24px; /* Smaller font size for message */
+}
+
+/* Media query for mobile devices */
+@media (max-width: 480px) {
+    #message {
+        font-size: 28px; /* Adjust font size for smaller screens */
+    }
+}
+
+/* Refined Pop-up Styles */
+.popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    padding: 20px; /* Reduced padding */
+    background-color: rgba(0, 0, 0, 0.8); /* Semi-transparent background */
+    border: none; /* No border */
+    border-radius: 10px; /* Slightly rounded corners */
+    z-index: 1000; /* Ensure it stays above other content */
+    width: 75vw; /* Responsive width */
+    max-width: 300px; /* Max width for consistency */
+    box-shadow: 0 6px 20px rgba(0, 0, 0, 0.2); /* Softer shadow */
+    animation: popup-appear 0.3s ease-out; /* Smooth animation */
+    display: flex;
+    flex-direction: column; /* Align content in column */
+    align-items: center; /* Center content */
+    color: white; /* White text color for contrast */
+}
+
+/* Animation for Popup */
+@keyframes popup-appear {
+    from {
+        transform: translate(-50%, -60%); /* Start above */
+        opacity: 0; /* Start transparent */
+    }
+    to {
+        transform: translate(-50%, -50%); /* Centered position */
+        opacity: 1; /* Fully visible */
+    }
+}
+
+.popup h1 {
+    font-size: 18px; /* Smaller font size for heading */
+    color: #f9f9f9; /* Softer text color */
+    margin: 8px 0 12px; /* Adjusted margin */
+    text-align: center;
+    line-height: 1.4;
+}
+
+.popup button {
+    margin-top: 12px; /* Space above button */
+    padding: 8px 18px; /* Reduced padding for buttons */
+    font-size: 14px; /* Slightly smaller font size */
+    background-color: #ff0080; /* Soft pink for the button */
+    color: white; /* Button text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Subtle rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.2s ease, transform 0.1s ease; /* Smooth transitions */
+}
+
+.popup button:hover {
+    background-color: #ff4d9a; /* Lighter pink on hover */
+}
+
+.popup button:active {
+    transform: scale(0.95); /* Slight scale-down on press */
+}
+
+.popup .message-icon {
+    font-size: 40px; /* Smaller icon size */
+    margin-bottom: 8px; /* Space below icon */
+}
+
+/* Game Over Specific Popup Styling */
+.popup.game-over {
+    background-color: rgba(50, 50, 50, 0.9); /* Darker background for game over */
+}
+
+.popup.game-over h1 {
+    color: #dddddd; /* Softer text color */
+}
+
+.popup.game-over .message-icon {
+    color: #ff8fd1; /* Light pink icon color */
+}
+
+
+/* Prevent virtual keyboard on mobile devices */
+@media (max-width: 768px) {
+    #keyboard {
+        pointer-events: none; /* Disable pointer events on mobile */
+        opacity: 0.5; /* Dim the keyboard */
+    }
+}
+
+/* Optionally hide the keyboard altogether */
+@media (max-width: 768px) {
+    #keyboard {
+        display: none; /* Hide keyboard on smaller screens */
+    }
+}
+
+        .title {
+            margin-bottom: 0px; /* Reduce the space below the title */
+        }
+        .link {
+            color: inherit; /* Inherit color from parent */
+            text-decoration: none; /* No underline */
+            margin-top: 0px; /* Reduce the space below the title */
+        }
+        .link2 {
+            margin-top: 8px; /* Reduce the space below the title */
+            margin-bottom: -5px; /* Reduce the space below the title */
+            font-size: 12px;
+            color: #ff00a8;
+        }

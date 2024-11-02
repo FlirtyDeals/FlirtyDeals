@@ -280,11 +280,7 @@ em {
 
 
 
-/* Initial blur effect */
-.blurred {
-    filter: blur(25px); /* Adjust blur value if needed */
-    transition: filter 0.3s ease; /* Smooth transition */
-}
+
 
 /* Card Image */
 .card-image {
@@ -431,10 +427,7 @@ em {
     transition: filter 0.3s ease; /* Smooth transition for the filter */
 }
 
-/* Blur effect class for the first special card */
-.blurred {
-    filter: blur(5px); /* Set the blur amount */
-}
+
 
 /* Ribbon styles for the first special card */
 .ribbon {
@@ -490,10 +483,6 @@ em {
     transition: filter 0.3s ease; /* Smooth transition for the filter */
 }
 
-/* Blur effect class for the second special card */
-.blurred2 {
-    filter: blur(5px); /* Set the blur amount */
-}
 
 /* Ribbon styles for the second special card */
 .ribbon2 {
@@ -546,11 +535,6 @@ em {
     width: 100%;
     height: auto;
     transition: filter 0.3s ease; /* Smooth transition for the filter */
-}
-
-/* Blur effect class for the third special card */
-.blurred3 {
-    filter: blur(5px); /* Set the blur amount */
 }
 
 /* Ribbon styles for the third special card */
@@ -773,6 +757,12 @@ em {
 
 /* Styles for blurred elements */
 .blurred {
+    filter: blur(25px);
+    transition: filter 0.3s ease;
+}
+
+/* Styles for blurred elements */
+.blurred2 {
     filter: blur(25px);
     transition: filter 0.3s ease;
 }
