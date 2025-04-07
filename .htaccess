@@ -1,9 +1,4 @@
 RewriteEngine on
-
-# Redirect /discord to Discord invite URL
-RewriteRule ^discord$ https://discord.gg/uX2qpvbcmR [L,R=301]
-
-# The rest of your existing rewrite rules
 RewriteCond %{REQUEST_FILENAME} !-d
 RewriteCond %{REQUEST_FILENAME}\.html -f
 RewriteRule ^(.*)$ $1.html [NC,L]
