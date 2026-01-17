@@ -1,4 +1,4 @@
-// FlirtyDeals.com - Main JavaScript File (fixed persistent age verification)
+// FlirtyDeals.com - Main JavaScript File (more robust persistent age verification + diagnostics)
 
 (function() {
     'use strict';
@@ -29,41 +29,260 @@
         }, null);
     }
 
-    // Unified storage getters/setters with fallback order: localStorage, sessionStorage, cookies
-    function getStored(key) {
-        if (storageAvailable('localStorage')) {
-            return localStorage.getItem(key);
-        }
-        if (storageAvailable('sessionStorage')) {
-            return sessionStorage.getItem(key);
-        }
-        return getCookie(key);
+    function deleteCookie(name) {
+        setCookie(name, '', -1);
     }
 
-    function setStored(key, value) {
-        if (storageAvailable('localStorage')) {
-            localStorage.setItem(key, value);
-            return;
-        }
-        if (storageAvailable('sessionStorage')) {
-            sessionStorage.setItem(key, value);
-            return;
-        }
-        // fallback to cookie for ~10 years
-        setCookie(key, value, 3650);
+    // IndexedDB helpers, promise-based
+    function openIDB() {
+        return new Promise((resolve, reject) => {
+            if (!('indexedDB' in window)) {
+                resolve(null);
+                return;
+            }
+
+            const req = indexedDB.open('flirty_deals_db', 1);
+
+            req.onupgradeneeded = function(evt) {
+                const db = evt.target.result;
+                if (!db.objectStoreNames.contains('settings')) {
+                    db.createObjectStore('settings', { keyPath: 'key' });
+                }
+            };
+
+            req.onsuccess = function(evt) {
+                resolve(evt.target.result);
+            };
+
+            req.onerror = function(evt) {
+                resolve(null);
+            };
+        });
     }
 
-    function removeStored(key) {
-        if (storageAvailable('localStorage')) {
-            localStorage.removeItem(key);
-            return;
+    function idbGet(db, key) {
+        return new Promise((resolve) => {
+            if (!db) return resolve(null);
+            try {
+                const tx = db.transaction('settings', 'readonly');
+                const store = tx.objectStore('settings');
+                const req = store.get(key);
+                req.onsuccess = function() {
+                    resolve(req.result ? req.result.value : null);
+                };
+                req.onerror = function() {
+                    resolve(null);
+                };
+            } catch (e) {
+                resolve(null);
+            }
+        });
+    }
+
+    function idbSet(db, key, value) {
+        return new Promise((resolve) => {
+            if (!db) return resolve(false);
+            try {
+                const tx = db.transaction('settings', 'readwrite');
+                const store = tx.objectStore('settings');
+                store.put({ key: key, value: value });
+                tx.oncomplete = function() {
+                    resolve(true);
+                };
+                tx.onerror = function() {
+                    resolve(false);
+                };
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    function idbDelete(db, key) {
+        return new Promise((resolve) => {
+            if (!db) return resolve(false);
+            try {
+                const tx = db.transaction('settings', 'readwrite');
+                const store = tx.objectStore('settings');
+                store.delete(key);
+                tx.oncomplete = function() {
+                    resolve(true);
+                };
+                tx.onerror = function() {
+                    resolve(false);
+                };
+            } catch (e) {
+                resolve(false);
+            }
+        });
+    }
+
+    // Unified storage getters/setters with fallback order: localStorage, indexedDB, cookies, sessionStorage
+    async function getStored(key) {
+        // 1) localStorage
+        try {
+            if (storageAvailable('localStorage')) {
+                const v = localStorage.getItem(key);
+                if (v !== null) {
+                    console.info('storage: using localStorage for key', key);
+                    return { value: v, backend: 'localStorage' };
+                }
+            }
+        } catch (e) {
+            console.warn('storage: localStorage access threw', e);
         }
-        if (storageAvailable('sessionStorage')) {
-            sessionStorage.removeItem(key);
-            return;
+
+        // 2) indexedDB
+        try {
+            const db = await openIDB();
+            if (db) {
+                const v = await idbGet(db, key);
+                if (v !== null && v !== undefined) {
+                    console.info('storage: using IndexedDB for key', key);
+                    return { value: v, backend: 'indexedDB' };
+                }
+            }
+        } catch (e) {
+            console.warn('storage: IndexedDB access threw', e);
         }
-        // remove cookie by setting expiry in the past
-        setCookie(key, '', -1);
+
+        // 3) cookies
+        try {
+            const v = getCookie(key);
+            if (v !== null && v !== undefined) {
+                console.info('storage: using cookies for key', key);
+                return { value: v, backend: 'cookie' };
+            }
+        } catch (e) {
+            console.warn('storage: cookie access threw', e);
+        }
+
+        // 4) sessionStorage last resort
+        try {
+            if (storageAvailable('sessionStorage')) {
+                const v = sessionStorage.getItem(key);
+                if (v !== null) {
+                    console.info('storage: using sessionStorage for key', key);
+                    return { value: v, backend: 'sessionStorage' };
+                }
+            }
+        } catch (e) {
+            console.warn('storage: sessionStorage access threw', e);
+        }
+
+        return { value: null, backend: null };
+    }
+
+    async function setStored(key, value) {
+        // store as string
+        const str = String(value);
+
+        // 1) localStorage
+        try {
+            if (storageAvailable('localStorage')) {
+                localStorage.setItem(key, str);
+                console.info('storage: wrote key to localStorage', key);
+                return { success: true, backend: 'localStorage' };
+            }
+        } catch (e) {
+            console.warn('storage: localStorage write threw', e);
+        }
+
+        // 2) indexedDB
+        try {
+            const db = await openIDB();
+            if (db) {
+                const ok = await idbSet(db, key, str);
+                if (ok) {
+                    console.info('storage: wrote key to IndexedDB', key);
+                    return { success: true, backend: 'indexedDB' };
+                }
+            }
+        } catch (e) {
+            console.warn('storage: IndexedDB write threw', e);
+        }
+
+        // 3) cookie fallback for ~10 years
+        try {
+            setCookie(key, str, 3650);
+            console.info('storage: wrote key to cookie', key);
+            return { success: true, backend: 'cookie' };
+        } catch (e) {
+            console.warn('storage: cookie write threw', e);
+        }
+
+        // 4) sessionStorage last resort
+        try {
+            if (storageAvailable('sessionStorage')) {
+                sessionStorage.setItem(key, str);
+                console.info('storage: wrote key to sessionStorage', key);
+                return { success: true, backend: 'sessionStorage' };
+            }
+        } catch (e) {
+            console.warn('storage: sessionStorage write threw', e);
+        }
+
+        console.error('storage: failed to persist key', key);
+        return { success: false, backend: null };
+    }
+
+    async function removeStored(key) {
+        try {
+            if (storageAvailable('localStorage')) {
+                localStorage.removeItem(key);
+                console.info('storage: removed key from localStorage', key);
+            }
+        } catch (e) {}
+
+        try {
+            const db = await openIDB();
+            if (db) {
+                await idbDelete(db, key);
+                console.info('storage: removed key from IndexedDB', key);
+            }
+        } catch (e) {}
+
+        try {
+            deleteCookie(key);
+            console.info('storage: removed key cookie', key);
+        } catch (e) {}
+
+        try {
+            if (storageAvailable('sessionStorage')) {
+                sessionStorage.removeItem(key);
+                console.info('storage: removed key from sessionStorage', key);
+            }
+        } catch (e) {}
+    }
+
+    // Helper to save an object with timestamp and optional expiry days
+    async function saveFlag(name, value, expireDays) {
+        const payload = {
+            value: value,
+            savedAt: new Date().toISOString(),
+            expiresAt: expireDays ? new Date(Date.now() + expireDays * 864e5).toISOString() : null
+        };
+        return await setStored(name, JSON.stringify(payload));
+    }
+
+    async function readFlag(name) {
+        const got = await getStored(name);
+        if (!got.value) return { exists: false, value: null, backend: got.backend };
+        try {
+            const parsed = JSON.parse(got.value);
+            if (parsed && parsed.expiresAt) {
+                if (new Date(parsed.expiresAt) <= new Date()) {
+                    // expired
+                    await removeStored(name);
+                    console.info('storage: flag expired for', name);
+                    return { exists: false, value: null, backend: got.backend };
+                }
+            }
+            return { exists: true, value: parsed.value, backend: got.backend, meta: parsed };
+        } catch (e) {
+            // not JSON, return raw
+            return { exists: true, value: got.value, backend: got.backend };
+        }
     }
 
     // Run after DOM is ready
@@ -74,19 +293,26 @@
         const acceptAgeBtn = document.getElementById('acceptAge');
         const exitSiteBtn = document.getElementById('exitSite');
 
-        function checkAgeVerification() {
-            const ageVerified = getStored('ageVerified');
-            if (ageVerified === 'true') {
+        async function checkAgeVerification() {
+            // read flag
+            const res = await readFlag('ageVerified');
+            if (res.exists && res.value === 'true') {
                 if (ageModal) ageModal.classList.remove('active');
                 document.body.classList.add('age-verified');
+                console.info('age verification: user already verified, backend:', res.backend);
             } else {
                 if (ageModal) ageModal.classList.add('active');
                 document.body.classList.remove('age-verified');
+                console.info('age verification: no verification found, backend:', res.backend);
+                // extra diagnostic: show hints in console about common reasons this will not persist
+                console.info('age verification hints: if this keeps clearing, check browser privacy settings, private browsing mode, extensions that clear storage on exit, or that the site may be served from multiple subdomains (www vs non-www).');
             }
         }
 
-        function acceptAge() {
-            setStored('ageVerified', 'true');
+        async function acceptAge() {
+            // save for 365 days by default
+            const result = await saveFlag('ageVerified', 'true', 365);
+            console.info('age verification set result', result);
             if (ageModal) ageModal.classList.remove('active');
             document.body.classList.add('age-verified');
         }
@@ -103,14 +329,18 @@
             exitSiteBtn.addEventListener('click', exitSite);
         }
 
-        checkAgeVerification();
+        // Run check immediately
+        checkAgeVerification().catch(err => {
+            console.error('age verification check failed', err);
+        });
 
         // Deal Card Reveal - ONLY FOR SHEMALE CARDS
-        function setupDealReveals() {
+        async function setupDealReveals() {
             const shemaleCards = document.querySelectorAll('.shemale-card');
 
             // Check if shemale content was previously revealed
-            const shemaleRevealed = getStored('shemaleRevealed') === 'true';
+            const res = await readFlag('shemaleRevealed');
+            const shemaleRevealed = res.exists && res.value === 'true';
 
             if (shemaleRevealed) {
                 shemaleCards.forEach(card => {
@@ -125,7 +355,7 @@
                 const overlay = dealImage.querySelector('.deal-overlay');
 
                 if (overlay) {
-                    overlay.addEventListener('click', function() {
+                    overlay.addEventListener('click', async function() {
                         const isCurrentlyRevealed = dealImage.classList.contains('revealed');
 
                         // Toggle ALL shemale cards
@@ -139,14 +369,14 @@
                             }
                         });
 
-                        // Save state as string 'true' or 'false'
-                        setStored('shemaleRevealed', isCurrentlyRevealed ? 'false' : 'true');
+                        // Save state
+                        await saveFlag('shemaleRevealed', (!isCurrentlyRevealed).toString(), 365);
                     });
                 }
             });
         }
 
-        setupDealReveals();
+        setupDealReveals().catch(e => console.warn('setupDealReveals failed', e));
 
         // Filter Functionality - Hide sections and show only filtered cards
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -274,7 +504,8 @@
             }
 
             if (ageModal && e.key === 'Enter' && ageModal.classList.contains('active')) {
-                acceptAge();
+                // call the same async accept handler
+                acceptAgeBtn && acceptAgeBtn.click();
             }
         });
 
@@ -304,8 +535,6 @@
         const dealButtons = document.querySelectorAll('.deal-btn');
         dealButtons.forEach(button => {
             button.addEventListener('click', function(event) {
-                // If it's an anchor, prevent default only for tracking quick debug,
-                // otherwise allow navigation to proceed. Here we only read values.
                 const card = this.closest('.deal-card');
                 if (!card) return;
                 const titleEl = card.querySelector('.deal-title');
