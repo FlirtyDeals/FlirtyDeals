@@ -458,7 +458,7 @@ body.age-verified .shemale-card .deal-image img {
 
 /* Age Verification Modal */
 .modal {
-    display: none;
+    display: none; /* Changed from display: none; */
     position: fixed;
     top: 0;
     left: 0;
@@ -471,7 +471,7 @@ body.age-verified .shemale-card .deal-image img {
 }
 
 .modal.active {
-    display: flex;
+    display: flex !important; /* Add !important */
 }
 
 .modal-content {

@@ -288,51 +288,68 @@
     // Run after DOM is ready
     document.addEventListener('DOMContentLoaded', function() {
 
-        // Age Verification
-        const ageModal = document.getElementById('ageModal');
-        const acceptAgeBtn = document.getElementById('acceptAge');
-        const exitSiteBtn = document.getElementById('exitSite');
+// Age Verification
+const ageModal = document.getElementById('ageModal');
+const acceptAgeBtn = document.getElementById('acceptAge');
+const exitSiteBtn = document.getElementById('exitSite');
 
-        async function checkAgeVerification() {
-            // read flag
-            const res = await readFlag('ageVerified');
-            if (res.exists && res.value === 'true') {
-                if (ageModal) ageModal.classList.remove('active');
-                document.body.classList.add('age-verified');
-                console.info('age verification: user already verified, backend:', res.backend);
-            } else {
-                if (ageModal) ageModal.classList.add('active');
-                document.body.classList.remove('age-verified');
-                console.info('age verification: no verification found, backend:', res.backend);
-                // extra diagnostic: show hints in console about common reasons this will not persist
-                console.info('age verification hints: if this keeps clearing, check browser privacy settings, private browsing mode, extensions that clear storage on exit, or that the site may be served from multiple subdomains (www vs non-www).');
-            }
+async function checkAgeVerification() {
+    const res = await readFlag('ageVerified');
+    
+    console.log('Age check result:', res); // DIAGNOSTIC
+    
+    if (res.exists && res.value === 'true') {
+        if (ageModal) {
+            ageModal.classList.remove('active');
+            ageModal.style.display = 'none'; // ADD THIS
         }
-
-        async function acceptAge() {
-            // save for 365 days by default
-            const result = await saveFlag('ageVerified', 'true', 365);
-            console.info('age verification set result', result);
-            if (ageModal) ageModal.classList.remove('active');
-            document.body.classList.add('age-verified');
+        document.body.classList.add('age-verified');
+        console.info('✓ Age verified from:', res.backend);
+    } else {
+        if (ageModal) {
+            ageModal.classList.add('active');
+            ageModal.style.display = 'flex'; // ADD THIS
         }
+        document.body.classList.remove('age-verified');
+        console.info('✗ No verification found');
+    }
+}
 
-        function exitSite() {
-            window.location.href = 'about:blank';
-        }
+async function acceptAge() {
+    const result = await saveFlag('ageVerified', 'true', 365);
+    console.info('✓ Age verification saved:', result); // DIAGNOSTIC
+    
+    if (ageModal) {
+        ageModal.classList.remove('active');
+        ageModal.style.display = 'none'; // ADD THIS
+    }
+    document.body.classList.add('age-verified');
+}
 
-        if (acceptAgeBtn) {
-            acceptAgeBtn.addEventListener('click', acceptAge);
-        }
+function exitSite() {
+    // Don't save anything - just exit
+    window.location.href = 'https://www.youtube.com/watch?v=kJa2kwoZ2a4&t=8s';
+}
 
-        if (exitSiteBtn) {
-            exitSiteBtn.addEventListener('click', exitSite);
-        }
+if (acceptAgeBtn) {
+    acceptAgeBtn.addEventListener('click', acceptAge);
+}
 
-        // Run check immediately
-        checkAgeVerification().catch(err => {
-            console.error('age verification check failed', err);
-        });
+if (exitSiteBtn) {
+    exitSiteBtn.addEventListener('click', exitSite);
+}
+
+// Run check immediately
+checkAgeVerification().catch(err => {
+    console.error('Age verification check failed:', err);
+});
+
+// Add this console log to see storage status
+console.log('Storage diagnostics:', {
+    localStorage: storageAvailable('localStorage'),
+    sessionStorage: storageAvailable('sessionStorage'),
+    cookiesEnabled: navigator.cookieEnabled
+});
 
         // Deal Card Reveal - ONLY FOR SHEMALE CARDS
         async function setupDealReveals() {
