@@ -351,49 +351,86 @@ console.log('Storage diagnostics:', {
     cookiesEnabled: navigator.cookieEnabled
 });
 
-        // Deal Card Reveal - ONLY FOR SHEMALE CARDS
-        async function setupDealReveals() {
-            const shemaleCards = document.querySelectorAll('.shemale-card');
+// Deal Card Reveal - ONLY FOR SHEMALE CARDS
+async function setupDealReveals() {
+    const shemaleCards = document.querySelectorAll('.shemale-card');
 
-            // Check if shemale content was previously revealed
-            const res = await readFlag('shemaleRevealed');
-            const shemaleRevealed = res.exists && res.value === 'true';
+    // Check if shemale content was previously revealed
+    const res = await readFlag('shemaleRevealed');
+    const shemaleRevealed = res.exists && res.value === 'true';
 
-            if (shemaleRevealed) {
-                shemaleCards.forEach(card => {
-                    const dealImage = card.querySelector('.deal-image');
-                    if (dealImage) dealImage.classList.add('revealed');
+    if (shemaleRevealed) {
+        shemaleCards.forEach(card => {
+            const dealImage = card.querySelector('.deal-image');
+            if (dealImage) dealImage.classList.add('revealed');
+        });
+    }
+
+    shemaleCards.forEach(card => {
+        const dealImage = card.querySelector('.deal-image');
+        if (!dealImage) return;
+        const overlay = dealImage.querySelector('.deal-overlay');
+
+        if (overlay) {
+            overlay.addEventListener('click', async function() {
+                const isCurrentlyRevealed = dealImage.classList.contains('revealed');
+
+                // Toggle ALL shemale cards (including clones in filtered view)
+                const allShemaleCards = document.querySelectorAll('.shemale-card');
+                allShemaleCards.forEach(otherCard => {
+                    const otherImage = otherCard.querySelector('.deal-image');
+                    if (!otherImage) return;
+                    if (isCurrentlyRevealed) {
+                        otherImage.classList.remove('revealed');
+                    } else {
+                        otherImage.classList.add('revealed');
+                    }
                 });
-            }
 
-            shemaleCards.forEach(card => {
-                const dealImage = card.querySelector('.deal-image');
-                if (!dealImage) return;
-                const overlay = dealImage.querySelector('.deal-overlay');
-
-                if (overlay) {
-                    overlay.addEventListener('click', async function() {
-                        const isCurrentlyRevealed = dealImage.classList.contains('revealed');
-
-                        // Toggle ALL shemale cards
-                        shemaleCards.forEach(otherCard => {
-                            const otherImage = otherCard.querySelector('.deal-image');
-                            if (!otherImage) return;
-                            if (isCurrentlyRevealed) {
-                                otherImage.classList.remove('revealed');
-                            } else {
-                                otherImage.classList.add('revealed');
-                            }
-                        });
-
-                        // Save state
-                        await saveFlag('shemaleRevealed', (!isCurrentlyRevealed).toString(), 365);
-                    });
-                }
+                // Save state
+                await saveFlag('shemaleRevealed', (!isCurrentlyRevealed).toString(), 365);
             });
         }
+    });
+}
 
-        setupDealReveals().catch(e => console.warn('setupDealReveals failed', e));
+setupDealReveals().catch(e => console.warn('setupDealReveals failed', e));
+
+// Re-attach reveal functionality to cloned cards
+function attachRevealListeners(cards) {
+    cards.forEach(card => {
+        if (!card.classList.contains('shemale-card')) return;
+        
+        const dealImage = card.querySelector('.deal-image');
+        if (!dealImage) return;
+        const overlay = dealImage.querySelector('.deal-overlay');
+
+        if (overlay) {
+            // Remove old listeners by cloning
+            const newOverlay = overlay.cloneNode(true);
+            overlay.parentNode.replaceChild(newOverlay, overlay);
+            
+            newOverlay.addEventListener('click', async function() {
+                const isCurrentlyRevealed = dealImage.classList.contains('revealed');
+
+                // Toggle ALL shemale cards
+                const allShemaleCards = document.querySelectorAll('.shemale-card');
+                allShemaleCards.forEach(otherCard => {
+                    const otherImage = otherCard.querySelector('.deal-image');
+                    if (!otherImage) return;
+                    if (isCurrentlyRevealed) {
+                        otherImage.classList.remove('revealed');
+                    } else {
+                        otherImage.classList.add('revealed');
+                    }
+                });
+
+                // Save state
+                await saveFlag('shemaleRevealed', (!isCurrentlyRevealed).toString(), 365);
+            });
+        }
+    });
+}
 
         // Filter Functionality - Hide sections and show only filtered cards
         const filterButtons = document.querySelectorAll('.filter-btn');
@@ -401,67 +438,72 @@ console.log('Storage diagnostics:', {
         const allDealsContainer = document.getElementById('allDealsContainer');
         const heroSection = document.getElementById('heroSection');
 
-        function filterDeals(category, clickedButton) {
-            // Update active button
-            filterButtons.forEach(btn => btn.classList.remove('active'));
-            if (clickedButton) clickedButton.classList.add('active');
+function filterDeals(category, clickedButton) {
+    // Update active button
+    filterButtons.forEach(btn => btn.classList.remove('active'));
+    if (clickedButton) clickedButton.classList.add('active');
 
-            const filteredContainer = document.getElementById('filteredDealsContainer');
-            const filteredGrid = document.getElementById('filteredGrid');
+    const filteredContainer = document.getElementById('filteredDealsContainer');
+    const filteredGrid = document.getElementById('filteredGrid');
 
-            if (!filteredContainer || !filteredGrid) return;
+    if (!filteredContainer || !filteredGrid) return;
 
-            if (category === 'all') {
-                // Hide filtered container
-                filteredContainer.style.display = 'none';
+    if (category === 'all') {
+        // Hide filtered container
+        filteredContainer.style.display = 'none';
 
-                // Show main container
-                if (allDealsContainer) allDealsContainer.style.display = 'block';
+        // Show main container
+        if (allDealsContainer) allDealsContainer.style.display = 'block';
 
-                // Show hero section
-                if (heroSection) heroSection.style.display = 'block';
+        // Show hero section
+        if (heroSection) heroSection.style.display = 'block';
 
-                // Show ALL section containers
-                const allSections = document.querySelectorAll('.deals-container');
-                allSections.forEach(section => {
-                    section.style.display = 'block';
-                });
+        // Show ALL section containers
+        const allSections = document.querySelectorAll('.deals-container');
+        allSections.forEach(section => {
+            section.style.display = 'block';
+        });
 
-                // Show ALL separators
-                const separators = document.querySelectorAll('.separator');
-                separators.forEach(sep => {
-                    sep.style.display = 'block';
-                });
+        // Show ALL separators
+        const separators = document.querySelectorAll('.separator');
+        separators.forEach(sep => {
+            sep.style.display = 'block';
+        });
 
-                // Show ALL cards
-                dealCards.forEach(card => {
-                    card.style.display = 'block';
-                    card.style.opacity = '1';
-                });
-            } else {
-                // Hide main container and hero
-                if (allDealsContainer) allDealsContainer.style.display = 'none';
-                if (heroSection) heroSection.style.display = 'none';
+        // Show ALL cards
+        dealCards.forEach(card => {
+            card.style.display = 'block';
+            card.style.opacity = '1';
+        });
+    } else {
+        // Hide main container and hero
+        if (allDealsContainer) allDealsContainer.style.display = 'none';
+        if (heroSection) heroSection.style.display = 'none';
 
-                // Show filtered container
-                filteredContainer.style.display = 'block';
+        // Show filtered container
+        filteredContainer.style.display = 'block';
 
-                // Clear filtered grid
-                filteredGrid.innerHTML = '';
+        // Clear filtered grid
+        filteredGrid.innerHTML = '';
 
-                // Clone matching cards into single grid
-                dealCards.forEach(card => {
-                    const cardCategory = card.getAttribute('data-category');
-                    if (cardCategory === category) {
-                        const cardClone = card.cloneNode(true);
-                        cardClone.style.display = 'block';
-                        cardClone.style.opacity = '1';
-                        cardClone.style.transform = 'translateY(0px)'; // Reset transform
-                        filteredGrid.appendChild(cardClone);
-                    }
-                });
+        // Clone matching cards into single grid
+        const clonedCards = [];
+        dealCards.forEach(card => {
+            const cardCategory = card.getAttribute('data-category');
+            if (cardCategory === category) {
+                const cardClone = card.cloneNode(true);
+                cardClone.style.display = 'block';
+                cardClone.style.opacity = '1';
+                cardClone.style.transform = 'translateY(0px)';
+                filteredGrid.appendChild(cardClone);
+                clonedCards.push(cardClone);
             }
-        }
+        });
+
+        // Re-attach reveal listeners to cloned shemale cards
+        attachRevealListeners(clonedCards);
+    }
+}
 
         filterButtons.forEach(button => {
             button.addEventListener('click', function() {
@@ -560,6 +602,28 @@ console.log('Storage diagnostics:', {
                 trackDealClick(dealTitle, dealUrl);
             });
         });
+
+// Scroll to Top Button
+        const scrollToTopBtn = document.getElementById('scrollToTop');
+        
+        if (scrollToTopBtn) {
+            // Show/hide button based on scroll position
+            window.addEventListener('scroll', function() {
+                if (window.pageYOffset > 300) {
+                    scrollToTopBtn.classList.add('show');
+                } else {
+                    scrollToTopBtn.classList.remove('show');
+                }
+            });
+
+            // Scroll to top when clicked
+            scrollToTopBtn.addEventListener('click', function() {
+                window.scrollTo({
+                    top: 0,
+                    behavior: 'smooth'
+                });
+            });
+        }
 
         // Console Welcome Message
         console.log('%c🌸 FlirtyDeals.com 🌸', 'color: #d6006e; font-size: 24px; font-weight: bold;');
