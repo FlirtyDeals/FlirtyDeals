@@ -65,58 +65,59 @@
 
 <body>
 
-    <!-- Cookie Consent Banner -->
-    <div id="cookie-banner">
-        <button class="close-banner" onclick="rejectCookies()">&times;</button>
-        <h3>🍪 We value your privacy</h3>
-        <p>We use cookies to enhance your browsing experience and analyze our traffic. By clicking "Accept All", you consent to our use of cookies.</p>
-        <div class="cookie-buttons">
-            <button class="cookie-btn cookie-btn-accept" onclick="acceptAllCookies()">Accept All</button>
-            <button class="cookie-btn cookie-btn-reject" onclick="rejectCookies()">Reject All</button>
-            <button class="cookie-btn cookie-btn-manage" onclick="openSettings()">Manage Preferences</button>
-        </div>
-    </div>
-
-    <!-- Cookie Settings Modal -->
-    <div id="cookie-settings-modal">
-        <div class="modal-content">
-            <h2>Cookie Preferences</h2>
-            
-            <div class="cookie-category">
-                <div class="category-header">
-                    <h4>✅ Necessary Cookies</h4>
-                    <label class="toggle-switch">
-                        <input type="checkbox" checked disabled>
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <p class="category-description">
-                    These cookies are essential for the website to function properly. They cannot be disabled.
-                </p>
-            </div>
-
-            <div class="cookie-category">
-                <div class="category-header">
-                    <h4>📊 Analytics Cookies</h4>
-                    <label class="toggle-switch">
-                        <input type="checkbox" id="analytics-toggle" onchange="updatePreferences()">
-                        <span class="slider"></span>
-                    </label>
-                </div>
-                <p class="category-description">
-                    These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously (Google Analytics).
-                </p>
-            </div>
-
-            <div class="modal-buttons">
-                <button class="cookie-btn cookie-btn-reject" onclick="savePreferences()">Save Preferences</button>
-                <button class="cookie-btn cookie-btn-accept" onclick="acceptAllFromModal()">Accept All</button>
+<!-- Cookie Consent Banner -->
+<div id="cookie-banner">
+    <button class="close-banner" onclick="rejectCookies()">&times;</button>
+    <div class="cookie-content">
+        <span class="cookie-icon">🍪</span>
+        <div class="cookie-text-wrapper">
+            <p class="cookie-message">We use cookies to enhance your browsing experience and analyze our traffic.</p>
+            <div class="cookie-links">
+                <a href="#" class="cookie-text-link cookie-link-accept" onclick="acceptAllCookies(); return false;">✓ Accept</a>
+                <a href="#" class="cookie-text-link cookie-link-reject" onclick="rejectCookies(); return false;">✗ Reject</a>
+                <a href="#" class="cookie-text-link cookie-link-customize" onclick="openSettings(); return false;">⚙ Customize</a>
             </div>
         </div>
     </div>
+</div>
 
-    <!-- Settings Button (shows after consent is given) -->
-    <button id="cookie-settings-btn" onclick="openSettings()" title="Cookie Settings">⚙️</button>
+<!-- Cookie Settings Modal -->
+<div id="cookie-settings-modal">
+    <div class="modal-content">
+        <h2>Cookie Preferences</h2>
+        
+        <div class="cookie-category">
+            <div class="category-header">
+                <h4>✅ Necessary Cookies</h4>
+                <label class="toggle-switch">
+                    <input type="checkbox" checked disabled>
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p class="category-description">
+                These cookies are essential for the website to function properly. They cannot be disabled.
+            </p>
+        </div>
+
+        <div class="cookie-category">
+            <div class="category-header">
+                <h4>📊 Analytics Cookies</h4>
+                <label class="toggle-switch">
+                    <input type="checkbox" id="analytics-toggle" onchange="updatePreferences()">
+                    <span class="slider"></span>
+                </label>
+            </div>
+            <p class="category-description">
+                These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously (Google Analytics).
+            </p>
+        </div>
+
+        <div class="modal-buttons">
+            <a href="#" class="cookie-text-link" onclick="savePreferences(); return false;">Save Preferences</a>
+            <a href="#" class="cookie-text-link" onclick="acceptAllFromModal(); return false;">Accept All</a>
+        </div>
+    </div>
+</div>
 
 <!-- Age Verification Modal -->
 <div class="modal active" id="ageModal">
