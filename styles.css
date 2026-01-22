@@ -318,8 +318,25 @@ body.age-verified .shemale-card .deal-image img {
     }
 }
 
-/* Mobile - show feedback only while pressing */
+/* Mobile - show subtle hint always, full feedback when pressing */
 @media (hover: none) and (pointer: coarse) {
+    /* Show a subtle hint at bottom that it's tappable */
+    .deal-image.revealed .deal-overlay::before {
+        content: 'Tap to hide';
+        position: absolute;
+        bottom: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        color: rgba(255, 255, 255, 0.7);
+        font-size: 0.75rem;
+        font-weight: 500;
+        background: rgba(0, 0, 0, 0.5);
+        padding: 5px 12px;
+        border-radius: 15px;
+        pointer-events: none;
+    }
+
+    /* Full overlay feedback when pressing */
     .deal-image.revealed .deal-overlay:active {
         opacity: 1;
         background: rgba(0, 0, 0, 0.6);
@@ -334,6 +351,11 @@ body.age-verified .shemale-card .deal-image img {
         color: white;
         font-size: 0.9rem;
         font-weight: 600;
+    }
+    
+    /* Hide the bottom hint when actively pressing */
+    .deal-image.revealed .deal-overlay:active::before {
+        display: none;
     }
     
     /* Hide the original "Click to Reveal" text when pressing */
@@ -726,5 +748,12 @@ footer {
         width: 45px;
         height: 45px;
         font-size: 1rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .modal {
+        align-items: flex-start;
+        padding-top: 11vh; /* Change this value - lower number = higher position */
     }
 }
