@@ -12,9 +12,10 @@
     const GEMINI_API_URL = 'https://gemini-api.join-flirtydeals.workers.dev';
     const CACHE_EXPIRY_DAYS = 30;
     const CACHE_VERSION = '5.0_gemini_africa';
-    const BATCH_SIZE = 80;
-    const REQUEST_DELAY = 4500;
-    
+    const BATCH_SIZE = 10;
+    const REQUEST_DELAY = 15000;
+    const MAX_RETRY_ATTEMPTS = 4;
+
     // 130+ Major Languages - ALL Countries + African Digitalization Focus
     // Special focus on African languages with 500k+ speakers
     const SUPPORTED_LANGUAGES = {
@@ -462,14 +463,14 @@
         // GEMINI API BATCH TRANSLATION via Worker proxy
         // ========================================
         
-        // Batch translate multiple texts using Worker proxy
-        batchTranslateTexts: async function(textsArray, targetLang, retryCount = 0) {
-            if (!textsArray || textsArray.length === 0) return [];
+// Batch translate multiple texts using Worker proxy (robust with retries/backoff)
+batchTranslateTexts: async function(textsArray, targetLang, retryCount = 0) {
+    if (!textsArray || textsArray.length === 0) return [];
 
-            const langName = SUPPORTED_LANGUAGES[targetLang]?.name || targetLang;
-            
-            try {
-                const prompt = `You are a professional translator. Translate the following texts from English to ${langName} (${targetLang}).
+    const langName = SUPPORTED_LANGUAGES[targetLang]?.name || targetLang;
+
+    try {
+        const prompt = `You are a professional translator. Translate the following texts from English to ${langName} (${targetLang}).
 
 IMPORTANT RULES:
 1. Return ONLY a valid JSON array of translations
@@ -485,73 +486,92 @@ ${JSON.stringify(textsArray, null, 2)}
 
 Output format: ["translation1", "translation2", ...]`;
 
-                // POST to your Worker proxy. The Worker will add the real API key and forward request to Gemini.
-                const response = await fetch(GEMINI_API_URL, {
-                  method: 'POST',
-                  headers: {
-                    'Content-Type': 'application/json'
-                  },
-                  body: JSON.stringify({
-                    contents: [{
-                      parts: [{
-                        text: prompt
-                      }]
-                    }],
-                    generationConfig: {
-                      temperature: 0.1,
-                      maxOutputTokens: 8000
-                    }
-                  })
-                });
+        // request body (Worker will append the secret key and forward to Gemini)
+        const requestBody = JSON.stringify({
+            contents: [{ parts: [{ text: prompt }] }],
+            generationConfig: { temperature: 0.1, maxOutputTokens: 8000 }
+        });
 
-                if (!response.ok) {
-                    const errorText = await response.text();
-                    
-                    if (response.status === 429) {
-                        if (retryCount < 3) {
-                            const waitTime = (retryCount + 1) * REQUEST_DELAY;
-                            this.log(`Rate limited, waiting ${waitTime/1000}s before retry ${retryCount + 1}/3...`);
-                            await this.delay(waitTime);
-                            return this.batchTranslateTexts(textsArray, targetLang, retryCount + 1);
-                        }
-                        throw new Error('Rate limit exceeded. Please try again in a minute.');
-                    }
-                    
-                    throw new Error(`Proxy error (${response.status}): ${errorText}`);
-                }
+        let attempt = 0;
+        let lastError = null;
+        let resp = null;
 
-                const data = await response.json();
-                
-                if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                    throw new Error('Invalid response from Gemini proxy');
-                }
+        while (attempt <= MAX_RETRY_ATTEMPTS) {
+            // use the backoff fetch helper
+            resp = await this.sendRequestWithBackoff(GEMINI_API_URL, {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: requestBody
+            }).catch(e => { lastError = e; return null; });
 
-                const responseText = data.candidates[0].content.parts[0].text;
-                
-                let jsonText = responseText.trim();
-                if (jsonText.startsWith('```json')) {
-                    jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-                } else if (jsonText.startsWith('```')) {
-                    jsonText = jsonText.replace(/```\n?/g, '');
-                }
-                
-                const translations = JSON.parse(jsonText);
-                
-                if (!Array.isArray(translations)) {
-                    throw new Error('Response is not an array');
-                }
-                
-                if (translations.length !== textsArray.length) {
-                    this.log(`Warning: Expected ${textsArray.length} translations, got ${translations.length}`, true);
-                }
-                
-                return translations;
-                
-            } catch (error) {
-                this.log(`Batch translation error: ${error.message}`, true);
-                return textsArray;
+            if (!resp) {
+                // network error handled by sendRequestWithBackoff; increment attempt and loop
+                attempt++;
+                continue;
             }
-        },
+
+            // If Worker forwarded a transient Gemini error
+            if (resp.status === 503 || resp.status === 429) {
+                lastError = new Error(`Proxy status ${resp.status}`);
+                attempt++;
+                if (attempt > MAX_RETRY_ATTEMPTS) break;
+                // exponential backoff with jitter (cap wait)
+                const backoff = Math.min(30000, 2000 * Math.pow(2, attempt));
+                const jitter = Math.floor(Math.random() * 1500);
+                await this.delay(backoff + jitter);
+                continue;
+            }
+
+            // non-OK (but not transient) - read and throw
+            if (!resp.ok) {
+                const errText = await resp.text().catch(() => null);
+                throw new Error(`Proxy error (${resp.status}): ${errText}`);
+            }
+
+            // success
+            break;
+        }
+
+        if (!resp || !resp.ok) {
+            const errMsg = lastError ? lastError.message : 'Unknown proxy error';
+            this.log(`Batch translation error after retries: ${errMsg}`, true);
+            // fallback: return originals so page doesn't break
+            return textsArray;
+        }
+
+        const data = await resp.json();
+
+        if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
+            throw new Error('Invalid response from Gemini proxy');
+        }
+
+        const responseText = data.candidates[0].content.parts[0].text;
+
+        let jsonText = responseText.trim();
+        if (jsonText.startsWith('```json')) {
+            jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
+        } else if (jsonText.startsWith('```')) {
+            jsonText = jsonText.replace(/```\n?/g, '');
+        }
+
+        const translations = JSON.parse(jsonText);
+
+        if (!Array.isArray(translations)) {
+            throw new Error('Response is not an array');
+        }
+
+        if (translations.length !== textsArray.length) {
+            this.log(`Warning: Expected ${textsArray.length} translations, got ${translations.length}`, true);
+        }
+
+        return translations;
+
+    } catch (error) {
+        this.log(`Batch translation error: ${error.message}`, true);
+        return textsArray;
+    }
+},
+
 
         // Translate entire page
         translatePage: async function(targetLang) {
@@ -899,9 +919,26 @@ Output format: ["translation1", "translation2", ...]`;
             this.log('Cache cleared');
         },
 
-        delay: function(ms) {
-            return new Promise(resolve => setTimeout(resolve, ms));
-        }
+delay: function(ms) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+},
+
+// Exponential backoff with full jitter
+sendRequestWithBackoff: async function(url, options, attempts = 0) {
+    try {
+        const resp = await fetch(url, options);
+        return resp;
+    } catch (err) {
+        if (attempts >= MAX_RETRY_ATTEMPTS) throw err;
+        const base = 2000 * Math.pow(2, attempts); // 2s, 4s, 8s...
+        const jitter = Math.floor(Math.random() * 1000); // 0-1s random
+        const wait = base + jitter;
+        await this.delay(wait);
+        return this.sendRequestWithBackoff(url, options, attempts + 1);
+    }
+},
+
+
     };
 
     // Expose to window
