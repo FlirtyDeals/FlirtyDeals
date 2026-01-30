@@ -1,17 +1,19 @@
 // Gemini AI Auto-Translation System for FlirtyDeals.com - v3.0
-// Uses Google's Gemini API - FREE TIER with high limits!
+// Uses Google's Gemini API via your Cloudflare Worker proxy
 // 🌍 Now supports 130+ languages including major African languages!
 
 (function() {
     'use strict';
 
-// GEMINI API CONFIGURATION
-// Your site should call the Cloudflare Worker proxy instead of Google directly.
-const GEMINI_API_URL = 'https://gemini-api.join-flirtydeals.workers.dev'; // <- your Worker URL
-const CACHE_EXPIRY_DAYS = 30;
-const CACHE_VERSION = '5.0_gemini_africa';
-const BATCH_SIZE = 80;
-const REQUEST_DELAY = 4500;
+    // ============================
+    // CLIENT CONFIG - call the Worker proxy
+    // ============================
+    // Worker endpoint (change if different)
+    const GEMINI_API_URL = 'https://gemini-api.join-flirtydeals.workers.dev';
+    const CACHE_EXPIRY_DAYS = 30;
+    const CACHE_VERSION = '5.0_gemini_africa';
+    const BATCH_SIZE = 80;
+    const REQUEST_DELAY = 4500;
     
     // 130+ Major Languages - ALL Countries + African Digitalization Focus
     // Special focus on African languages with 500k+ speakers
@@ -151,9 +153,9 @@ const REQUEST_DELAY = 4500;
         'ber': { name: 'Tamazight', flag: '🇲🇦' }, // 30M+ speakers (Berber)
         
         // Celtic & Regional European
-        'cy': { name: 'Cymraeg', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
+        'cy': { name: 'Cymraeg', flag: '🏴' },
         'ga': { name: 'Gaeilge', flag: '🇮🇪' },
-        'gd': { name: 'Gàidhlig', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
+        'gd': { name: 'Gàidhlig', flag: '🏴' },
         'mt': { name: 'Malti', flag: '🇲🇹' },
         'lb': { name: 'Lëtzebuergesch', flag: '🇱🇺' },
         'co': { name: 'Corsu', flag: '🇫🇷' },
@@ -186,12 +188,13 @@ const REQUEST_DELAY = 4500;
         init: function() {
             this.log('🚀 Initializing Gemini Translation System v3.0...');
             
-            // Check API key
-            if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
-                console.error('⚠️ GEMINI API KEY NOT SET! Get your free key from https://aistudio.google.com/app/apikey');
-                this.showNotification('⚠️ Translation API key not configured', 'error');
+            // Check proxy URL
+            if (!GEMINI_API_URL) {
+                console.error('Translation proxy not configured');
+                this.showNotification('Translation proxy not configured', 'error');
                 return;
             }
+
             
             this.loadCache();
             this.detectLanguage();
@@ -456,10 +459,10 @@ const REQUEST_DELAY = 4500;
         },
 
         // ========================================
-        // GEMINI API BATCH TRANSLATION
+        // GEMINI API BATCH TRANSLATION via Worker proxy
         // ========================================
         
-        // Batch translate multiple texts using Gemini API
+        // Batch translate multiple texts using Worker proxy
         batchTranslateTexts: async function(textsArray, targetLang, retryCount = 0) {
             if (!textsArray || textsArray.length === 0) return [];
 
@@ -482,26 +485,24 @@ ${JSON.stringify(textsArray, null, 2)}
 
 Output format: ["translation1", "translation2", ...]`;
 
-            
-const response = await fetch(GEMINI_API_URL, {
-  method: 'POST',
-  headers: {
-    'Content-Type': 'application/json'
-  },
-  body: JSON.stringify({
-    // send the same request body you would send to Gemini;
-    // the Worker will append the secret key and forward it.
-    contents: [{
-      parts: [{
-        text: prompt
-      }]
-    }],
-    generationConfig: {
-      temperature: 0.1,
-      maxOutputTokens: 8000
-    }
-  })
-});
+                // POST to your Worker proxy. The Worker will add the real API key and forward request to Gemini.
+                const response = await fetch(GEMINI_API_URL, {
+                  method: 'POST',
+                  headers: {
+                    'Content-Type': 'application/json'
+                  },
+                  body: JSON.stringify({
+                    contents: [{
+                      parts: [{
+                        text: prompt
+                      }]
+                    }],
+                    generationConfig: {
+                      temperature: 0.1,
+                      maxOutputTokens: 8000
+                    }
+                  })
+                });
 
                 if (!response.ok) {
                     const errorText = await response.text();
@@ -516,13 +517,13 @@ const response = await fetch(GEMINI_API_URL, {
                         throw new Error('Rate limit exceeded. Please try again in a minute.');
                     }
                     
-                    throw new Error(`Gemini API error (${response.status}): ${errorText}`);
+                    throw new Error(`Proxy error (${response.status}): ${errorText}`);
                 }
 
                 const data = await response.json();
                 
                 if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-                    throw new Error('Invalid response from Gemini API');
+                    throw new Error('Invalid response from Gemini proxy');
                 }
 
                 const responseText = data.candidates[0].content.parts[0].text;
