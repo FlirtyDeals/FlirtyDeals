@@ -1,64 +1,90 @@
-// Gemini AI Auto-Translation System for FlirtyDeals.com
+// Gemini AI Auto-Translation System for FlirtyDeals.com - v3.0
 // Uses Google's Gemini API - FREE TIER with high limits!
-// Batches translations intelligently • Smart caching • Beautiful UI
+// 🌍 Now supports 130+ languages including major African languages!
 
 (function() {
     'use strict';
 
-    // ========================================
-    // GEMINI API CONFIGURATION
-    // ========================================
-    // Get your FREE API key from: https://aistudio.google.com/app/apikey
-    const GEMINI_API_KEY = 'AIzaSyC5jeRpqOF_egi-tBjHieDfdrHTBbm4UV4'; // Replace with your key!
-    const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-lite:generateContent';
+// GEMINI API CONFIGURATION
+// Your site should call the Cloudflare Worker proxy instead of Google directly.
+const GEMINI_API_URL = 'https://gemini-api.join-flirtydeals.workers.dev'; // <- your Worker URL
+const CACHE_EXPIRY_DAYS = 30;
+const CACHE_VERSION = '5.0_gemini_africa';
+const BATCH_SIZE = 80;
+const REQUEST_DELAY = 4500;
     
-    const CACHE_EXPIRY_DAYS = 30;
-    const CACHE_VERSION = '3.0_gemini';
-    const BATCH_SIZE = 80; // Translate 80 items per API call (reduces 550 calls to ~7 calls!)
-    const REQUEST_DELAY = 4500; // 4.5 seconds between batches (15 RPM = 1 request per 4 seconds)
-    
-    // All 70+ supported languages
+    // 130+ Major Languages - ALL Countries + African Digitalization Focus
+    // Special focus on African languages with 500k+ speakers
     const SUPPORTED_LANGUAGES = {
+        // Western Europe
         'en': { name: 'English', flag: '🇬🇧' },
         'es': { name: 'Español', flag: '🇪🇸' },
         'fr': { name: 'Français', flag: '🇫🇷' },
         'de': { name: 'Deutsch', flag: '🇩🇪' },
         'it': { name: 'Italiano', flag: '🇮🇹' },
         'pt': { name: 'Português', flag: '🇵🇹' },
-        'ru': { name: 'Русский', flag: '🇷🇺' },
-        'zh': { name: '中文', flag: '🇨🇳' },
-        'ja': { name: '日本語', flag: '🇯🇵' },
-        'ko': { name: '한국어', flag: '🇰🇷' },
-        'ar': { name: 'العربية', flag: '🇸🇦' },
-        'hi': { name: 'हिन्दी', flag: '🇮🇳' },
         'nl': { name: 'Nederlands', flag: '🇳🇱' },
-        'pl': { name: 'Polski', flag: '🇵🇱' },
-        'tr': { name: 'Türkçe', flag: '🇹🇷' },
+        'ca': { name: 'Català', flag: '🇪🇸' },
+        'gl': { name: 'Galego', flag: '🇪🇸' },
+        'eu': { name: 'Euskara', flag: '🇪🇸' },
+        
+        // Nordic Countries
         'sv': { name: 'Svenska', flag: '🇸🇪' },
         'da': { name: 'Dansk', flag: '🇩🇰' },
         'no': { name: 'Norsk', flag: '🇳🇴' },
         'fi': { name: 'Suomi', flag: '🇫🇮' },
+        'is': { name: 'Íslenska', flag: '🇮🇸' },
+        
+        // Eastern Europe
+        'pl': { name: 'Polski', flag: '🇵🇱' },
         'cs': { name: 'Čeština', flag: '🇨🇿' },
         'sk': { name: 'Slovenčina', flag: '🇸🇰' },
-        'uk': { name: 'Українська', flag: '🇺🇦' },
-        'el': { name: 'Ελληνικά', flag: '🇬🇷' },
-        'he': { name: 'עברית', flag: '🇮🇱' },
         'hu': { name: 'Magyar', flag: '🇭🇺' },
         'ro': { name: 'Română', flag: '🇷🇴' },
         'bg': { name: 'Български', flag: '🇧🇬' },
         'hr': { name: 'Hrvatski', flag: '🇭🇷' },
         'sr': { name: 'Српски', flag: '🇷🇸' },
         'sl': { name: 'Slovenščina', flag: '🇸🇮' },
+        'mk': { name: 'Македонски', flag: '🇲🇰' },
+        'sq': { name: 'Shqip', flag: '🇦🇱' },
+        'bs': { name: 'Bosanski', flag: '🇧🇦' },
+        
+        // Baltic States
         'lt': { name: 'Lietuvių', flag: '🇱🇹' },
         'lv': { name: 'Latviešu', flag: '🇱🇻' },
         'et': { name: 'Eesti', flag: '🇪🇪' },
-        'id': { name: 'Bahasa Indonesia', flag: '🇮🇩' },
-        'ms': { name: 'Bahasa Melayu', flag: '🇲🇾' },
-        'th': { name: 'ไทย', flag: '🇹🇭' },
-        'vi': { name: 'Tiếng Việt', flag: '🇻🇳' },
+        
+        // Eastern Europe & Caucasus
+        'ru': { name: 'Русский', flag: '🇷🇺' },
+        'uk': { name: 'Українська', flag: '🇺🇦' },
+        'be': { name: 'Беларуская', flag: '🇧🇾' },
+        'ka': { name: 'ქართული', flag: '🇬🇪' },
+        'hy': { name: 'Հայերեն', flag: '🇦🇲' },
+        'az': { name: 'Azərbaycan', flag: '🇦🇿' },
+        
+        // Central Asia
+        'kk': { name: 'Қазақ', flag: '🇰🇿' },
+        'uz': { name: "O'zbek", flag: '🇺🇿' },
+        'ky': { name: 'Кыргызча', flag: '🇰🇬' },
+        'tg': { name: 'Тоҷикӣ', flag: '🇹🇯' },
+        'tk': { name: 'Türkmen', flag: '🇹🇲' },
+        'mn': { name: 'Монгол', flag: '🇲🇳' },
+        
+        // Greece & Turkey
+        'el': { name: 'Ελληνικά', flag: '🇬🇷' },
+        'tr': { name: 'Türkçe', flag: '🇹🇷' },
+        
+        // Middle East
+        'ar': { name: 'العربية', flag: '🇸🇦' },
+        'he': { name: 'עברית', flag: '🇮🇱' },
         'fa': { name: 'فارسی', flag: '🇮🇷' },
-        'bn': { name: 'বাংলা', flag: '🇧🇩' },
         'ur': { name: 'اردو', flag: '🇵🇰' },
+        'ps': { name: 'پښتو', flag: '🇦🇫' },
+        'ku': { name: 'Kurdî', flag: '🇮🇶' },
+        
+        // South Asia
+        'hi': { name: 'हिन्दी', flag: '🇮🇳' },
+        'bn': { name: 'বাংলা', flag: '🇧🇩' },
         'te': { name: 'తెలుగు', flag: '🇮🇳' },
         'ta': { name: 'தமிழ்', flag: '🇮🇳' },
         'mr': { name: 'मराठी', flag: '🇮🇳' },
@@ -66,36 +92,83 @@
         'kn': { name: 'ಕನ್ನಡ', flag: '🇮🇳' },
         'ml': { name: 'മലയാളം', flag: '🇮🇳' },
         'pa': { name: 'ਪੰਜਾਬੀ', flag: '🇮🇳' },
-        'sw': { name: 'Kiswahili', flag: '🇰🇪' },
-        'am': { name: 'አማርኛ', flag: '🇪🇹' },
-        'af': { name: 'Afrikaans', flag: '🇿🇦' },
-        'az': { name: 'Azərbaycan', flag: '🇦🇿' },
-        'be': { name: 'Беларуская', flag: '🇧🇾' },
-        'ca': { name: 'Català', flag: '🇪🇸' },
-        'cy': { name: 'Cymraeg', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
-        'eo': { name: 'Esperanto', flag: '🌍' },
-        'eu': { name: 'Euskara', flag: '🇪🇸' },
-        'ga': { name: 'Gaeilge', flag: '🇮🇪' },
-        'gl': { name: 'Galego', flag: '🇪🇸' },
-        'hy': { name: 'Հայերեն', flag: '🇦🇲' },
-        'is': { name: 'Íslenska', flag: '🇮🇸' },
-        'ka': { name: 'ქართული', flag: '🇬🇪' },
-        'kk': { name: 'Қазақ', flag: '🇰🇿' },
-        'km': { name: 'ខ្មែរ', flag: '🇰🇭' },
-        'ky': { name: 'Кыргызча', flag: '🇰🇬' },
-        'lo': { name: 'ລາວ', flag: '🇱🇦' },
-        'lb': { name: 'Lëtzebuergesch', flag: '🇱🇺' },
-        'mk': { name: 'Македонски', flag: '🇲🇰' },
-        'mn': { name: 'Монгол', flag: '🇲🇳' },
-        'my': { name: 'မြန်မာ', flag: '🇲🇲' },
-        'ne': { name: 'नेपाली', flag: '🇳🇵' },
-        'ps': { name: 'پښتو', flag: '🇦🇫' },
+        'or': { name: 'ଓଡ଼ିଆ', flag: '🇮🇳' },
         'si': { name: 'සිංහල', flag: '🇱🇰' },
-        'sq': { name: 'Shqip', flag: '🇦🇱' },
-        'tg': { name: 'Тоҷикӣ', flag: '🇹🇯' },
-        'tk': { name: 'Türkmen', flag: '🇹🇲' },
-        'uz': { name: "O'zbek", flag: '🇺🇿' },
-        'yi': { name: 'ייִדיש', flag: '🇮🇱' }
+        'ne': { name: 'नेपाली', flag: '🇳🇵' },
+        'sd': { name: 'سنڌي', flag: '🇵🇰' },
+        
+        // East Asia
+        'zh': { name: '中文', flag: '🇨🇳' },
+        'ja': { name: '日本語', flag: '🇯🇵' },
+        'ko': { name: '한국어', flag: '🇰🇷' },
+        
+        // Southeast Asia
+        'th': { name: 'ไทย', flag: '🇹🇭' },
+        'vi': { name: 'Tiếng Việt', flag: '🇻🇳' },
+        'id': { name: 'Bahasa Indonesia', flag: '🇮🇩' },
+        'ms': { name: 'Bahasa Melayu', flag: '🇲🇾' },
+        'tl': { name: 'Tagalog', flag: '🇵🇭' },
+        'lo': { name: 'ລາວ', flag: '🇱🇦' },
+        'km': { name: 'ខ្មែរ', flag: '🇰🇭' },
+        'my': { name: 'မြန်မာ', flag: '🇲🇲' },
+        'jv': { name: 'Basa Jawa', flag: '🇮🇩' },
+        'ceb': { name: 'Cebuano', flag: '🇵🇭' },
+        
+        // East Africa (MAJOR DIGITALIZATION FOCUS)
+        'sw': { name: 'Kiswahili', flag: '🇰🇪' }, // 200M+ speakers!
+        'am': { name: 'አማርኛ', flag: '🇪🇹' }, // 57M speakers
+        'om': { name: 'Afaan Oromoo', flag: '🇪🇹' }, // 57M speakers
+        'ti': { name: 'ትግርኛ', flag: '🇪🇷' }, // 10M+ speakers (Tigrinya)
+        'so': { name: 'Soomaali', flag: '🇸🇴' }, // 21M+ speakers
+        'rw': { name: 'Ikinyarwanda', flag: '🇷🇼' }, // 12M+ speakers
+        'rn': { name: 'Ikirundi', flag: '🇧🇮' }, // 10M+ speakers (Kirundi)
+        'lg': { name: 'Luganda', flag: '🇺🇬' }, // 20M speakers
+        
+        // Southern Africa
+        'af': { name: 'Afrikaans', flag: '🇿🇦' },
+        'zu': { name: 'isiZulu', flag: '🇿🇦' },
+        'xh': { name: 'isiXhosa', flag: '🇿🇦' },
+        'st': { name: 'Sesotho', flag: '🇱🇸' },
+        'sn': { name: 'chiShona', flag: '🇿🇼' }, // 10M+ speakers
+        'ts': { name: 'Xitsonga', flag: '🇿🇦' }, // 7M+ speakers (Tsonga)
+        'ny': { name: 'Chichewa', flag: '🇲🇼' }, // 12M+ speakers
+        'mg': { name: 'Malagasy', flag: '🇲🇬' }, // 25M speakers
+        
+        // West Africa (HUGE POPULATIONS)
+        'yo': { name: 'Yorùbá', flag: '🇳🇬' }, // 45M+ speakers
+        'ig': { name: 'Igbo', flag: '🇳🇬' }, // 30M+ speakers
+        'ha': { name: 'Hausa', flag: '🇳🇬' }, // 100M+ speakers!
+        'wo': { name: 'Wolof', flag: '🇸🇳' }, // 10M+ speakers
+        'ff': { name: 'Fulfulde', flag: '🇳🇬' }, // 30M+ speakers (Fulani/Fula)
+        'kr': { name: 'Kanuri', flag: '🇳🇬' }, // 10M+ speakers
+        
+        // Central Africa
+        'ln': { name: 'Lingála', flag: '🇨🇩' }, // 45M+ speakers!
+        'kg': { name: 'Kikongo', flag: '🇨🇩' }, // 5M+ speakers
+        'lua': { name: 'Tshiluba', flag: '🇨🇩' }, // 8M+ speakers
+        
+        // North Africa
+        'ber': { name: 'Tamazight', flag: '🇲🇦' }, // 30M+ speakers (Berber)
+        
+        // Celtic & Regional European
+        'cy': { name: 'Cymraeg', flag: '🏴󠁧󠁢󠁷󠁬󠁳󠁿' },
+        'ga': { name: 'Gaeilge', flag: '🇮🇪' },
+        'gd': { name: 'Gàidhlig', flag: '🏴󠁧󠁢󠁳󠁣󠁴󠁿' },
+        'mt': { name: 'Malti', flag: '🇲🇹' },
+        'lb': { name: 'Lëtzebuergesch', flag: '🇱🇺' },
+        'co': { name: 'Corsu', flag: '🇫🇷' },
+        'fy': { name: 'Frysk', flag: '🇳🇱' },
+        
+        // Pacific & Others
+        'sm': { name: 'Gagana Samoa', flag: '🇼🇸' },
+        'haw': { name: 'ʻŌlelo Hawaiʻi', flag: '🇺🇸' },
+        'hmn': { name: 'Hmong', flag: '🇱🇦' },
+        'tpi': { name: 'Tok Pisin', flag: '🇵🇬' }, // 4M+ speakers
+        
+        // Additional
+        'yi': { name: 'ייִדיש', flag: '🇮🇱' },
+        'eo': { name: 'Esperanto', flag: '🌍' },
+        'la': { name: 'Latin', flag: '🏛️' }
     };
 
     // ========================================
@@ -111,7 +184,7 @@
 
         // Initialize the system
         init: function() {
-            this.log('🚀 Initializing Gemini Translation System...');
+            this.log('🚀 Initializing Gemini Translation System v3.0...');
             
             // Check API key
             if (GEMINI_API_KEY === 'YOUR_GEMINI_API_KEY_HERE') {
@@ -127,8 +200,9 @@
             
             this.log(`✅ Initialization complete! Current language: ${this.currentLang}`);
             this.log(`📦 Loaded ${Object.keys(this.translationCache).length} cached translations`);
+            this.log(`🌍 Supporting ${Object.keys(SUPPORTED_LANGUAGES).length} languages`);
             
-            // Auto-translate if not English
+            // Auto-translate if browser language is not English
             if (this.currentLang !== 'en') {
                 this.log(`🌍 Auto-translating to ${SUPPORTED_LANGUAGES[this.currentLang].name}...`);
                 setTimeout(() => this.translatePage(this.currentLang), 500);
@@ -167,7 +241,7 @@
             }
         },
 
-        // Create modern language dropdown
+        // Create modern language dropdown with reset button
         createLanguageDropdown: function() {
             const navActions = document.querySelector('.nav-actions');
             if (!navActions) {
@@ -194,12 +268,15 @@
                         <input type="text" class="lang-search" placeholder="🔍 Search languages..." id="langSearch">
                     </div>
                     <div class="lang-list" id="langList"></div>
+                    <div class="lang-reset-container">
+                        <a href="#" class="lang-reset-btn" id="langResetBtn">🔄 Reset to English</a>
+                    </div>
                 </div>
             `;
 
             // Insert before Discord button
             navActions.insertBefore(dropdown, navActions.firstChild);
-            this.log('✅ Language dropdown created');
+            this.log('✅ Language dropdown created with reset button');
 
             // Populate language list
             this.populateLanguageList();
@@ -238,6 +315,7 @@
             const btn = document.getElementById('langFlagBtn');
             const menu = document.getElementById('langDropdownMenu');
             const search = document.getElementById('langSearch');
+            const resetBtn = document.getElementById('langResetBtn');
 
             if (!btn || !menu) return;
 
@@ -252,6 +330,16 @@
                     this.log('Dropdown opened');
                 }
             };
+
+            // Reset to English button
+            if (resetBtn) {
+                resetBtn.onclick = (e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    this.log('🔄 Resetting to English...');
+                    this.changeLanguage('en');
+                };
+            }
 
             // Close dropdown when clicking outside
             document.addEventListener('click', (e) => {
@@ -290,6 +378,11 @@
                         if (node.parentElement.tagName === 'SCRIPT') return NodeFilter.FILTER_REJECT;
                         if (node.parentElement.tagName === 'STYLE') return NodeFilter.FILTER_REJECT;
                         if (node.parentElement.closest('.language-dropdown')) return NodeFilter.FILTER_REJECT;
+                        
+                        // EXCLUDE BADGES FROM TRANSLATION
+                        if (node.parentElement.classList.contains('featured-badge')) return NodeFilter.FILTER_REJECT;
+                        if (node.parentElement.classList.contains('discount-badge')) return NodeFilter.FILTER_REJECT;
+                        
                         return NodeFilter.FILTER_ACCEPT;
                     }
                 }
@@ -307,14 +400,59 @@
                 }
             }
 
-            // Save meta tags
+            // Save ALL SEO metadata (including new ones from #3)
             this.originalContent.title = document.title;
+            
             const metaDesc = document.querySelector('meta[name="description"]');
             if (metaDesc) {
                 this.originalContent.description = metaDesc.getAttribute('content');
             }
+            
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle) {
+                this.originalContent.ogTitle = ogTitle.getAttribute('content');
+            }
+            
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogDesc) {
+                this.originalContent.ogDescription = ogDesc.getAttribute('content');
+            }
+            
+            // NEW: Application names
+            const appName = document.querySelector('meta[name="application-name"]');
+            if (appName) {
+                this.originalContent.applicationName = appName.getAttribute('content');
+            }
+            
+            const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+            if (appleTitle) {
+                this.originalContent.appleMobileTitle = appleTitle.getAttribute('content');
+            }
+            
+            // NEW: JSON-LD Schema
+            const jsonLdScript = document.querySelector('script[type="application/ld+json"]');
+            if (jsonLdScript) {
+                try {
+                    const schema = JSON.parse(jsonLdScript.textContent);
+                    if (schema.name) this.originalContent.schemaName = schema.name;
+                    if (schema.description) this.originalContent.schemaDescription = schema.description;
+                    this.originalContent.jsonLdElement = jsonLdScript;
+                    this.originalContent.jsonLdFull = schema;
+                } catch (e) {
+                    this.log('Could not parse JSON-LD schema', true);
+                }
+            }
+            
+            // Save all image alt texts
+            const images = document.querySelectorAll('img[alt]');
+            images.forEach((img, index) => {
+                this.originalContent[`img_alt_${index}`] = {
+                    element: img,
+                    text: img.getAttribute('alt')
+                };
+            });
 
-            this.log(`✅ Saved ${Object.keys(this.originalContent).length} text elements`);
+            this.log(`✅ Saved ${Object.keys(this.originalContent).length} text elements + complete SEO metadata`);
         },
 
         // ========================================
@@ -328,7 +466,6 @@
             const langName = SUPPORTED_LANGUAGES[targetLang]?.name || targetLang;
             
             try {
-                // Create the prompt for Gemini
                 const prompt = `You are a professional translator. Translate the following texts from English to ${langName} (${targetLang}).
 
 IMPORTANT RULES:
@@ -338,34 +475,37 @@ IMPORTANT RULES:
 4. Preserve formatting like line breaks
 5. Do not add explanations or extra text
 6. Return exactly ${textsArray.length} translations
+7. For adult content terms, translate naturally and professionally
 
 Input texts:
 ${JSON.stringify(textsArray, null, 2)}
 
 Output format: ["translation1", "translation2", ...]`;
 
-                const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        contents: [{
-                            parts: [{
-                                text: prompt
-                            }]
-                        }],
-                        generationConfig: {
-                            temperature: 0.1,
-                            maxOutputTokens: 8000
-                        }
-                    })
-                });
+            
+const response = await fetch(GEMINI_API_URL, {
+  method: 'POST',
+  headers: {
+    'Content-Type': 'application/json'
+  },
+  body: JSON.stringify({
+    // send the same request body you would send to Gemini;
+    // the Worker will append the secret key and forward it.
+    contents: [{
+      parts: [{
+        text: prompt
+      }]
+    }],
+    generationConfig: {
+      temperature: 0.1,
+      maxOutputTokens: 8000
+    }
+  })
+});
 
                 if (!response.ok) {
                     const errorText = await response.text();
                     
-                    // Handle rate limiting with retry
                     if (response.status === 429) {
                         if (retryCount < 3) {
                             const waitTime = (retryCount + 1) * REQUEST_DELAY;
@@ -387,7 +527,6 @@ Output format: ["translation1", "translation2", ...]`;
 
                 const responseText = data.candidates[0].content.parts[0].text;
                 
-                // Extract JSON from response (Gemini sometimes adds markdown)
                 let jsonText = responseText.trim();
                 if (jsonText.startsWith('```json')) {
                     jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
@@ -409,13 +548,11 @@ Output format: ["translation1", "translation2", ...]`;
                 
             } catch (error) {
                 this.log(`Batch translation error: ${error.message}`, true);
-                
-                // Return original texts as fallback
                 return textsArray;
             }
         },
 
-        // Translate entire page using batched Gemini API calls
+        // Translate entire page
         translatePage: async function(targetLang) {
             if (this.isTranslating) {
                 this.log('Translation already in progress...', true);
@@ -433,7 +570,6 @@ Output format: ["translation1", "translation2", ...]`;
             this.log(`🌍 Starting translation to ${SUPPORTED_LANGUAGES[targetLang].name}...`);
 
             try {
-                // Get all text nodes
                 const keys = Object.keys(this.originalContent).filter(key => !isNaN(key));
                 const totalItems = keys.length;
                 
@@ -450,34 +586,28 @@ Output format: ["translation1", "translation2", ...]`;
                     
                     this.log(`Processing batch ${batchNumber}/${totalBatches} (${batchKeys.length} items)...`);
                     
-                    // Collect texts for this batch
                     const textsToTranslate = [];
                     const batchIndices = [];
                     
                     for (const key of batchKeys) {
                         const item = this.originalContent[key];
                         if (item && item.text) {
-                            // Check cache first
                             const cacheKey = `${item.text}_${targetLang}`;
                             if (this.translationCache[cacheKey]) {
-                                // Use cached translation
                                 item.node.textContent = this.translationCache[cacheKey];
                                 translatedCount++;
                             } else {
-                                // Add to batch for API call
                                 textsToTranslate.push(item.text);
                                 batchIndices.push(key);
                             }
                         }
                     }
                     
-                    // Translate uncached items
                     if (textsToTranslate.length > 0) {
                         this.log(`🤖 Calling Gemini API for ${textsToTranslate.length} texts...`);
                         
                         const translations = await this.batchTranslateTexts(textsToTranslate, targetLang);
                         
-                        // Apply translations
                         for (let j = 0; j < batchIndices.length && j < translations.length; j++) {
                             const key = batchIndices[j];
                             const item = this.originalContent[key];
@@ -486,7 +616,6 @@ Output format: ["translation1", "translation2", ...]`;
                             if (item && item.node && translation) {
                                 item.node.textContent = translation;
                                 
-                                // Cache the translation
                                 const cacheKey = `${item.text}_${targetLang}`;
                                 this.translationCache[cacheKey] = translation;
                                 
@@ -497,29 +626,86 @@ Output format: ["translation1", "translation2", ...]`;
                         this.saveCache();
                     }
                     
-                    // Update progress
                     this.updateProgress(i + batchKeys.length, totalItems);
                     
-                    // Delay between batches to respect rate limits (except last batch)
                     if (i + BATCH_SIZE < keys.length) {
                         this.log(`⏳ Waiting ${REQUEST_DELAY/1000}s before next batch...`);
                         await this.delay(REQUEST_DELAY);
                     }
                 }
 
-                // Translate meta tags
-                if (this.originalContent.title) {
-                    const titleCacheKey = `${this.originalContent.title}_${targetLang}`;
-                    if (this.translationCache[titleCacheKey]) {
-                        document.title = this.translationCache[titleCacheKey];
-                    } else {
-                        const titleTranslation = await this.batchTranslateTexts([this.originalContent.title], targetLang);
-                        if (titleTranslation && titleTranslation[0]) {
-                            document.title = titleTranslation[0];
-                            this.translationCache[titleCacheKey] = titleTranslation[0];
-                            this.saveCache();
+                // Translate ALL SEO metadata (including new ones)
+                this.log('📄 Translating complete SEO metadata...');
+                
+                const seoTexts = [];
+                const seoKeys = [];
+                
+                if (this.originalContent.title) seoTexts.push(this.originalContent.title), seoKeys.push('title');
+                if (this.originalContent.description) seoTexts.push(this.originalContent.description), seoKeys.push('description');
+                if (this.originalContent.ogTitle) seoTexts.push(this.originalContent.ogTitle), seoKeys.push('ogTitle');
+                if (this.originalContent.ogDescription) seoTexts.push(this.originalContent.ogDescription), seoKeys.push('ogDescription');
+                if (this.originalContent.applicationName) seoTexts.push(this.originalContent.applicationName), seoKeys.push('applicationName');
+                if (this.originalContent.appleMobileTitle) seoTexts.push(this.originalContent.appleMobileTitle), seoKeys.push('appleMobileTitle');
+                if (this.originalContent.schemaName) seoTexts.push(this.originalContent.schemaName), seoKeys.push('schemaName');
+                if (this.originalContent.schemaDescription) seoTexts.push(this.originalContent.schemaDescription), seoKeys.push('schemaDescription');
+                
+                if (seoTexts.length > 0) {
+                    const seoTranslations = await this.batchTranslateTexts(seoTexts, targetLang);
+                    
+                    seoKeys.forEach((key, index) => {
+                        const translation = seoTranslations[index];
+                        if (translation) {
+                            if (key === 'title') {
+                                document.title = translation;
+                            } else if (key === 'description') {
+                                const metaDesc = document.querySelector('meta[name="description"]');
+                                if (metaDesc) metaDesc.setAttribute('content', translation);
+                            } else if (key === 'ogTitle') {
+                                const ogTitle = document.querySelector('meta[property="og:title"]');
+                                if (ogTitle) ogTitle.setAttribute('content', translation);
+                            } else if (key === 'ogDescription') {
+                                const ogDesc = document.querySelector('meta[property="og:description"]');
+                                if (ogDesc) ogDesc.setAttribute('content', translation);
+                            } else if (key === 'applicationName') {
+                                const appName = document.querySelector('meta[name="application-name"]');
+                                if (appName) appName.setAttribute('content', translation);
+                            } else if (key === 'appleMobileTitle') {
+                                const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+                                if (appleTitle) appleTitle.setAttribute('content', translation);
+                            } else if (key === 'schemaName' && this.originalContent.jsonLdFull) {
+                                this.originalContent.jsonLdFull.name = translation;
+                            } else if (key === 'schemaDescription' && this.originalContent.jsonLdFull) {
+                                this.originalContent.jsonLdFull.description = translation;
+                            }
                         }
+                    });
+                    
+                    // Update JSON-LD if it was translated
+                    if (this.originalContent.jsonLdElement && this.originalContent.jsonLdFull) {
+                        this.originalContent.jsonLdElement.textContent = JSON.stringify(this.originalContent.jsonLdFull, null, 2);
                     }
+                }
+                
+                // Translate image alt texts
+                const altTexts = [];
+                const altKeys = [];
+                Object.keys(this.originalContent).forEach(key => {
+                    if (key.startsWith('img_alt_')) {
+                        altTexts.push(this.originalContent[key].text);
+                        altKeys.push(key);
+                    }
+                });
+                
+                if (altTexts.length > 0) {
+                    this.log(`🖼️ Translating ${altTexts.length} image alt texts...`);
+                    const altTranslations = await this.batchTranslateTexts(altTexts, targetLang);
+                    
+                    altKeys.forEach((key, index) => {
+                        const translation = altTranslations[index];
+                        if (translation && this.originalContent[key].element) {
+                            this.originalContent[key].element.setAttribute('alt', translation);
+                        }
+                    });
                 }
 
                 document.documentElement.lang = targetLang;
@@ -539,6 +725,7 @@ Output format: ["translation1", "translation2", ...]`;
 
         // Restore original English content
         restoreOriginalContent: function() {
+            // Restore text nodes
             Object.keys(this.originalContent).forEach(key => {
                 if (!isNaN(key)) {
                     const item = this.originalContent[key];
@@ -548,16 +735,60 @@ Output format: ["translation1", "translation2", ...]`;
                 }
             });
 
+            // Restore ALL SEO metadata
             if (this.originalContent.title) {
                 document.title = this.originalContent.title;
             }
+            
+            const metaDesc = document.querySelector('meta[name="description"]');
+            if (metaDesc && this.originalContent.description) {
+                metaDesc.setAttribute('content', this.originalContent.description);
+            }
+            
+            const ogTitle = document.querySelector('meta[property="og:title"]');
+            if (ogTitle && this.originalContent.ogTitle) {
+                ogTitle.setAttribute('content', this.originalContent.ogTitle);
+            }
+            
+            const ogDesc = document.querySelector('meta[property="og:description"]');
+            if (ogDesc && this.originalContent.ogDescription) {
+                ogDesc.setAttribute('content', this.originalContent.ogDescription);
+            }
+            
+            const appName = document.querySelector('meta[name="application-name"]');
+            if (appName && this.originalContent.applicationName) {
+                appName.setAttribute('content', this.originalContent.applicationName);
+            }
+            
+            const appleTitle = document.querySelector('meta[name="apple-mobile-web-app-title"]');
+            if (appleTitle && this.originalContent.appleMobileTitle) {
+                appleTitle.setAttribute('content', this.originalContent.appleMobileTitle);
+            }
+            
+            // Restore JSON-LD
+            if (this.originalContent.jsonLdElement && this.originalContent.schemaName) {
+                const schema = this.originalContent.jsonLdFull;
+                schema.name = this.originalContent.schemaName;
+                schema.description = this.originalContent.schemaDescription;
+                this.originalContent.jsonLdElement.textContent = JSON.stringify(schema, null, 2);
+            }
+            
+            // Restore image alt texts
+            Object.keys(this.originalContent).forEach(key => {
+                if (key.startsWith('img_alt_')) {
+                    const item = this.originalContent[key];
+                    if (item.element && item.text) {
+                        item.element.setAttribute('alt', item.text);
+                    }
+                }
+            });
 
             document.documentElement.lang = 'en';
             this.log('✅ Restored English content');
             this.showNotification('Restored to English', 'success');
         },
 
-        // Change language manually
+        // Change language
         changeLanguage: async function(lang) {
             if (lang === this.currentLang) {
                 this.dropdownOpen = false;
@@ -569,30 +800,22 @@ Output format: ["translation1", "translation2", ...]`;
             this.currentLang = lang;
             localStorage.setItem('flirty_language', lang);
             
-            // Update flag button
             const flagBtn = document.querySelector('.flag-icon');
             if (flagBtn) {
                 flagBtn.textContent = SUPPORTED_LANGUAGES[lang].flag;
             }
 
-            // Update active state in list
             document.querySelectorAll('.lang-item').forEach(item => {
                 item.classList.remove('active');
             });
             
-            // Close dropdown
             this.dropdownOpen = false;
             document.getElementById('langDropdownMenu').classList.remove('active');
 
-            // Translate page
             await this.translatePage(lang);
         },
 
-        // ========================================
-        // UI COMPONENTS
-        // ========================================
-
-        // Show non-blocking progress indicator
+        // UI Components
         showProgressIndicator: function() {
             let indicator = document.getElementById('translationProgress');
             if (!indicator) {
@@ -610,7 +833,6 @@ Output format: ["translation1", "translation2", ...]`;
             setTimeout(() => indicator.classList.add('active'), 10);
         },
 
-        // Update progress
         updateProgress: function(current, total) {
             const percent = Math.round((current / total) * 100);
             const percentEl = document.getElementById('progressPercent');
@@ -619,7 +841,6 @@ Output format: ["translation1", "translation2", ...]`;
             }
         },
 
-        // Hide progress indicator
         hideProgressIndicator: function() {
             const indicator = document.getElementById('translationProgress');
             if (indicator) {
@@ -628,7 +849,6 @@ Output format: ["translation1", "translation2", ...]`;
             }
         },
 
-        // Show notification
         showNotification: function(message, type = 'info') {
             const notification = document.createElement('div');
             notification.className = `notification notification-${type}`;
@@ -645,10 +865,7 @@ Output format: ["translation1", "translation2", ...]`;
             }, 3000);
         },
 
-        // ========================================
-        // CACHE MANAGEMENT
-        // ========================================
-
+        // Cache management
         loadCache: function() {
             try {
                 const cached = localStorage.getItem('translation_cache');
@@ -681,13 +898,12 @@ Output format: ["translation1", "translation2", ...]`;
             this.log('Cache cleared');
         },
 
-        // Utility delay function
         delay: function(ms) {
             return new Promise(resolve => setTimeout(resolve, ms));
         }
     };
 
-    // Expose to window for manual control
+    // Expose to window
     window.AutoTranslate = AutoTranslate;
 
     // Initialize when DOM is ready

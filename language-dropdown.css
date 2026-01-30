@@ -224,10 +224,11 @@
 }
 
 /* Non-blocking Translation Progress Indicator */
+/* REPOSITIONED to bottom-left to avoid blocking scroll-to-top button */
 .translation-progress {
     position: fixed;
     bottom: 20px;
-    right: 20px;
+    left: 20px;
     background: white;
     padding: 16px 24px;
     border-radius: 12px;
@@ -312,6 +313,41 @@
     background: linear-gradient(135deg, #f44336 0%, #c62828 100%);
 }
 
+/* Reset to English Button */
+.lang-reset-container {
+    padding: 12px 14px;
+    border-top: 1px solid #f0f0f0;
+    background: linear-gradient(135deg, #fff9fc 0%, #fff 100%);
+    border-radius: 0 0 16px 16px;
+}
+
+.lang-reset-btn {
+    display: block;
+    width: 100%;
+    padding: 10px 16px;
+    text-align: center;
+    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
+    color: white;
+    text-decoration: none;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 600;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.3s ease;
+    box-shadow: 0 2px 8px rgba(214, 0, 110, 0.2);
+}
+
+.lang-reset-btn:hover {
+    background: linear-gradient(135deg, #b8005d 0%, #e61382 100%);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(214, 0, 110, 0.3);
+}
+
+.lang-reset-btn:active {
+    transform: translateY(0);
+    box-shadow: 0 2px 6px rgba(214, 0, 110, 0.2);
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .lang-dropdown-menu {
@@ -329,9 +365,9 @@
     
     .translation-progress {
         bottom: 10px;
-        right: 10px;
         left: 10px;
-        max-width: none;
+        right: auto;
+        max-width: calc(100% - 80px); /* Leave space for scroll-to-top button */
     }
 }
 
