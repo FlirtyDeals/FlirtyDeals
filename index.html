@@ -62,13 +62,18 @@
   }
   </script>
 
-  <!-- Gemini Auto-Translation System -->
-  <script src="gemini-i18n.js"></script>
+  <!-- Language Dropdown with Hidden Google Translate -->
   <link rel="stylesheet" href="language-dropdown.css">
+  <link rel="stylesheet" href="google-translate-hide.css">
+  <script type="text/javascript" src="https://translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+  <script src="language-dropdown.js"></script>
   
 </head>
 
 <body>
+
+<!-- Hidden Google Translate Widget (controlled by custom dropdown) -->
+<div id="google_translate_element" style="display:none;visibility:hidden;opacity:0;position:absolute;left:-9999px;"></div>
 
 <!-- Cookie Consent Banner -->
 <div id="cookie-banner">

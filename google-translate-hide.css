@@ -1,0 +1,81 @@
+/* COMPLETE GOOGLE TRANSLATE HIDING - Nuclear option to ensure ZERO Google UI shows */
+
+/* Hide the Google Translate widget container */
+#google_translate_element {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
+    width: 0 !important;
+    height: 0 !important;
+    overflow: hidden !important;
+    pointer-events: none !important;
+}
+
+/* Hide all Google Translate elements */
+.goog-te-gadget,
+.goog-te-gadget-simple,
+.goog-te-gadget-icon,
+.goog-te-menu-value,
+.goog-te-menu-frame,
+.goog-te-balloon-frame,
+.goog-te-banner-frame {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Remove the top banner Google adds */
+.goog-te-banner-frame.skiptranslate {
+    display: none !important;
+}
+
+/* Remove body padding that Google adds */
+body {
+    top: 0 !important;
+    position: static !important;
+}
+
+body.translated {
+    top: 0 !important;
+    position: static !important;
+}
+
+/* Hide any iframe Google creates */
+iframe.goog-te-banner-frame,
+iframe.goog-te-menu-frame {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Hide the select dropdown Google creates */
+.goog-te-combo {
+    display: none !important;
+    visibility: hidden !important;
+    opacity: 0 !important;
+}
+
+/* Hide Google's "Powered by" text */
+.goog-logo-link,
+.goog-te-gadget span {
+    display: none !important;
+}
+
+/* Ensure no visual glitches */
+.skiptranslate {
+    display: none !important;
+}
+
+/* Remove any Google branding */
+#goog-gt-tt,
+.goog-gt-tt {
+    display: none !important;
+}
+
+/* Hide translation tooltips */
+.goog-text-highlight {
+    background-color: transparent !important;
+    box-shadow: none !important;
+}
