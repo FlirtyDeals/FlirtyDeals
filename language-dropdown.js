@@ -44,9 +44,14 @@ const languages = [
 ];
 
 let currentLanguage = 'en';
+let googleTranslateReady = false;
 
-// Initialize Google Translate (hidden)
-function googleTranslateElementInit() {
+// CRITICAL: Define this function BEFORE the Google Translate script loads
+// This gets called automatically by Google Translate when it's ready
+window.googleTranslateElementInit = function() {
+    console.log('🔄 Initializing Google Translate...');
+    
+    // Create the Google Translate widget
     new google.translate.TranslateElement({
         pageLanguage: 'en',
         includedLanguages: languages.map(l => l.code).join(','),
@@ -54,20 +59,35 @@ function googleTranslateElementInit() {
         autoDisplay: false
     }, 'google_translate_element');
     
-    // Wait for Google Translate to load, then hide it
-    setTimeout(hideGoogleTranslateUI, 1000);
+    console.log('✅ Google Translate initialized, waiting for dropdown...');
+    
+    // Wait for the select element to be created
+    waitForGoogleTranslate();
+}
+
+// Wait for Google Translate select element to be created
+function waitForGoogleTranslate() {
+    let attempts = 0;
+    const maxAttempts = 50; // 5 seconds max
+    
+    const checkInterval = setInterval(() => {
+        attempts++;
+        const select = document.querySelector('.goog-te-combo');
+        
+        if (select) {
+            console.log('✅ Google Translate dropdown found!', select.options.length, 'languages available');
+            googleTranslateReady = true;
+            hideGoogleTranslateUI();
+            clearInterval(checkInterval);
+        } else if (attempts >= maxAttempts) {
+            console.error('❌ Google Translate failed to load after', attempts * 100, 'ms');
+            clearInterval(checkInterval);
+        }
+    }, 100);
 }
 
 // Completely hide all Google Translate UI elements
 function hideGoogleTranslateUI() {
-    // Hide the top banner
-    const banner = document.querySelector('.goog-te-banner-frame');
-    if (banner) banner.style.display = 'none';
-    
-    // Remove body top padding that Google adds
-    document.body.style.top = '0';
-    document.body.style.position = 'static';
-    
     // Hide the widget itself
     const widget = document.getElementById('google_translate_element');
     if (widget) {
@@ -77,30 +97,100 @@ function hideGoogleTranslateUI() {
         widget.style.position = 'absolute';
         widget.style.left = '-9999px';
     }
+    
+    // Remove body top padding that Google adds
+    document.body.style.top = '0 !important';
+    document.body.style.position = 'static !important';
+    
+    // Hide the top banner if it appears
+    const observer = new MutationObserver(() => {
+        const banner = document.querySelector('.goog-te-banner-frame');
+        if (banner && banner.style.display !== 'none') {
+            banner.style.display = 'none';
+            document.body.style.top = '0';
+        }
+        
+        // Also hide any skiptranslate elements
+        document.querySelectorAll('.skiptranslate').forEach(el => {
+            if (el.id !== 'google_translate_element') {
+                el.style.display = 'none';
+            }
+        });
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
 }
 
 // Change language programmatically
 function changeLanguage(langCode) {
-    if (langCode === 'en') {
-        // Reset to original English
-        const select = document.querySelector('.goog-te-combo');
-        if (select) {
-            select.value = '';
-            select.dispatchEvent(new Event('change'));
-        }
-        currentLanguage = 'en';
-        updateDropdownButton();
+    console.log('🌍 Attempting to change language to:', langCode);
+    
+    if (!googleTranslateReady) {
+        console.error('❌ Google Translate not ready yet. Please wait a moment and try again.');
+        showNotification('Translation service loading, please wait...', 'info');
         return;
     }
     
-    // Change to selected language
     const select = document.querySelector('.goog-te-combo');
-    if (select) {
-        select.value = langCode;
+    if (!select) {
+        console.error('❌ Google Translate select element not found.');
+        showNotification('Translation service unavailable', 'error');
+        return;
+    }
+    
+    try {
+        if (langCode === 'en') {
+            // Reset to English
+            select.value = '';
+        } else {
+            // Change to selected language
+            select.value = langCode;
+        }
+        
+        // Trigger the change event
         select.dispatchEvent(new Event('change'));
+        
+        // Update UI
         currentLanguage = langCode;
         updateDropdownButton();
+        
+        console.log('✅ Language changed to:', langCode);
+        
+        // Show notification
+        const lang = languages.find(l => l.code === langCode);
+        if (lang) {
+            showNotification(`Translating to ${lang.name}...`, 'success');
+        }
+    } catch (error) {
+        console.error('❌ Error changing language:', error);
+        showNotification('Translation failed', 'error');
     }
+}
+
+// Show notification
+function showNotification(message, type = 'info') {
+    // Remove existing notification
+    const existing = document.querySelector('.translation-notification');
+    if (existing) {
+        existing.remove();
+    }
+    
+    const notification = document.createElement('div');
+    notification.className = `translation-notification notification-${type}`;
+    notification.textContent = message;
+    document.body.appendChild(notification);
+    
+    // Animate in
+    setTimeout(() => notification.classList.add('active'), 10);
+    
+    // Remove after 3 seconds
+    setTimeout(() => {
+        notification.classList.remove('active');
+        setTimeout(() => notification.remove(), 300);
+    }, 3000);
 }
 
 // Update the dropdown button to show current language
@@ -123,7 +213,10 @@ function updateDropdownButton() {
 // Create the custom language dropdown
 function createLanguageDropdown() {
     const navActions = document.querySelector('.nav-actions');
-    if (!navActions) return;
+    if (!navActions) {
+        console.error('❌ Could not find .nav-actions element');
+        return;
+    }
     
     const dropdownHTML = `
         <div class="language-dropdown">
@@ -158,6 +251,8 @@ function createLanguageDropdown() {
         navActions.insertAdjacentHTML('afterbegin', dropdownHTML);
     }
     
+    console.log('✅ Language dropdown created');
+    
     // Add event listeners
     setupEventListeners();
 }
@@ -168,6 +263,11 @@ function setupEventListeners() {
     const dropdownMenu = document.getElementById('langDropdownMenu');
     const searchInput = document.getElementById('langSearch');
     const resetBtn = document.getElementById('langResetBtn');
+    
+    if (!flagBtn || !dropdownMenu || !searchInput || !resetBtn) {
+        console.error('❌ Could not find dropdown elements');
+        return;
+    }
     
     // Toggle dropdown
     flagBtn.addEventListener('click', (e) => {
@@ -212,6 +312,8 @@ function setupEventListeners() {
         changeLanguage('en');
         dropdownMenu.classList.remove('active');
     });
+    
+    console.log('✅ Event listeners attached');
 }
 
 // Initialize everything when DOM is ready
@@ -222,11 +324,9 @@ if (document.readyState === 'loading') {
 }
 
 function init() {
+    console.log('🚀 Initializing language dropdown...');
     createLanguageDropdown();
     
     // Keep checking and hiding Google's UI elements
     setInterval(hideGoogleTranslateUI, 500);
 }
-
-// Make the init function available globally for Google Translate callback
-window.googleTranslateElementInit = googleTranslateElementInit;

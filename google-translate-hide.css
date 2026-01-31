@@ -1,19 +1,16 @@
 /* COMPLETE GOOGLE TRANSLATE HIDING - Nuclear option to ensure ZERO Google UI shows */
 
-/* Hide the Google Translate widget container */
+/* Hide the Google Translate widget container but keep it functional */
 #google_translate_element {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
     position: absolute !important;
     left: -9999px !important;
-    width: 0 !important;
-    height: 0 !important;
+    top: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
     overflow: hidden !important;
-    pointer-events: none !important;
 }
 
-/* Hide all Google Translate elements */
+/* Hide all Google Translate UI elements */
 .goog-te-gadget,
 .goog-te-gadget-simple,
 .goog-te-gadget-icon,
@@ -21,9 +18,23 @@
 .goog-te-menu-frame,
 .goog-te-balloon-frame,
 .goog-te-banner-frame {
-    display: none !important;
-    visibility: hidden !important;
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
+    overflow: hidden !important;
+}
+
+/* Hide but keep functional - the select dropdown we need to control */
+.goog-te-combo {
+    position: absolute !important;
+    left: -9999px !important;
+    top: -9999px !important;
+    width: 1px !important;
+    height: 1px !important;
     opacity: 0 !important;
+    pointer-events: none !important;
 }
 
 /* Remove the top banner Google adds */
@@ -45,16 +56,8 @@ body.translated {
 /* Hide any iframe Google creates */
 iframe.goog-te-banner-frame,
 iframe.goog-te-menu-frame {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
-}
-
-/* Hide the select dropdown Google creates */
-.goog-te-combo {
-    display: none !important;
-    visibility: hidden !important;
-    opacity: 0 !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
 /* Hide Google's "Powered by" text */
@@ -65,7 +68,8 @@ iframe.goog-te-menu-frame {
 
 /* Ensure no visual glitches */
 .skiptranslate {
-    display: none !important;
+    position: absolute !important;
+    left: -9999px !important;
 }
 
 /* Remove any Google branding */
