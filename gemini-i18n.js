@@ -12,9 +12,10 @@
     const GEMINI_API_URL = 'https://gemini-api.join-flirtydeals.workers.dev';
     const CACHE_EXPIRY_DAYS = 30;
     const CACHE_VERSION = '5.0_gemini_africa';
-    const BATCH_SIZE = 10;
-    const REQUEST_DELAY = 15000;
-    const MAX_RETRY_ATTEMPTS = 4;
+    const BATCH_SIZE = 3; // Small batches for reliability
+    const REQUEST_DELAY = 200; // Only 200ms between batches!
+    const MAX_RETRY_ATTEMPTS = 2; // Faster failure = faster overall
+    const CONCURRENT_BATCHES = 5; // Process 5 batches at once!
 
     // 130+ Major Languages - ALL Countries + African Digitalization Focus
     // Special focus on African languages with 500k+ speakers
@@ -463,33 +464,29 @@
         // GEMINI API BATCH TRANSLATION via Worker proxy
         // ========================================
         
-// Batch translate multiple texts using Worker proxy (robust with retries/backoff)
+// Batch translate multiple texts using Worker proxy (fast with retries)
 batchTranslateTexts: async function(textsArray, targetLang, retryCount = 0) {
     if (!textsArray || textsArray.length === 0) return [];
 
     const langName = SUPPORTED_LANGUAGES[targetLang]?.name || targetLang;
 
     try {
-        const prompt = `You are a professional translator. Translate the following texts from English to ${langName} (${targetLang}).
+        // Create optimized prompt for Gemini
+        const prompt = `Translate these ${textsArray.length} texts to ${langName}. Return ONLY a JSON array with translations in the same order:
 
-IMPORTANT RULES:
-1. Return ONLY a valid JSON array of translations
-2. Maintain the EXACT same order as the input
-3. Keep HTML entities, emojis, and special characters unchanged
-4. Preserve formatting like line breaks
-5. Do not add explanations or extra text
-6. Return exactly ${textsArray.length} translations
-7. For adult content terms, translate naturally and professionally
+${JSON.stringify(textsArray)}
 
-Input texts:
-${JSON.stringify(textsArray, null, 2)}
+Return format: ["translation1", "translation2", ...]`;
 
-Output format: ["translation1", "translation2", ...]`;
-
-        // request body (Worker will append the secret key and forward to Gemini)
+        // Request body in Gemini API format (worker will proxy it)
         const requestBody = JSON.stringify({
             contents: [{ parts: [{ text: prompt }] }],
-            generationConfig: { temperature: 0.1, maxOutputTokens: 8000 }
+            generationConfig: { 
+                temperature: 0.1, 
+                maxOutputTokens: 4096,
+                topK: 20,
+                topP: 0.8
+            }
         });
 
         let attempt = 0;
@@ -497,7 +494,6 @@ Output format: ["translation1", "translation2", ...]`;
         let resp = null;
 
         while (attempt <= MAX_RETRY_ATTEMPTS) {
-            // use the backoff fetch helper
             resp = await this.sendRequestWithBackoff(GEMINI_API_URL, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
@@ -505,75 +501,74 @@ Output format: ["translation1", "translation2", ...]`;
             }).catch(e => { lastError = e; return null; });
 
             if (!resp) {
-                // network error handled by sendRequestWithBackoff; increment attempt and loop
                 attempt++;
                 continue;
             }
 
-            // If Worker forwarded a transient Gemini error
-            if (resp.status === 503 || resp.status === 429) {
-                lastError = new Error(`Proxy status ${resp.status}`);
+            // Handle transient errors with fast retry
+            if (resp.status === 503 || resp.status === 429 || resp.status === 504) {
+                lastError = new Error(`Worker status ${resp.status}`);
                 attempt++;
                 if (attempt > MAX_RETRY_ATTEMPTS) break;
-                // exponential backoff with jitter (cap wait)
-                const backoff = Math.min(30000, 2000 * Math.pow(2, attempt));
-                const jitter = Math.floor(Math.random() * 1500);
+                
+                // Fast exponential backoff
+                const backoff = Math.min(5000, 1000 * Math.pow(2, attempt));
+                const jitter = Math.floor(Math.random() * 500);
                 await this.delay(backoff + jitter);
                 continue;
             }
 
-            // non-OK (but not transient) - read and throw
             if (!resp.ok) {
-                const errText = await resp.text().catch(() => null);
-                throw new Error(`Proxy error (${resp.status}): ${errText}`);
+                const errText = await resp.text().catch(() => 'Unknown error');
+                this.log(`❌ Worker error (${resp.status}): ${errText}`, true);
+                return textsArray; // Fallback to originals
             }
 
-            // success
+            // Success!
             break;
         }
 
         if (!resp || !resp.ok) {
-            const errMsg = lastError ? lastError.message : 'Unknown proxy error';
-            this.log(`Batch translation error after retries: ${errMsg}`, true);
-            // fallback: return originals so page doesn't break
+            const errMsg = lastError ? lastError.message : 'Unknown worker error';
+            this.log(`❌ Failed after ${MAX_RETRY_ATTEMPTS} retries: ${errMsg}`, true);
             return textsArray;
         }
 
         const data = await resp.json();
 
+        // Parse Gemini response
         if (!data.candidates || !data.candidates[0] || !data.candidates[0].content) {
-            throw new Error('Invalid response from Gemini proxy');
+            this.log('❌ Invalid response from Gemini', true);
+            return textsArray;
         }
 
         const responseText = data.candidates[0].content.parts[0].text;
 
+        // Clean and parse JSON
         let jsonText = responseText.trim();
-        if (jsonText.startsWith('```json')) {
-            jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '');
-        } else if (jsonText.startsWith('```')) {
-            jsonText = jsonText.replace(/```\n?/g, '');
-        }
+        jsonText = jsonText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
 
         const translations = JSON.parse(jsonText);
 
         if (!Array.isArray(translations)) {
-            throw new Error('Response is not an array');
+            this.log('❌ Response is not an array', true);
+            return textsArray;
         }
 
         if (translations.length !== textsArray.length) {
-            this.log(`Warning: Expected ${textsArray.length} translations, got ${translations.length}`, true);
+            this.log(`⚠️ Expected ${textsArray.length} translations, got ${translations.length}`, true);
         }
 
         return translations;
 
     } catch (error) {
-        this.log(`Batch translation error: ${error.message}`, true);
+        this.log(`❌ Translation error: ${error.message}`, true);
         return textsArray;
     }
 },
 
 
-        // Translate entire page
+        // Translate entire page - OPTIMIZED FOR SPEED with parallel processing
         translatePage: async function(targetLang) {
             if (this.isTranslating) {
                 this.log('Translation already in progress...', true);
@@ -588,25 +583,19 @@ Output format: ["translation1", "translation2", ...]`;
 
             this.isTranslating = true;
             this.showProgressIndicator();
-            this.log(`🌍 Starting translation to ${SUPPORTED_LANGUAGES[targetLang].name}...`);
+            this.log(`🌍 Starting FAST translation to ${SUPPORTED_LANGUAGES[targetLang].name}...`);
 
             try {
                 const keys = Object.keys(this.originalContent).filter(key => !isNaN(key));
                 const totalItems = keys.length;
                 
-                this.log(`📝 Translating ${totalItems} text elements in batches of ${BATCH_SIZE}...`);
+                this.log(`📝 Translating ${totalItems} texts with ${CONCURRENT_BATCHES} parallel requests...`);
                 
                 let translatedCount = 0;
                 const startTime = Date.now();
 
-                // Process in batches
-                for (let i = 0; i < keys.length; i += BATCH_SIZE) {
-                    const batchKeys = keys.slice(i, i + BATCH_SIZE);
-                    const batchNumber = Math.floor(i / BATCH_SIZE) + 1;
-                    const totalBatches = Math.ceil(keys.length / BATCH_SIZE);
-                    
-                    this.log(`Processing batch ${batchNumber}/${totalBatches} (${batchKeys.length} items)...`);
-                    
+                // PARALLEL BATCH PROCESSING - Much faster!
+                const processBatch = async (batchKeys) => {
                     const textsToTranslate = [];
                     const batchIndices = [];
                     
@@ -625,8 +614,6 @@ Output format: ["translation1", "translation2", ...]`;
                     }
                     
                     if (textsToTranslate.length > 0) {
-                        this.log(`🤖 Calling Gemini API for ${textsToTranslate.length} texts...`);
-                        
                         const translations = await this.batchTranslateTexts(textsToTranslate, targetLang);
                         
                         for (let j = 0; j < batchIndices.length && j < translations.length; j++) {
@@ -647,16 +634,38 @@ Output format: ["translation1", "translation2", ...]`;
                         this.saveCache();
                     }
                     
-                    this.updateProgress(i + batchKeys.length, totalItems);
+                    return batchKeys.length;
+                };
+
+                // Split into batches
+                const batches = [];
+                for (let i = 0; i < keys.length; i += BATCH_SIZE) {
+                    batches.push(keys.slice(i, i + BATCH_SIZE));
+                }
+
+                this.log(`🚀 Processing ${batches.length} batches with ${CONCURRENT_BATCHES} concurrent workers...`);
+
+                // Process batches in parallel groups
+                for (let i = 0; i < batches.length; i += CONCURRENT_BATCHES) {
+                    const concurrentBatches = batches.slice(i, i + CONCURRENT_BATCHES);
+                    const batchPromises = concurrentBatches.map(batch => processBatch(batch));
                     
-                    if (i + BATCH_SIZE < keys.length) {
-                        this.log(`⏳ Waiting ${REQUEST_DELAY/1000}s before next batch...`);
+                    // Wait for this group to complete
+                    await Promise.all(batchPromises);
+                    
+                    // Update progress
+                    const processed = Math.min(i + CONCURRENT_BATCHES, batches.length);
+                    this.updateProgress(processed * BATCH_SIZE, totalItems);
+                    this.log(`✓ Completed ${processed}/${batches.length} batch groups`);
+                    
+                    // Small delay before next group (only if more to do)
+                    if (i + CONCURRENT_BATCHES < batches.length) {
                         await this.delay(REQUEST_DELAY);
                     }
                 }
 
                 // Translate ALL SEO metadata (including new ones)
-                this.log('📄 Translating complete SEO metadata...');
+                this.log('📄 Translating SEO metadata...');
                 
                 const seoTexts = [];
                 const seoKeys = [];
@@ -923,15 +932,16 @@ delay: function(ms) {
     return new Promise(resolve => setTimeout(resolve, ms));
 },
 
-// Exponential backoff with full jitter
+// Exponential backoff with jitter - FAST version
 sendRequestWithBackoff: async function(url, options, attempts = 0) {
     try {
         const resp = await fetch(url, options);
         return resp;
     } catch (err) {
         if (attempts >= MAX_RETRY_ATTEMPTS) throw err;
-        const base = 2000 * Math.pow(2, attempts); // 2s, 4s, 8s...
-        const jitter = Math.floor(Math.random() * 1000); // 0-1s random
+        // Faster backoff: 500ms, 1s, 2s
+        const base = 500 * Math.pow(2, attempts);
+        const jitter = Math.floor(Math.random() * 300);
         const wait = base + jitter;
         await this.delay(wait);
         return this.sendRequestWithBackoff(url, options, attempts + 1);
