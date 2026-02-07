@@ -26,7 +26,7 @@
 
     const DEFAULT_LANG = 'en';
     const TRANSLATIONS_URL = '/translations.json';
-    const EXCHANGE_RATE_BASE_URL = 'https://hexarate.paikama.co/api/rates/latest/USD';
+    const EXCHANGE_RATE_API = 'https://hexarate.paikama.co/api/rates/latest/USD';
 
     let currentLang = DEFAULT_LANG;
     let translations = {};
@@ -116,87 +116,24 @@
     }
 
     /**
-     * Fetch exchange rate for a specific currency
-     */
-    async function fetchExchangeRate(targetCurrency) {
-        try {
-            const url = `${EXCHANGE_RATE_BASE_URL}?target=${targetCurrency}`;
-            const response = await fetch(url);
-            const data = await response.json();
-            
-            if (data && data.status_code === 200 && data.data && data.data.mid) {
-                return data.data.mid;
-            }
-            
-            return null;
-        } catch (error) {
-            console.warn(`⚠️ Could not fetch rate for ${targetCurrency}:`, error);
-            return null;
-        }
-    }
-
-    /**
      * Load exchange rates from API
-     * Makes separate API calls for each currency needed
      */
     async function loadExchangeRates() {
-        console.log('🔄 Loading exchange rates...');
-        
-        // Get unique currencies from all languages
-        const currencies = [...new Set(Object.values(LANGUAGES).map(lang => lang.currency))];
-        
-        // Remove USD since it's the base currency
-        const targetCurrencies = currencies.filter(curr => curr !== 'USD');
-        
-        // Fetch rates for all currencies in parallel
-        const ratePromises = targetCurrencies.map(async (currency) => {
-            const rate = await fetchExchangeRate(currency);
-            return { currency, rate };
-        });
-        
         try {
-            const results = await Promise.all(ratePromises);
+            const response = await fetch(EXCHANGE_RATE_API);
+            const data = await response.json();
             
-            // Build exchangeRates object
-            let successCount = 0;
-            results.forEach(({ currency, rate }) => {
-                if (rate !== null) {
-                    exchangeRates[currency] = rate;
-                    successCount++;
-                }
-            });
-            
-            console.log(`✅ Loaded ${successCount}/${targetCurrencies.length} exchange rates`);
-            
-            // Add fallback rates for any that failed
-            if (successCount < targetCurrencies.length) {
-                console.log('⚠️ Using fallback rates for missing currencies');
-                const fallbackRates = {
-                    'CNY': 7.2,
-                    'INR': 83.0,
-                    'EUR': 0.95,
-                    'AED': 3.67,
-                    'BDT': 110.0,
-                    'BRL': 5.6,
-                    'RUB': 90.0,
-                    'IDR': 16000.0,
-                    'PKR': 280.0,
-                    'JPY': 150.0
-                };
-                
-                // Fill in missing rates with fallback values
-                targetCurrencies.forEach(currency => {
-                    if (!exchangeRates[currency] && fallbackRates[currency]) {
-                        exchangeRates[currency] = fallbackRates[currency];
-                    }
-                });
+            if (data && data.data && data.data.rates) {
+                exchangeRates = data.data.rates;
+                console.log('✅ Exchange rates loaded');
+                return true;
             }
             
-            return true;
+            return false;
         } catch (error) {
-            console.error('❌ Failed to load exchange rates:', error);
+            console.warn('⚠️ Could not load exchange rates, using fallback values');
             
-            // Use all fallback rates
+            // Fallback exchange rates (approximate)
             exchangeRates = {
                 'CNY': 7.2,
                 'INR': 83.0,
