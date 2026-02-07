@@ -73,6 +73,31 @@
     z-index: 9999;
 }
 
+/* Mobile: Center the dropdown on small screens */
+@media (max-width: 480px) {
+    .lang-dropdown {
+        /* Center the dropdown instead of right-aligning */
+        right: 50%;
+        transform: translateX(50%) translateY(-10px);
+        left: auto;
+        
+        /* Make it responsive to screen width */
+        min-width: min(280px, 85vw);
+        max-width: min(320px, 90vw);
+        width: min(300px, 88vw);
+    }
+    
+    .lang-dropdown.show {
+        transform: translateX(50%) translateY(0);
+    }
+    
+    /* RTL support on mobile */
+    body.rtl .lang-dropdown {
+        right: 50%;
+        left: auto;
+    }
+}
+
 .lang-dropdown.show {
     opacity: 1;
     visibility: visible;
@@ -359,12 +384,6 @@ body.rtl .footer-bottom {
 }
 
 @media (max-width: 480px) {
-    /* Still opens below button - make it slightly wider for better tapping */
-    .lang-dropdown {
-        min-width: 240px;
-        max-width: min(320px, 90vw);
-    }
-    
     /* Larger tap targets on mobile */
     .lang-option {
         padding: 14px 18px;
