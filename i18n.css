@@ -380,6 +380,9 @@ body.rtl .lang-dropdown.show .lang-btn i {
         visibility: hidden;
         pointer-events: none;
         z-index: 10001;
+        /* Prevent auto-scroll to active element */
+        overflow-anchor: none;
+        scroll-behavior: auto;
     }
     
     /* Visual drag handle */
@@ -406,6 +409,12 @@ body.rtl .lang-dropdown.show .lang-btn i {
     body.rtl .lang-dropdown {
         left: 0;
         right: 0;
+    }
+    
+    /* Prevent active option from forcing scroll position */
+    .lang-option.active {
+        scroll-margin: 0;
+        scroll-snap-align: none;
     }
     
     /* Larger tap targets for mobile */

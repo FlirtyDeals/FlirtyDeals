@@ -430,10 +430,19 @@
                 if (isOpen) {
                     // Add backdrop class
                     switcher.classList.add('dropdown-open');
-                    // Reset scroll to top immediately when opening
-                    setTimeout(() => {
-                        dropdown.scrollTop = 0;
-                    }, 0);
+                    
+                    // CRITICAL: Force scroll to top AFTER dropdown is visible
+                    // Use requestAnimationFrame to ensure it happens after render
+                    requestAnimationFrame(() => {
+                        requestAnimationFrame(() => {
+                            dropdown.scrollTo({
+                                top: 0,
+                                behavior: 'instant'
+                            });
+                            console.log('📜 Forced scroll to top, scrollTop =', dropdown.scrollTop);
+                        });
+                    });
+                    
                     // Prevent body scroll
                     document.body.style.overflow = 'hidden';
                     document.body.style.position = 'fixed';
