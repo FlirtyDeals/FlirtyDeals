@@ -226,187 +226,100 @@
         return { success: false, backend: null };
     }
 
-    async function removeStored(key) {
+    async function deleteStored(key) {
         try {
-            if (storageAvailable('localStorage')) {
-                localStorage.removeItem(key);
-                console.info('storage: removed key from localStorage', key);
-            }
+            if (storageAvailable('localStorage')) localStorage.removeItem(key);
         } catch (e) {}
-
         try {
             const db = await openIDB();
-            if (db) {
-                await idbDelete(db, key);
-                console.info('storage: removed key from IndexedDB', key);
-            }
+            if (db) await idbDelete(db, key);
         } catch (e) {}
-
         try {
             deleteCookie(key);
-            console.info('storage: removed key cookie', key);
         } catch (e) {}
-
         try {
-            if (storageAvailable('sessionStorage')) {
-                sessionStorage.removeItem(key);
-                console.info('storage: removed key from sessionStorage', key);
+            if (storageAvailable('sessionStorage')) sessionStorage.removeItem(key);
+        } catch (e) {}
+    }
+
+    // Helper: read a persistent flag
+    async function getFlag(key) {
+        const res = await getStored(key);
+        return res.value === 'true';
+    }
+
+    // Helper: write a persistent flag
+    async function saveFlag(key, value, days = 3650) {
+        return await setStored(key, value ? 'true' : 'false');
+    }
+
+    document.addEventListener('DOMContentLoaded', async function() {
+
+        const ageModal = document.getElementById('ageModal');
+        const acceptAgeBtn = document.getElementById('acceptAge');
+        const exitSiteBtn = document.getElementById('exitSite');
+
+        // Check verification on page load
+        const isVerified = await getFlag('ageVerified');
+        console.info('age-verification: ageVerified =', isVerified);
+
+        if (isVerified) {
+            // Mark body as age-verified to unblur images
+            document.body.classList.add('age-verified');
+            
+            if (ageModal) {
+                ageModal.classList.remove('active');
             }
-        } catch (e) {}
-    }
+        } else {
+            // show modal
+            if (ageModal) {
+                ageModal.classList.add('active');
+            }
+        }
 
-    // Helper to save an object with timestamp and optional expiry days
-    async function saveFlag(name, value, expireDays) {
-        const payload = {
-            value: value,
-            savedAt: new Date().toISOString(),
-            expiresAt: expireDays ? new Date(Date.now() + expireDays * 864e5).toISOString() : null
-        };
-        return await setStored(name, JSON.stringify(payload));
-    }
+        // Accept age
+        if (acceptAgeBtn) {
+            acceptAgeBtn.addEventListener('click', async function() {
+                const res = await saveFlag('ageVerified', true);
+                console.info('age-verification: saved ageVerified, success =', res.success, 'backend =', res.backend);
 
-    async function readFlag(name) {
-        const got = await getStored(name);
-        if (!got.value) return { exists: false, value: null, backend: got.backend };
-        try {
-            const parsed = JSON.parse(got.value);
-            if (parsed && parsed.expiresAt) {
-                if (new Date(parsed.expiresAt) <= new Date()) {
-                    // expired
-                    await removeStored(name);
-                    console.info('storage: flag expired for', name);
-                    return { exists: false, value: null, backend: got.backend };
+                // Mark body as age-verified
+                document.body.classList.add('age-verified');
+
+                if (ageModal) {
+                    ageModal.classList.remove('active');
                 }
-            }
-            return { exists: true, value: parsed.value, backend: got.backend, meta: parsed };
-        } catch (e) {
-            // not JSON, return raw
-            return { exists: true, value: got.value, backend: got.backend };
-        }
-    }
-
-    // Run after DOM is ready
-    document.addEventListener('DOMContentLoaded', function() {
-
-// Age Verification
-const ageModal = document.getElementById('ageModal');
-const acceptAgeBtn = document.getElementById('acceptAge');
-const exitSiteBtn = document.getElementById('exitSite');
-
-async function checkAgeVerification() {
-    const res = await readFlag('ageVerified');
-    
-    console.log('Age check result:', res); // DIAGNOSTIC
-    
-    if (res.exists && res.value === 'true') {
-        if (ageModal) {
-            ageModal.classList.remove('active');
-            ageModal.style.display = 'none'; // ADD THIS
-        }
-        document.body.classList.add('age-verified');
-        console.info('✓ Age verified from:', res.backend);
-    } else {
-        if (ageModal) {
-            ageModal.classList.add('active');
-            ageModal.style.display = 'flex'; // ADD THIS
-        }
-        document.body.classList.remove('age-verified');
-        console.info('✗ No verification found');
-    }
-}
-
-async function acceptAge() {
-    const result = await saveFlag('ageVerified', 'true', 365);
-    console.info('✓ Age verification saved:', result); // DIAGNOSTIC
-    
-    if (ageModal) {
-        ageModal.classList.remove('active');
-        ageModal.style.display = 'none'; // ADD THIS
-    }
-    document.body.classList.add('age-verified');
-}
-
-function exitSite() {
-    // Don't save anything - just exit
-    window.location.href = 'https://www.youtube.com/watch?v=kJa2kwoZ2a4&t=8s';
-}
-
-if (acceptAgeBtn) {
-    acceptAgeBtn.addEventListener('click', acceptAge);
-}
-
-if (exitSiteBtn) {
-    exitSiteBtn.addEventListener('click', exitSite);
-}
-
-// Run check immediately
-checkAgeVerification().catch(err => {
-    console.error('Age verification check failed:', err);
-});
-
-// Add this console log to see storage status
-console.log('Storage diagnostics:', {
-    localStorage: storageAvailable('localStorage'),
-    sessionStorage: storageAvailable('sessionStorage'),
-    cookiesEnabled: navigator.cookieEnabled
-});
-
-// Deal Card Reveal - ONLY FOR SHEMALE CARDS
-async function setupDealReveals() {
-    const shemaleCards = document.querySelectorAll('.shemale-card');
-
-    // Check if shemale content was previously revealed
-    const res = await readFlag('shemaleRevealed');
-    const shemaleRevealed = res.exists && res.value === 'true';
-
-    if (shemaleRevealed) {
-        shemaleCards.forEach(card => {
-            const dealImage = card.querySelector('.deal-image');
-            if (dealImage) dealImage.classList.add('revealed');
-        });
-    }
-
-    shemaleCards.forEach(card => {
-        const dealImage = card.querySelector('.deal-image');
-        if (!dealImage) return;
-        const overlay = dealImage.querySelector('.deal-overlay');
-
-        if (overlay) {
-            overlay.addEventListener('click', async function() {
-                const isCurrentlyRevealed = dealImage.classList.contains('revealed');
-
-                // Toggle ALL shemale cards (including clones in filtered view)
-                const allShemaleCards = document.querySelectorAll('.shemale-card');
-                allShemaleCards.forEach(otherCard => {
-                    const otherImage = otherCard.querySelector('.deal-image');
-                    if (!otherImage) return;
-                    if (isCurrentlyRevealed) {
-                        otherImage.classList.remove('revealed');
-                    } else {
-                        otherImage.classList.add('revealed');
-                    }
-                });
-
-                // Save state
-                await saveFlag('shemaleRevealed', (!isCurrentlyRevealed).toString(), 365);
             });
         }
-    });
-}
 
-setupDealReveals().catch(e => console.warn('setupDealReveals failed', e));
+        // Exit site
+        function exitSite() {
+            window.location.href = 'https://www.google.com';
+        }
 
-// Re-attach reveal functionality to cloned cards
+        if (exitSiteBtn) {
+            exitSiteBtn.addEventListener('click', exitSite);
+        }
+
+        // Shemale card reveal toggling with persistence
 function attachRevealListeners(cards) {
-    cards.forEach(card => {
+    if (!cards) return;
+    
+    cards.forEach(async card => {
         if (!card.classList.contains('shemale-card')) return;
-        
+
         const dealImage = card.querySelector('.deal-image');
         if (!dealImage) return;
-        const overlay = dealImage.querySelector('.deal-overlay');
 
+        // Check persisted state
+        const wasRevealed = await getFlag('shemaleRevealed');
+        if (wasRevealed) {
+            dealImage.classList.add('revealed');
+        }
+
+        // For each card, clone the overlay to reset listeners
+        const overlay = dealImage.querySelector('.deal-overlay');
         if (overlay) {
-            // Remove old listeners by cloning
             const newOverlay = overlay.cloneNode(true);
             overlay.parentNode.replaceChild(newOverlay, overlay);
             
@@ -530,31 +443,20 @@ function filterDeals(category, clickedButton) {
 
         smoothScroll();
 
-        // Intersection Observer for Animations
-        function setupScrollAnimations() {
-            const observerOptions = {
-                threshold: 0.1,
-                rootMargin: '0px 0px -50px 0px'
-            };
-
-            const observer = new IntersectionObserver(function(entries) {
-                entries.forEach(entry => {
-                    if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
-                    }
-                });
-            }, observerOptions);
-
+        // Show all cards immediately without lazy loading
+        function showAllCards() {
             dealCards.forEach(card => {
-                card.style.opacity = '0';
-                card.style.transform = 'translateY(20px)';
+                card.style.opacity = '1';
+                card.style.transform = 'translateY(0)';
                 card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
-                observer.observe(card);
             });
         }
 
-        setupScrollAnimations();
+        // Initialize cards immediately
+        showAllCards();
+
+        // Attach shemale reveal listeners to initial cards
+        attachRevealListeners(dealCards);
 
         // Keyboard Navigation Support
         document.addEventListener('keydown', function(e) {
