@@ -360,31 +360,32 @@ body.rtl .lang-dropdown.show .lang-btn i {
     .lang-dropdown {
         position: fixed;
         top: auto;
-        bottom: -200%; /* Far off screen to ensure it's completely hidden */
+        bottom: 0;
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 70vh;
+        max-height: 75vh;
+        min-height: 300px;
         border-radius: 20px 20px 0 0;
-        overflow-y: scroll !important; /* Force scroll */
+        overflow-y: auto;
         overflow-x: hidden;
         -webkit-overflow-scrolling: touch;
-        overscroll-behavior: none; /* Disable rubber band */
-        padding-top: 32px; /* Space for handle */
-        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
-        transition: bottom 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
+        overscroll-behavior: contain;
+        padding-top: 40px;
+        padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
+        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
-        transform: none !important; /* Remove transform conflicts */
-        /* Explicitly hidden by default */
-        opacity: 0 !important;
-        visibility: hidden !important;
-        pointer-events: none !important;
+        transform: translateY(100%);
+        opacity: 0;
+        visibility: hidden;
+        pointer-events: none;
+        z-index: 10001;
     }
     
     /* Visual drag handle */
     .lang-dropdown::before {
         content: '';
-        position: absolute;
+        position: fixed;
         top: 12px;
         left: 50%;
         transform: translateX(-50%);
@@ -392,14 +393,14 @@ body.rtl .lang-dropdown.show .lang-btn i {
         height: 5px;
         background: rgba(255, 255, 255, 0.3);
         border-radius: 3px;
-        z-index: 1;
+        z-index: 10002;
     }
     
     .lang-dropdown.show {
-        bottom: 0 !important; /* Slide up */
-        opacity: 1 !important; /* Make visible */
-        visibility: visible !important; /* Make visible */
-        pointer-events: auto !important; /* Make clickable */
+        transform: translateY(0);
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
     }
     
     body.rtl .lang-dropdown {
@@ -409,9 +410,11 @@ body.rtl .lang-dropdown.show .lang-btn i {
     
     /* Larger tap targets for mobile */
     .lang-option {
-        min-height: 56px;
-        padding: 18px 24px;
+        min-height: 60px;
+        padding: 16px 24px;
         font-size: 16px;
+        touch-action: manipulation;
+        -webkit-tap-highlight-color: rgba(214, 0, 110, 0.1);
     }
     
     .lang-option:first-child {
@@ -419,11 +422,13 @@ body.rtl .lang-dropdown.show .lang-btn i {
     }
     
     .lang-option:last-child {
-        margin-bottom: 8px;
+        margin-bottom: 0;
+        padding-bottom: 20px;
     }
     
     .lang-flag {
         font-size: 24px;
+        flex-shrink: 0;
     }
     
     .lang-name {
@@ -433,22 +438,44 @@ body.rtl .lang-dropdown.show .lang-btn i {
     
     /* Make scrollbar more visible on mobile */
     .lang-dropdown::-webkit-scrollbar {
-        width: 10px;
+        width: 8px;
     }
     
     .lang-dropdown::-webkit-scrollbar-track {
         background: rgba(255, 255, 255, 0.08);
-        margin: 32px 0 10px 0; /* Don't show under handle */
+        margin: 40px 0 20px 0;
     }
     
     .lang-dropdown::-webkit-scrollbar-thumb {
         background: rgba(214, 0, 110, 0.7);
-        border-radius: 5px;
+        border-radius: 4px;
         border: 2px solid #1a1a1a;
     }
     
     .lang-dropdown::-webkit-scrollbar-thumb:active {
         background: rgba(214, 0, 110, 0.9);
+    }
+    
+    /* Add backdrop for better UX */
+    .language-switcher::after {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.6);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease, visibility 0.3s ease;
+        z-index: 10000;
+        pointer-events: none;
+    }
+    
+    .language-switcher.dropdown-open::after {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
     }
 }
     

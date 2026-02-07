@@ -467,6 +467,22 @@
             }
         });
         
+        // Mobile: Close dropdown when clicking backdrop
+        if (window.innerWidth <= 480) {
+            // Use event delegation since backdrop is pseudo-element, listen on switcher
+            switcher.addEventListener('click', (e) => {
+                // If clicking on the switcher but not on button or dropdown
+                if (e.target === switcher && dropdown.classList.contains('show')) {
+                    dropdown.classList.remove('show');
+                    switcher.classList.remove('dropdown-open');
+                    document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    console.log('📱 Backdrop clicked - closing dropdown');
+                }
+            });
+        }
+        
         // Language selection
         const langOptions = dropdown.querySelectorAll('.lang-option');
         langOptions.forEach(option => {
