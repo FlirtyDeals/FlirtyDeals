@@ -76,32 +76,32 @@
 /* Mobile: Center the dropdown IN THE MIDDLE OF THE SCREEN */
 @media (max-width: 480px) {
     .language-switcher {
-        /* Keep track of button position */
-        position: relative;
+        position: static;
     }
     
     .lang-dropdown {
-        /* Use FIXED positioning to center on VIEWPORT */
+        /* Use FIXED positioning with left/right auto margins */
         position: fixed;
-        left: 50vw;
-        right: auto;
+        left: 5vw !important;
+        right: 5vw !important;
         top: auto; /* Will be set dynamically by JS */
-        transform: translateX(-50%) translateY(-10px);
+        transform: translateY(-10px);
         
-        /* Make it responsive to screen width */
-        min-width: min(280px, 85vw);
-        max-width: min(320px, 90vw);
-        width: min(300px, 88vw);
+        /* Let it auto-size within the margins */
+        width: 90vw;
+        min-width: auto;
+        max-width: 90vw;
+        margin: 0 auto;
     }
     
     .lang-dropdown.show {
-        transform: translateX(-50%) translateY(0);
+        transform: translateY(0);
     }
     
-    /* RTL support on mobile - still centered */
+    /* RTL support on mobile */
     body.rtl .lang-dropdown {
-        left: 50vw;
-        right: auto;
+        left: 5vw !important;
+        right: 5vw !important;
     }
 }
 
