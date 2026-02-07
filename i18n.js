@@ -26,11 +26,12 @@
 
     const DEFAULT_LANG = 'en';
     const TRANSLATIONS_URL = '/translations.json';
-    const EXCHANGE_RATE_BASE_URL = 'https://hexarate.paikama.co/api/rates/latest/USD';
 
     let currentLang = DEFAULT_LANG;
     let translations = {};
-    let exchangeRates = {};
+    let exchangeRates = {
+        'USD': 1.0  // Base currency
+    };
 
     /**
      * Detect current language from URL path
@@ -116,31 +117,62 @@
     }
 
     /**
-     * Fetch exchange rate for a specific currency
+     * Fetch exchange rate for a specific currency from Hexarate API
      */
     async function fetchExchangeRate(targetCurrency) {
+        // Skip if it's USD (base currency)
+        if (targetCurrency === 'USD') {
+            return 1.0;
+        }
+
+        const url = `https://hexarate.paikama.co/api/rates/latest/USD?target=${targetCurrency}`;
+        
         try {
-            const url = `${EXCHANGE_RATE_BASE_URL}?target=${targetCurrency}`;
+            console.log(`🔄 Fetching rate for ${targetCurrency}...`);
             const response = await fetch(url);
+            
+            if (!response.ok) {
+                console.warn(`⚠️ API returned ${response.status} for ${targetCurrency}`);
+                return null;
+            }
+            
             const data = await response.json();
             
             if (data && data.status_code === 200 && data.data && data.data.mid) {
+                console.log(`✅ Got rate for ${targetCurrency}: ${data.data.mid}`);
                 return data.data.mid;
             }
             
+            console.warn(`⚠️ Invalid response format for ${targetCurrency}`);
             return null;
+            
         } catch (error) {
-            console.warn(`⚠️ Could not fetch rate for ${targetCurrency}:`, error);
+            console.warn(`⚠️ Could not fetch rate for ${targetCurrency}:`, error.message);
             return null;
         }
     }
 
     /**
-     * Load exchange rates from API
+     * Load exchange rates from Hexarate API
      * Makes separate API calls for each currency needed
      */
     async function loadExchangeRates() {
-        console.log('🔄 Loading exchange rates...');
+        console.log('🔄 Loading exchange rates from Hexarate API...');
+        
+        // Fallback rates in case API fails
+        const fallbackRates = {
+            'USD': 1.0,
+            'CNY': 7.2,
+            'INR': 83.0,
+            'EUR': 0.92,
+            'AED': 3.67,
+            'BDT': 110.0,
+            'BRL': 5.6,
+            'RUB': 90.0,
+            'IDR': 16000.0,
+            'PKR': 280.0,
+            'JPY': 150.0
+        };
         
         // Get unique currencies from all languages
         const currencies = [...new Set(Object.values(LANGUAGES).map(lang => lang.currency))];
@@ -148,70 +180,30 @@
         // Remove USD since it's the base currency
         const targetCurrencies = currencies.filter(curr => curr !== 'USD');
         
-        // Fetch rates for all currencies in parallel
-        const ratePromises = targetCurrencies.map(async (currency) => {
-            const rate = await fetchExchangeRate(currency);
-            return { currency, rate };
-        });
+        // Try to fetch rates from API
+        let apiSuccess = false;
         
-        try {
-            const results = await Promise.all(ratePromises);
+        for (const currency of targetCurrencies) {
+            const rate = await fetchExchangeRate(currency);
             
-            // Build exchangeRates object
-            let successCount = 0;
-            results.forEach(({ currency, rate }) => {
-                if (rate !== null) {
-                    exchangeRates[currency] = rate;
-                    successCount++;
-                }
-            });
-            
-            console.log(`✅ Loaded ${successCount}/${targetCurrencies.length} exchange rates`);
-            
-            // Add fallback rates for any that failed
-            if (successCount < targetCurrencies.length) {
-                console.log('⚠️ Using fallback rates for missing currencies');
-                const fallbackRates = {
-                    'CNY': 7.2,
-                    'INR': 83.0,
-                    'EUR': 0.95,
-                    'AED': 3.67,
-                    'BDT': 110.0,
-                    'BRL': 5.6,
-                    'RUB': 90.0,
-                    'IDR': 16000.0,
-                    'PKR': 280.0,
-                    'JPY': 150.0
-                };
-                
-                // Fill in missing rates with fallback values
-                targetCurrencies.forEach(currency => {
-                    if (!exchangeRates[currency] && fallbackRates[currency]) {
-                        exchangeRates[currency] = fallbackRates[currency];
-                    }
-                });
+            if (rate !== null) {
+                exchangeRates[currency] = rate;
+                apiSuccess = true;
+            } else if (fallbackRates[currency]) {
+                // Use fallback if API failed
+                exchangeRates[currency] = fallbackRates[currency];
+                console.log(`📋 Using fallback rate for ${currency}: ${fallbackRates[currency]}`);
             }
-            
-            return true;
-        } catch (error) {
-            console.error('❌ Failed to load exchange rates:', error);
-            
-            // Use all fallback rates
-            exchangeRates = {
-                'CNY': 7.2,
-                'INR': 83.0,
-                'EUR': 0.95,
-                'AED': 3.67,
-                'BDT': 110.0,
-                'BRL': 5.6,
-                'RUB': 90.0,
-                'IDR': 16000.0,
-                'PKR': 280.0,
-                'JPY': 150.0
-            };
-            
-            return true;
         }
+        
+        if (apiSuccess) {
+            console.log(`✅ Exchange rates loaded successfully`);
+        } else {
+            console.log(`⚠️ Using all fallback rates (API unavailable)`);
+        }
+        
+        console.log('Current exchange rates:', exchangeRates);
+        return true;
     }
 
     /**
@@ -224,14 +216,14 @@
         
         const rate = exchangeRates[targetCurrency];
         if (!rate) {
-            console.warn(`No exchange rate for ${targetCurrency}`);
+            console.warn(`No exchange rate for ${targetCurrency}, using USD`);
             return `$${usdPrice.toFixed(2)}`;
         }
         
         const converted = usdPrice * rate;
         const symbol = getCurrencySymbol(targetCurrency);
         
-        // Format based on currency
+        // Format based on currency (some don't use decimals)
         if (['JPY', 'IDR'].includes(targetCurrency)) {
             return `${symbol}${Math.round(converted).toLocaleString()}`;
         } else {
@@ -363,6 +355,8 @@
         const priceElements = document.querySelectorAll('[data-i18n-price]');
         const targetCurrency = LANGUAGES[lang].currency;
         
+        console.log(`💰 Converting ${priceElements.length} prices to ${targetCurrency}...`);
+        
         priceElements.forEach(element => {
             const usdAmount = parseFloat(element.getAttribute('data-i18n-price'));
             if (!isNaN(usdAmount)) {
@@ -371,7 +365,7 @@
             }
         });
         
-        console.log(`✅ Applied ${lang} translations and converted ${priceElements.length} prices to ${targetCurrency}`);
+        console.log(`✅ Applied ${lang} translations and converted prices to ${targetCurrency}`);
     }
 
     /**
@@ -379,7 +373,10 @@
      */
     function createLanguageSwitcher() {
         const navbar = document.querySelector('.nav-actions');
-        if (!navbar) return;
+        if (!navbar) {
+            console.warn('⚠️ Navigation not found, skipping language switcher');
+            return;
+        }
         
         const switcher = document.createElement('div');
         switcher.className = 'language-switcher';
@@ -460,11 +457,13 @@
      * Initialize i18n system
      */
     async function init() {
-        console.log('🌍 Initializing i18n system...');
+        console.log('🌍 Initializing FlirtyDeals i18n system...');
         
         // Detect current language
         const pathLang = detectLanguageFromPath();
         currentLang = pathLang || DEFAULT_LANG;
+        
+        console.log(`📍 Current language: ${currentLang} (${LANGUAGES[currentLang].name})`);
         
         // Save current language
         saveLanguage(currentLang);
@@ -479,7 +478,7 @@
         // Create language switcher
         createLanguageSwitcher();
         
-        console.log(`✅ i18n initialized for language: ${currentLang}`);
+        console.log(`✅ i18n system initialized successfully for ${currentLang}`);
     }
 
     // Auto-initialize when DOM is ready
