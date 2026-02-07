@@ -115,20 +115,22 @@
     background: rgba(214, 0, 110, 0.7);
 }
 
-/* RTL (Right-to-Left) Support */
+/* ========================================
+   RTL (Right-to-Left) Support
+   ======================================== */
+
+/* Base RTL Setup */
 body.rtl {
     direction: rtl;
-    text-align: right;
 }
 
-/* RTL Navigation */
+/* Navigation RTL */
 body.rtl .nav-container {
-    flex-direction: row-reverse;
+    flex-direction: row; /* Keep normal flow for RTL */
 }
 
 body.rtl .nav-actions {
-    margin-right: 0;
-    margin-left: auto;
+    flex-direction: row-reverse; /* Reverse the action buttons */
 }
 
 body.rtl .language-switcher {
@@ -141,7 +143,7 @@ body.rtl .lang-dropdown {
     left: 0;
 }
 
-/* RTL Deal Cards */
+/* Deal Cards RTL */
 body.rtl .deal-content {
     text-align: right;
 }
@@ -154,19 +156,47 @@ body.rtl .rating {
     flex-direction: row-reverse;
 }
 
-/* RTL Footer */
+/* Discount Badge RTL - Move to left in RTL */
+body.rtl .discount-badge {
+    right: auto;
+    left: 10px;
+}
+
+body.rtl .discount-badge.left {
+    left: auto;
+    right: 10px;
+}
+
+/* Featured Badge RTL - Move to right in RTL */
+body.rtl .featured-badge {
+    left: auto;
+    right: 10px;
+}
+
+/* Stars Rating RTL */
+body.rtl .stars {
+    direction: ltr; /* Keep stars left-to-right even in RTL */
+    unicode-bidi: embed;
+}
+
+/* Footer RTL */
 body.rtl .footer-container {
     direction: rtl;
 }
 
 body.rtl .footer-section ul {
     padding-right: 0;
-    padding-left: 20px;
+    padding-left: 0;
 }
 
-/* RTL Cookie Banner */
+body.rtl .social-links a {
+    flex-direction: row-reverse;
+}
+
+/* Cookie Banner RTL */
 body.rtl .cookie-content {
     flex-direction: row-reverse;
+    text-align: right;
 }
 
 body.rtl .cookie-links {
@@ -177,21 +207,69 @@ body.rtl .cookie-text-wrapper {
     text-align: right;
 }
 
-/* RTL Filter Buttons */
+body.rtl .close-banner {
+    left: 15px;
+    right: auto;
+}
+
+/* Filter Buttons RTL */
 body.rtl .filter-bar {
     flex-direction: row-reverse;
 }
 
-/* RTL Modal */
+/* Modal RTL */
 body.rtl .modal-content {
     text-align: right;
+    direction: rtl;
 }
 
 body.rtl .modal-buttons {
     flex-direction: row-reverse;
 }
 
-/* Mobile Responsive */
+/* Hero Section RTL */
+body.rtl .hero {
+    direction: rtl;
+}
+
+/* Scroll to Top Button RTL */
+body.rtl .scroll-to-top {
+    right: auto;
+    left: 30px;
+}
+
+/* Navigation Logo RTL - Keep on correct side */
+body.rtl .nav-logo {
+    order: 2; /* Move logo to end (right side in RTL) */
+}
+
+body.rtl .nav-center {
+    order: 1;
+}
+
+body.rtl .nav-actions {
+    order: 0; /* Move actions to start (left side in RTL) */
+}
+
+/* Deal Button RTL */
+body.rtl .deal-btn {
+    direction: rtl;
+}
+
+/* Icons in RTL - flip certain icons */
+body.rtl .fa-chevron-down,
+body.rtl .fa-arrow-up {
+    transform: scaleX(-1);
+}
+
+body.rtl .lang-dropdown.show .lang-btn i {
+    transform: rotate(180deg) scaleX(-1);
+}
+
+/* ========================================
+   Mobile Responsive RTL Fixes
+   ======================================== */
+
 @media (max-width: 768px) {
     .language-switcher {
         margin-right: 10px;
@@ -220,6 +298,34 @@ body.rtl .modal-buttons {
         right: auto;
         left: -10px;
     }
+    
+    /* Fix nav container stacking in RTL on mobile */
+    body.rtl .nav-container {
+        flex-direction: column;
+    }
+    
+    body.rtl .nav-logo,
+    body.rtl .nav-center,
+    body.rtl .nav-actions {
+        order: unset; /* Reset order on mobile for proper stacking */
+    }
+    
+    /* Center actions on mobile */
+    body.rtl .nav-actions {
+        flex-direction: row-reverse;
+        justify-content: center;
+    }
+    
+    /* Footer stacking */
+    body.rtl .footer-container {
+        text-align: right;
+    }
+    
+    /* Fix scroll to top button on mobile RTL */
+    body.rtl .scroll-to-top {
+        right: auto;
+        left: 20px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -232,10 +338,176 @@ body.rtl .modal-buttons {
         width: 100%;
         max-height: 50vh;
         border-radius: 16px 16px 0 0;
+        transform: translateY(100%);
+    }
+    
+    .lang-dropdown.show {
+        transform: translateY(0);
     }
     
     body.rtl .lang-dropdown {
         left: 0;
         right: 0;
+    }
+    
+    /* Fix deal cards text alignment on small screens */
+    body.rtl .deal-title,
+    body.rtl .deal-description {
+        text-align: right;
+    }
+    
+    /* Fix modal buttons stacking */
+    body.rtl .modal-buttons {
+        flex-direction: column-reverse;
+    }
+    
+    /* Ensure proper text flow on very small screens */
+    body.rtl .nav-title,
+    body.rtl .nav-subtitle {
+        text-align: center;
+        direction: rtl;
+    }
+    
+    /* Fix cookie banner on mobile */
+    body.rtl .cookie-content {
+        flex-direction: column;
+        text-align: right;
+    }
+    
+    body.rtl .cookie-links {
+        flex-direction: column;
+        align-items: flex-end;
+    }
+    
+    /* Fix filter bar wrapping */
+    body.rtl .filter-bar {
+        justify-content: center;
+    }
+}
+
+/* ========================================
+   Additional RTL Typography & Layout
+   ======================================== */
+
+/* Ensure proper text rendering for RTL languages */
+body.rtl {
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+/* Fix list markers in RTL */
+body.rtl ul,
+body.rtl ol {
+    padding-right: 20px;
+    padding-left: 0;
+}
+
+/* Fix table alignment in RTL if any */
+body.rtl table {
+    direction: rtl;
+}
+
+body.rtl th,
+body.rtl td {
+    text-align: right;
+}
+
+/* Fix form elements in RTL */
+body.rtl input,
+body.rtl textarea,
+body.rtl select {
+    direction: rtl;
+    text-align: right;
+}
+
+/* Ensure emojis and icons stay LTR */
+body.rtl .lang-flag,
+body.rtl .current-lang-flag,
+body.rtl .cookie-icon,
+body.rtl .rating .stars {
+    direction: ltr;
+    display: inline-block;
+}
+
+/* Fix flexbox gaps in RTL */
+body.rtl .deals-grid {
+    direction: rtl;
+}
+
+body.rtl .deal-card {
+    direction: rtl;
+}
+
+/* Ensure images stay properly oriented */
+body.rtl img {
+    transform: scaleX(1); /* Prevent image flipping */
+}
+
+/* Fix spacing for RTL nav buttons */
+body.rtl .nav-btn {
+    flex-direction: row-reverse;
+}
+
+/* Fix language dropdown text alignment */
+body.rtl .lang-option {
+    flex-direction: row-reverse;
+    text-align: right;
+}
+
+/* Fix modal close button if any */
+body.rtl .modal-close,
+body.rtl .close-banner {
+    right: auto;
+    left: 15px;
+}
+
+/* Ensure section titles are centered properly */
+body.rtl .section-title {
+    text-align: center;
+    direction: rtl;
+}
+
+/* Fix hero section */
+body.rtl .hero-video {
+    direction: ltr; /* Keep video container LTR */
+}
+
+/* Fix footer bottom text */
+body.rtl .footer-bottom {
+    text-align: center;
+    direction: rtl;
+}
+
+/* ========================================
+   Performance & Accessibility
+   ======================================== */
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+    body.rtl *,
+    body.rtl *::before,
+    body.rtl *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+    }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+    body.rtl .lang-btn {
+        border-width: 2px;
+    }
+    
+    body.rtl .lang-dropdown {
+        border-width: 2px;
+    }
+}
+
+/* Dark mode considerations (if implemented in future) */
+@media (prefers-color-scheme: dark) {
+    body.rtl .lang-dropdown {
+        background: #0a0a0a;
     }
 }

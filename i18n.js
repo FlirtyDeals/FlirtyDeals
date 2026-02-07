@@ -285,11 +285,17 @@
         
         // Update HTML lang and dir attributes
         document.documentElement.setAttribute('lang', lang);
-        if (LANGUAGES[lang].rtl) {
+        
+        // RTL language handling - ensure proper setup
+        const isRTL = LANGUAGES[lang].rtl === true;
+        
+        if (isRTL) {
             document.documentElement.setAttribute('dir', 'rtl');
             document.body.classList.add('rtl');
+            // Force reflow to ensure RTL styles apply correctly
+            void document.body.offsetHeight;
         } else {
-            document.documentElement.removeAttribute('dir');
+            document.documentElement.setAttribute('dir', 'ltr');
             document.body.classList.remove('rtl');
         }
         
