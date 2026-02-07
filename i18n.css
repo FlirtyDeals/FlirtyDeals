@@ -373,8 +373,9 @@ body.rtl .lang-dropdown.show .lang-btn i {
         transition: bottom 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
         transform: none !important; /* Remove transform conflicts */
-        opacity: 1 !important; /* Always visible when positioned */
-        visibility: visible !important;
+        /* Keep default hidden state */
+        opacity: 0;
+        visibility: hidden;
     }
     
     /* Visual drag handle */
@@ -393,6 +394,8 @@ body.rtl .lang-dropdown.show .lang-btn i {
     
     .lang-dropdown.show {
         bottom: 0 !important; /* Slide up */
+        opacity: 1 !important; /* Make visible */
+        visibility: visible !important; /* Make visible */
     }
     
     body.rtl .lang-dropdown {
