@@ -359,7 +359,19 @@
             }
         });
         
-        console.log(`✅ Applied ${lang} translations`);
+        // Convert all prices with data-i18n-price attribute
+        const priceElements = document.querySelectorAll('[data-i18n-price]');
+        const targetCurrency = LANGUAGES[lang].currency;
+        
+        priceElements.forEach(element => {
+            const usdAmount = parseFloat(element.getAttribute('data-i18n-price'));
+            if (!isNaN(usdAmount)) {
+                const convertedPrice = convertPrice(usdAmount, targetCurrency);
+                element.textContent = convertedPrice;
+            }
+        });
+        
+        console.log(`✅ Applied ${lang} translations and converted ${priceElements.length} prices to ${targetCurrency}`);
     }
 
     /**
