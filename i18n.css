@@ -1,7 +1,8 @@
-/* Language Switcher - Simple Dropdown */
+/* Language Switcher - Simple Dropdown (ALL DEVICES) */
 .language-switcher {
     position: relative;
     margin-right: 15px;
+    z-index: 100;
 }
 
 .lang-btn {
@@ -36,35 +37,46 @@
     transition: transform 0.2s ease;
 }
 
-.lang-dropdown.show ~ .lang-btn i,
-.lang-btn:has(~ .lang-dropdown.show) i {
-    transform: rotate(180deg);
-}
-
-/* Dropdown Menu */
+/* Dropdown Menu - SAME ON ALL DEVICES */
 .lang-dropdown {
+    /* CRITICAL: These 3 lines make it appear BELOW the button */
     position: absolute;
-    top: calc(100% + 8px);
+    top: calc(100% + 8px);  /* 8px below button */
     right: 0;
+    
+    /* Styling */
     background: #1a1a1a;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
+    
+    /* Size */
     min-width: 220px;
+    width: max-content;
     max-width: 280px;
+    
+    /* Scrolling */
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
+    
+    /* Effects */
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    
+    /* Hidden by default */
     opacity: 0;
     visibility: hidden;
+    pointer-events: none;
     transform: translateY(-10px);
     transition: all 0.2s ease;
-    z-index: 1000;
+    
+    /* Make sure it's on top */
+    z-index: 9999;
 }
 
 .lang-dropdown.show {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto;
     transform: translateY(0);
 }
 
@@ -295,7 +307,11 @@ body.rtl .footer-bottom {
     direction: rtl;
 }
 
-/* Mobile Responsive */
+/* ========================================
+   MOBILE RESPONSIVE
+   NO POSITION CHANGES - ONLY SIZE TWEAKS
+   ======================================== */
+
 @media (max-width: 768px) {
     .language-switcher {
         margin-right: 10px;
@@ -315,14 +331,10 @@ body.rtl .footer-bottom {
         display: none;
     }
     
+    /* Still opens below button - just adjust width */
     .lang-dropdown {
         min-width: 200px;
-        right: -10px;
-    }
-    
-    body.rtl .lang-dropdown {
-        right: auto;
-        left: -10px;
+        max-width: 260px;
     }
     
     body.rtl .nav-container {
@@ -347,22 +359,17 @@ body.rtl .footer-bottom {
 }
 
 @media (max-width: 480px) {
+    /* Still opens below button - make it slightly wider for better tapping */
     .lang-dropdown {
-        /* On small screens, make it wider */
         min-width: 240px;
-        max-width: 90vw;
-        right: -20px;
-    }
-    
-    body.rtl .lang-dropdown {
-        right: auto;
-        left: -20px;
+        max-width: min(320px, 90vw);
     }
     
     /* Larger tap targets on mobile */
     .lang-option {
         padding: 14px 18px;
         font-size: 15px;
+        min-height: 50px;
     }
     
     .lang-flag {
@@ -409,15 +416,5 @@ body.rtl .footer-bottom {
     .lang-dropdown,
     .lang-option {
         transition: none;
-    }
-}
-
-@media (prefers-contrast: high) {
-    .lang-btn {
-        border-width: 2px;
-    }
-    
-    .lang-dropdown {
-        border-width: 2px;
     }
 }
