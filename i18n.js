@@ -412,12 +412,26 @@
             e.preventDefault();
             const isOpen = dropdown.classList.toggle('show');
             
-            // Prevent body scroll on mobile when dropdown is open
+            // Mobile specific handling
             if (window.innerWidth <= 480) {
                 if (isOpen) {
+                    // Add backdrop class
+                    switcher.classList.add('dropdown-open');
+                    // Reset scroll to top immediately when opening
+                    setTimeout(() => {
+                        dropdown.scrollTop = 0;
+                    }, 0);
+                    // Prevent body scroll
                     document.body.style.overflow = 'hidden';
+                    document.body.style.position = 'fixed';
+                    document.body.style.width = '100%';
                 } else {
+                    // Remove backdrop class
+                    switcher.classList.remove('dropdown-open');
+                    // Restore body scroll
                     document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
                 }
             }
         });
@@ -427,10 +441,13 @@
             if (!switcher.contains(e.target)) {
                 const wasOpen = dropdown.classList.contains('show');
                 dropdown.classList.remove('show');
+                switcher.classList.remove('dropdown-open');
                 
                 // Restore body scroll on mobile
                 if (wasOpen && window.innerWidth <= 480) {
                     document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
                 }
             }
         });
@@ -443,6 +460,11 @@
                 const newLang = option.getAttribute('data-lang');
                 
                 if (newLang !== currentLang) {
+                    // Restore body scroll before redirect
+                    document.body.style.overflow = '';
+                    document.body.style.position = '';
+                    document.body.style.width = '';
+                    
                     saveLanguage(newLang);
                     redirectToLanguage(newLang);
                 }

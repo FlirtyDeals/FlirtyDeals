@@ -56,7 +56,7 @@
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
-    z-index: 1000;
+    z-index: 10000; /* Ensure it's above everything */
     -webkit-overflow-scrolling: touch;
 }
 
@@ -272,6 +272,30 @@ body.rtl .lang-dropdown.show .lang-btn i {
    Mobile Responsive RTL Fixes
    ======================================== */
 
+/* Mobile backdrop for dropdown */
+@media (max-width: 480px) {
+    .language-switcher::before {
+        content: '';
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.5);
+        opacity: 0;
+        visibility: hidden;
+        transition: opacity 0.3s ease;
+        z-index: 9999;
+        pointer-events: none;
+    }
+    
+    .language-switcher.dropdown-open::before {
+        opacity: 1;
+        visibility: visible;
+        pointer-events: auto;
+    }
+}
+
 @media (max-width: 768px) {
     .language-switcher {
         margin-right: 10px;
@@ -334,22 +358,41 @@ body.rtl .lang-dropdown.show .lang-btn i {
     .lang-dropdown {
         position: fixed;
         top: auto;
-        bottom: 0;
+        bottom: -100%; /* Start off screen */
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 65vh; /* Increased for better visibility */
-        border-radius: 16px 16px 0 0;
-        transform: translateY(100%);
-        overflow-y: scroll; /* Force scroll */
+        max-height: 70vh;
+        border-radius: 20px 20px 0 0;
+        overflow-y: scroll !important; /* Force scroll */
         overflow-x: hidden;
-        -webkit-overflow-scrolling: touch; /* Smooth iOS scrolling */
-        overscroll-behavior-y: contain; /* Prevent body scroll */
-        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
+        -webkit-overflow-scrolling: touch;
+        overscroll-behavior: none; /* Disable rubber band */
+        padding-top: 32px; /* Space for handle */
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
+        transition: bottom 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
+        transform: none !important; /* Remove transform conflicts */
+        opacity: 1 !important; /* Always visible when positioned */
+        visibility: visible !important;
+    }
+    
+    /* Visual drag handle */
+    .lang-dropdown::before {
+        content: '';
+        position: absolute;
+        top: 12px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 5px;
+        background: rgba(255, 255, 255, 0.3);
+        border-radius: 3px;
+        z-index: 1;
     }
     
     .lang-dropdown.show {
-        transform: translateY(0);
+        bottom: 0 !important; /* Slide up */
     }
     
     body.rtl .lang-dropdown {
@@ -359,31 +402,46 @@ body.rtl .lang-dropdown.show .lang-btn i {
     
     /* Larger tap targets for mobile */
     .lang-option {
-        min-height: 52px;
-        padding: 16px 20px;
-        font-size: 15px;
+        min-height: 56px;
+        padding: 18px 24px;
+        font-size: 16px;
+    }
+    
+    .lang-option:first-child {
+        margin-top: 0;
+    }
+    
+    .lang-option:last-child {
+        margin-bottom: 8px;
     }
     
     .lang-flag {
-        font-size: 22px;
+        font-size: 24px;
     }
     
     .lang-name {
-        font-size: 15px;
+        font-size: 16px;
+        font-weight: 500;
     }
     
-    /* Fix scrollbar visibility on mobile */
+    /* Make scrollbar more visible on mobile */
     .lang-dropdown::-webkit-scrollbar {
-        width: 8px;
+        width: 10px;
     }
     
     .lang-dropdown::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.05);
+        background: rgba(255, 255, 255, 0.08);
+        margin: 32px 0 10px 0; /* Don't show under handle */
     }
     
     .lang-dropdown::-webkit-scrollbar-thumb {
-        background: rgba(214, 0, 110, 0.6);
-        border-radius: 4px;
+        background: rgba(214, 0, 110, 0.7);
+        border-radius: 5px;
+        border: 2px solid #1a1a1a;
+    }
+    
+    .lang-dropdown::-webkit-scrollbar-thumb:active {
+        background: rgba(214, 0, 110, 0.9);
     }
 }
     
