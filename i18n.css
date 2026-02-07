@@ -50,12 +50,14 @@
     min-width: 200px;
     max-height: 400px;
     overflow-y: auto;
+    overflow-x: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
     transform: translateY(-10px);
     transition: all 0.3s ease;
     z-index: 1000;
+    -webkit-overflow-scrolling: touch;
 }
 
 .lang-dropdown.show {
@@ -336,9 +338,14 @@ body.rtl .lang-dropdown.show .lang-btn i {
         left: 0;
         right: 0;
         width: 100%;
-        max-height: 50vh;
+        max-height: 65vh; /* Increased for better visibility */
         border-radius: 16px 16px 0 0;
         transform: translateY(100%);
+        overflow-y: scroll; /* Force scroll */
+        overflow-x: hidden;
+        -webkit-overflow-scrolling: touch; /* Smooth iOS scrolling */
+        overscroll-behavior-y: contain; /* Prevent body scroll */
+        padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 12px);
     }
     
     .lang-dropdown.show {
@@ -349,6 +356,36 @@ body.rtl .lang-dropdown.show .lang-btn i {
         left: 0;
         right: 0;
     }
+    
+    /* Larger tap targets for mobile */
+    .lang-option {
+        min-height: 52px;
+        padding: 16px 20px;
+        font-size: 15px;
+    }
+    
+    .lang-flag {
+        font-size: 22px;
+    }
+    
+    .lang-name {
+        font-size: 15px;
+    }
+    
+    /* Fix scrollbar visibility on mobile */
+    .lang-dropdown::-webkit-scrollbar {
+        width: 8px;
+    }
+    
+    .lang-dropdown::-webkit-scrollbar-track {
+        background: rgba(255, 255, 255, 0.05);
+    }
+    
+    .lang-dropdown::-webkit-scrollbar-thumb {
+        background: rgba(214, 0, 110, 0.6);
+        border-radius: 4px;
+    }
+}
     
     /* Fix deal cards text alignment on small screens */
     body.rtl .deal-title,

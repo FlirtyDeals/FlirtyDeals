@@ -410,13 +410,28 @@
         
         dropdownBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            dropdown.classList.toggle('show');
+            const isOpen = dropdown.classList.toggle('show');
+            
+            // Prevent body scroll on mobile when dropdown is open
+            if (window.innerWidth <= 480) {
+                if (isOpen) {
+                    document.body.style.overflow = 'hidden';
+                } else {
+                    document.body.style.overflow = '';
+                }
+            }
         });
         
         // Close dropdown when clicking outside
         document.addEventListener('click', (e) => {
             if (!switcher.contains(e.target)) {
+                const wasOpen = dropdown.classList.contains('show');
                 dropdown.classList.remove('show');
+                
+                // Restore body scroll on mobile
+                if (wasOpen && window.innerWidth <= 480) {
+                    document.body.style.overflow = '';
+                }
             }
         });
         
