@@ -374,7 +374,27 @@
             e.stopPropagation();
             
             const isOpen = dropdown.classList.toggle('show');
+            
+            // On mobile, position dropdown below button
+            if (window.innerWidth <= 480) {
+                const btnRect = dropdownBtn.getBoundingClientRect();
+                dropdown.style.top = (btnRect.bottom + 8) + 'px';
+            } else {
+                // Reset to CSS default on desktop
+                dropdown.style.top = '';
+            }
+            
             console.log('Dropdown:', isOpen ? 'OPEN' : 'CLOSED');
+        });
+        
+        // Handle window resize
+        window.addEventListener('resize', () => {
+            if (dropdown.classList.contains('show') && window.innerWidth <= 480) {
+                const btnRect = dropdownBtn.getBoundingClientRect();
+                dropdown.style.top = (btnRect.bottom + 8) + 'px';
+            } else {
+                dropdown.style.top = '';
+            }
         });
         
         // Close dropdown when clicking outside

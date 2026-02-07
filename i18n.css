@@ -75,10 +75,17 @@
 
 /* Mobile: Center the dropdown IN THE MIDDLE OF THE SCREEN */
 @media (max-width: 480px) {
+    .language-switcher {
+        /* Keep track of button position */
+        position: relative;
+    }
+    
     .lang-dropdown {
-        /* CENTER IT ON THE SCREEN */
-        left: 50%;
+        /* Use FIXED positioning to center on VIEWPORT */
+        position: fixed;
+        left: 50vw;
         right: auto;
+        top: auto; /* Will be set dynamically by JS */
         transform: translateX(-50%) translateY(-10px);
         
         /* Make it responsive to screen width */
@@ -93,7 +100,7 @@
     
     /* RTL support on mobile - still centered */
     body.rtl .lang-dropdown {
-        left: 50%;
+        left: 50vw;
         right: auto;
     }
 }
