@@ -1,4 +1,4 @@
-/* Language Switcher Styles */
+/* Language Switcher - Simple Dropdown */
 .language-switcher {
     position: relative;
     margin-right: 15px;
@@ -14,7 +14,7 @@
     border-radius: 6px;
     color: white;
     cursor: pointer;
-    transition: all 0.3s ease;
+    transition: all 0.2s ease;
     font-size: 14px;
 }
 
@@ -33,13 +33,15 @@
 
 .lang-btn i {
     font-size: 12px;
-    transition: transform 0.3s ease;
+    transition: transform 0.2s ease;
 }
 
-.lang-dropdown.show .lang-btn i {
+.lang-dropdown.show ~ .lang-btn i,
+.lang-btn:has(~ .lang-dropdown.show) i {
     transform: rotate(180deg);
 }
 
+/* Dropdown Menu */
 .lang-dropdown {
     position: absolute;
     top: calc(100% + 8px);
@@ -47,36 +49,40 @@
     background: #1a1a1a;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 8px;
-    min-width: 200px;
+    min-width: 220px;
+    max-width: 280px;
     max-height: 400px;
     overflow-y: auto;
     overflow-x: hidden;
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
-    pointer-events: none; /* Ensure it's not clickable when hidden */
     transform: translateY(-10px);
-    transition: all 0.3s ease;
-    z-index: 10000; /* Ensure it's above everything */
-    -webkit-overflow-scrolling: touch;
+    transition: all 0.2s ease;
+    z-index: 1000;
 }
 
 .lang-dropdown.show {
     opacity: 1;
     visibility: visible;
-    pointer-events: auto; /* Make it clickable when shown */
     transform: translateY(0);
 }
 
+/* Language Options */
 .lang-option {
     display: flex;
     align-items: center;
-    gap: 10px;
+    gap: 12px;
+    width: 100%;
     padding: 12px 16px;
-    color: white;
-    text-decoration: none;
-    transition: background 0.2s ease;
+    background: transparent;
+    border: none;
     border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+    color: white;
+    text-align: left;
+    cursor: pointer;
+    transition: background 0.15s ease;
+    font-size: 14px;
 }
 
 .lang-option:last-child {
@@ -94,13 +100,15 @@
 
 .lang-flag {
     font-size: 20px;
+    flex-shrink: 0;
 }
 
 .lang-name {
     font-size: 14px;
+    white-space: nowrap;
 }
 
-/* Scrollbar for dropdown */
+/* Scrollbar */
 .lang-dropdown::-webkit-scrollbar {
     width: 6px;
 }
@@ -119,22 +127,17 @@
     background: rgba(214, 0, 110, 0.7);
 }
 
-/* ========================================
-   RTL (Right-to-Left) Support
-   ======================================== */
-
-/* Base RTL Setup */
+/* RTL Support */
 body.rtl {
     direction: rtl;
 }
 
-/* Navigation RTL */
 body.rtl .nav-container {
-    flex-direction: row; /* Keep normal flow for RTL */
+    flex-direction: row;
 }
 
 body.rtl .nav-actions {
-    flex-direction: row-reverse; /* Reverse the action buttons */
+    flex-direction: row-reverse;
 }
 
 body.rtl .language-switcher {
@@ -147,7 +150,11 @@ body.rtl .lang-dropdown {
     left: 0;
 }
 
-/* Deal Cards RTL */
+body.rtl .lang-option {
+    text-align: right;
+    flex-direction: row-reverse;
+}
+
 body.rtl .deal-content {
     text-align: right;
 }
@@ -160,7 +167,6 @@ body.rtl .rating {
     flex-direction: row-reverse;
 }
 
-/* Discount Badge RTL - Move to left in RTL */
 body.rtl .discount-badge {
     right: auto;
     left: 10px;
@@ -171,19 +177,16 @@ body.rtl .discount-badge.left {
     right: 10px;
 }
 
-/* Featured Badge RTL - Move to right in RTL */
 body.rtl .featured-badge {
     left: auto;
     right: 10px;
 }
 
-/* Stars Rating RTL */
 body.rtl .stars {
-    direction: ltr; /* Keep stars left-to-right even in RTL */
+    direction: ltr;
     unicode-bidi: embed;
 }
 
-/* Footer RTL */
 body.rtl .footer-container {
     direction: rtl;
 }
@@ -197,7 +200,6 @@ body.rtl .social-links a {
     flex-direction: row-reverse;
 }
 
-/* Cookie Banner RTL */
 body.rtl .cookie-content {
     flex-direction: row-reverse;
     text-align: right;
@@ -216,12 +218,10 @@ body.rtl .close-banner {
     right: auto;
 }
 
-/* Filter Buttons RTL */
 body.rtl .filter-bar {
     flex-direction: row-reverse;
 }
 
-/* Modal RTL */
 body.rtl .modal-content {
     text-align: right;
     direction: rtl;
@@ -231,20 +231,17 @@ body.rtl .modal-buttons {
     flex-direction: row-reverse;
 }
 
-/* Hero Section RTL */
 body.rtl .hero {
     direction: rtl;
 }
 
-/* Scroll to Top Button RTL */
 body.rtl .scroll-to-top {
     right: auto;
     left: 30px;
 }
 
-/* Navigation Logo RTL - Keep on correct side */
 body.rtl .nav-logo {
-    order: 2; /* Move logo to end (right side in RTL) */
+    order: 2;
 }
 
 body.rtl .nav-center {
@@ -252,52 +249,53 @@ body.rtl .nav-center {
 }
 
 body.rtl .nav-actions {
-    order: 0; /* Move actions to start (left side in RTL) */
+    order: 0;
 }
 
-/* Deal Button RTL */
 body.rtl .deal-btn {
     direction: rtl;
 }
 
-/* Icons in RTL - flip certain icons */
-body.rtl .fa-chevron-down,
-body.rtl .fa-arrow-up {
-    transform: scaleX(-1);
+body.rtl ul,
+body.rtl ol {
+    padding-right: 20px;
+    padding-left: 0;
 }
 
-body.rtl .lang-dropdown.show .lang-btn i {
-    transform: rotate(180deg) scaleX(-1);
+body.rtl input,
+body.rtl textarea,
+body.rtl select {
+    direction: rtl;
+    text-align: right;
 }
 
-/* ========================================
-   Mobile Responsive RTL Fixes
-   ======================================== */
-
-/* Mobile backdrop for dropdown */
-@media (max-width: 480px) {
-    .language-switcher::before {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.5);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease;
-        z-index: 9999;
-        pointer-events: none;
-    }
-    
-    .language-switcher.dropdown-open::before {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
+body.rtl .lang-flag,
+body.rtl .current-lang-flag,
+body.rtl .cookie-icon,
+body.rtl .rating .stars {
+    direction: ltr;
+    display: inline-block;
 }
 
+body.rtl .deals-grid {
+    direction: rtl;
+}
+
+body.rtl .deal-card {
+    direction: rtl;
+}
+
+body.rtl .section-title {
+    text-align: center;
+    direction: rtl;
+}
+
+body.rtl .footer-bottom {
+    text-align: center;
+    direction: rtl;
+}
+
+/* Mobile Responsive */
 @media (max-width: 768px) {
     .language-switcher {
         margin-right: 10px;
@@ -318,7 +316,7 @@ body.rtl .lang-dropdown.show .lang-btn i {
     }
     
     .lang-dropdown {
-        min-width: 180px;
+        min-width: 200px;
         right: -10px;
     }
     
@@ -327,7 +325,6 @@ body.rtl .lang-dropdown.show .lang-btn i {
         left: -10px;
     }
     
-    /* Fix nav container stacking in RTL on mobile */
     body.rtl .nav-container {
         flex-direction: column;
     }
@@ -335,21 +332,14 @@ body.rtl .lang-dropdown.show .lang-btn i {
     body.rtl .nav-logo,
     body.rtl .nav-center,
     body.rtl .nav-actions {
-        order: unset; /* Reset order on mobile for proper stacking */
+        order: unset;
     }
     
-    /* Center actions on mobile */
     body.rtl .nav-actions {
         flex-direction: row-reverse;
         justify-content: center;
     }
     
-    /* Footer stacking */
-    body.rtl .footer-container {
-        text-align: right;
-    }
-    
-    /* Fix scroll to top button on mobile RTL */
     body.rtl .scroll-to-top {
         right: auto;
         left: 20px;
@@ -358,170 +348,46 @@ body.rtl .lang-dropdown.show .lang-btn i {
 
 @media (max-width: 480px) {
     .lang-dropdown {
-        position: fixed;
-        top: auto;
-        bottom: 0;
-        left: 0;
-        right: 0;
-        width: 100%;
-        max-height: 75vh;
-        min-height: 300px;
-        border-radius: 20px 20px 0 0;
-        overflow-y: auto;
-        overflow-x: hidden;
-        -webkit-overflow-scrolling: touch;
-        overscroll-behavior: contain;
-        padding-top: 40px;
-        padding-bottom: max(env(safe-area-inset-bottom, 0px), 20px);
-        transition: transform 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
-        box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
-        transform: translateY(100%);
-        opacity: 0;
-        visibility: hidden;
-        pointer-events: none;
-        z-index: 10001;
-        /* Aggressively prevent auto-scroll */
-        overflow-anchor: none;
-        scroll-behavior: auto;
-        scroll-snap-type: none;
-    }
-    
-    /* Visual drag handle */
-    .lang-dropdown::before {
-        content: '';
-        position: fixed;
-        top: 12px;
-        left: 50%;
-        transform: translateX(-50%);
-        width: 40px;
-        height: 5px;
-        background: rgba(255, 255, 255, 0.3);
-        border-radius: 3px;
-        z-index: 10002;
-    }
-    
-    .lang-dropdown.show {
-        transform: translateY(0);
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
+        /* On small screens, make it wider */
+        min-width: 240px;
+        max-width: 90vw;
+        right: -20px;
     }
     
     body.rtl .lang-dropdown {
-        left: 0;
-        right: 0;
+        right: auto;
+        left: -20px;
     }
     
-    /* Prevent ALL scroll-affecting properties on lang options */
+    /* Larger tap targets on mobile */
     .lang-option {
-        min-height: 60px;
-        padding: 16px 24px;
-        font-size: 16px;
-        touch-action: manipulation;
-        -webkit-tap-highlight-color: rgba(214, 0, 110, 0.1);
-        /* Prevent this element from affecting scroll */
-        scroll-margin: 0 !important;
-        scroll-margin-top: 0 !important;
-        scroll-margin-bottom: 0 !important;
-        scroll-snap-align: none !important;
-        scroll-snap-stop: normal !important;
-    }
-    
-    /* Extra enforcement for active option */
-    .lang-option.active {
-        scroll-margin: 0 !important;
-        scroll-snap-align: none !important;
-        /* Prevent focus scroll */
-        scroll-margin-block: 0 !important;
-        scroll-margin-inline: 0 !important;
-    }
-    
-    /* Prevent any anchor links from scrolling */
-    .lang-option:target {
-        scroll-margin-top: 0 !important;
-    }
-    
-    .lang-option:first-child {
-        margin-top: 0;
-    }
-    
-    .lang-option:last-child {
-        margin-bottom: 0;
-        padding-bottom: 20px;
+        padding: 14px 18px;
+        font-size: 15px;
     }
     
     .lang-flag {
-        font-size: 24px;
-        flex-shrink: 0;
+        font-size: 22px;
     }
     
     .lang-name {
-        font-size: 16px;
-        font-weight: 500;
+        font-size: 15px;
     }
     
-    /* Make scrollbar more visible on mobile */
-    .lang-dropdown::-webkit-scrollbar {
-        width: 8px;
-    }
-    
-    .lang-dropdown::-webkit-scrollbar-track {
-        background: rgba(255, 255, 255, 0.08);
-        margin: 40px 0 20px 0;
-    }
-    
-    .lang-dropdown::-webkit-scrollbar-thumb {
-        background: rgba(214, 0, 110, 0.7);
-        border-radius: 4px;
-        border: 2px solid #1a1a1a;
-    }
-    
-    .lang-dropdown::-webkit-scrollbar-thumb:active {
-        background: rgba(214, 0, 110, 0.9);
-    }
-    
-    /* Add backdrop for better UX */
-    .language-switcher::after {
-        content: '';
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-        background: rgba(0, 0, 0, 0.6);
-        opacity: 0;
-        visibility: hidden;
-        transition: opacity 0.3s ease, visibility 0.3s ease;
-        z-index: 10000;
-        pointer-events: none;
-    }
-    
-    .language-switcher.dropdown-open::after {
-        opacity: 1;
-        visibility: visible;
-        pointer-events: auto;
-    }
-}
-    
-    /* Fix deal cards text alignment on small screens */
     body.rtl .deal-title,
     body.rtl .deal-description {
         text-align: right;
     }
     
-    /* Fix modal buttons stacking */
     body.rtl .modal-buttons {
         flex-direction: column-reverse;
     }
     
-    /* Ensure proper text flow on very small screens */
     body.rtl .nav-title,
     body.rtl .nav-subtitle {
         text-align: center;
         direction: rtl;
     }
     
-    /* Fix cookie banner on mobile */
     body.rtl .cookie-content {
         flex-direction: column;
         text-align: right;
@@ -532,135 +398,26 @@ body.rtl .lang-dropdown.show .lang-btn i {
         align-items: flex-end;
     }
     
-    /* Fix filter bar wrapping */
     body.rtl .filter-bar {
         justify-content: center;
     }
 }
 
-/* ========================================
-   Additional RTL Typography & Layout
-   ======================================== */
-
-/* Ensure proper text rendering for RTL languages */
-body.rtl {
-    text-rendering: optimizeLegibility;
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-}
-
-/* Fix list markers in RTL */
-body.rtl ul,
-body.rtl ol {
-    padding-right: 20px;
-    padding-left: 0;
-}
-
-/* Fix table alignment in RTL if any */
-body.rtl table {
-    direction: rtl;
-}
-
-body.rtl th,
-body.rtl td {
-    text-align: right;
-}
-
-/* Fix form elements in RTL */
-body.rtl input,
-body.rtl textarea,
-body.rtl select {
-    direction: rtl;
-    text-align: right;
-}
-
-/* Ensure emojis and icons stay LTR */
-body.rtl .lang-flag,
-body.rtl .current-lang-flag,
-body.rtl .cookie-icon,
-body.rtl .rating .stars {
-    direction: ltr;
-    display: inline-block;
-}
-
-/* Fix flexbox gaps in RTL */
-body.rtl .deals-grid {
-    direction: rtl;
-}
-
-body.rtl .deal-card {
-    direction: rtl;
-}
-
-/* Ensure images stay properly oriented */
-body.rtl img {
-    transform: scaleX(1); /* Prevent image flipping */
-}
-
-/* Fix spacing for RTL nav buttons */
-body.rtl .nav-btn {
-    flex-direction: row-reverse;
-}
-
-/* Fix language dropdown text alignment */
-body.rtl .lang-option {
-    flex-direction: row-reverse;
-    text-align: right;
-}
-
-/* Fix modal close button if any */
-body.rtl .modal-close,
-body.rtl .close-banner {
-    right: auto;
-    left: 15px;
-}
-
-/* Ensure section titles are centered properly */
-body.rtl .section-title {
-    text-align: center;
-    direction: rtl;
-}
-
-/* Fix hero section */
-body.rtl .hero-video {
-    direction: ltr; /* Keep video container LTR */
-}
-
-/* Fix footer bottom text */
-body.rtl .footer-bottom {
-    text-align: center;
-    direction: rtl;
-}
-
-/* ========================================
-   Performance & Accessibility
-   ======================================== */
-
-/* Reduce motion for users who prefer it */
+/* Accessibility */
 @media (prefers-reduced-motion: reduce) {
-    body.rtl *,
-    body.rtl *::before,
-    body.rtl *::after {
-        animation-duration: 0.01ms !important;
-        animation-iteration-count: 1 !important;
-        transition-duration: 0.01ms !important;
+    .lang-btn,
+    .lang-dropdown,
+    .lang-option {
+        transition: none;
     }
 }
 
-/* High contrast mode support */
 @media (prefers-contrast: high) {
-    body.rtl .lang-btn {
+    .lang-btn {
         border-width: 2px;
     }
     
-    body.rtl .lang-dropdown {
+    .lang-dropdown {
         border-width: 2px;
-    }
-}
-
-/* Dark mode considerations (if implemented in future) */
-@media (prefers-color-scheme: dark) {
-    body.rtl .lang-dropdown {
-        background: #0a0a0a;
     }
 }
