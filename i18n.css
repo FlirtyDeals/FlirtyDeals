@@ -54,6 +54,7 @@
     box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
     opacity: 0;
     visibility: hidden;
+    pointer-events: none; /* Ensure it's not clickable when hidden */
     transform: translateY(-10px);
     transition: all 0.3s ease;
     z-index: 10000; /* Ensure it's above everything */
@@ -63,6 +64,7 @@
 .lang-dropdown.show {
     opacity: 1;
     visibility: visible;
+    pointer-events: auto; /* Make it clickable when shown */
     transform: translateY(0);
 }
 
@@ -358,7 +360,7 @@ body.rtl .lang-dropdown.show .lang-btn i {
     .lang-dropdown {
         position: fixed;
         top: auto;
-        bottom: -100%; /* Start off screen */
+        bottom: -200%; /* Far off screen to ensure it's completely hidden */
         left: 0;
         right: 0;
         width: 100%;
@@ -370,12 +372,13 @@ body.rtl .lang-dropdown.show .lang-btn i {
         overscroll-behavior: none; /* Disable rubber band */
         padding-top: 32px; /* Space for handle */
         padding-bottom: calc(env(safe-area-inset-bottom, 0px) + 20px);
-        transition: bottom 0.3s cubic-bezier(0.4, 0.0, 0.2, 1);
+        transition: bottom 0.3s cubic-bezier(0.4, 0.0, 0.2, 1), opacity 0.3s ease, visibility 0.3s ease;
         box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.6);
         transform: none !important; /* Remove transform conflicts */
-        /* Keep default hidden state */
-        opacity: 0;
-        visibility: hidden;
+        /* Explicitly hidden by default */
+        opacity: 0 !important;
+        visibility: hidden !important;
+        pointer-events: none !important;
     }
     
     /* Visual drag handle */
@@ -396,6 +399,7 @@ body.rtl .lang-dropdown.show .lang-btn i {
         bottom: 0 !important; /* Slide up */
         opacity: 1 !important; /* Make visible */
         visibility: visible !important; /* Make visible */
+        pointer-events: auto !important; /* Make clickable */
     }
     
     body.rtl .lang-dropdown {

@@ -408,9 +408,22 @@
         const dropdownBtn = document.getElementById('langDropdownBtn');
         const dropdown = document.getElementById('langDropdown');
         
+        // CRITICAL: Explicitly ensure dropdown is closed on page load
+        dropdown.classList.remove('show');
+        switcher.classList.remove('dropdown-open');
+        
+        // Ensure body scroll is normal on load
+        document.body.style.overflow = '';
+        document.body.style.position = '';
+        document.body.style.width = '';
+        
+        console.log('🎯 Dropdown initialized - should be hidden');
+        
         dropdownBtn.addEventListener('click', (e) => {
             e.preventDefault();
             const isOpen = dropdown.classList.toggle('show');
+            
+            console.log('🔄 Dropdown toggled:', isOpen ? 'OPENING' : 'CLOSING');
             
             // Mobile specific handling
             if (window.innerWidth <= 480) {
@@ -425,6 +438,7 @@
                     document.body.style.overflow = 'hidden';
                     document.body.style.position = 'fixed';
                     document.body.style.width = '100%';
+                    console.log('📱 Mobile: Dropdown opened, body locked');
                 } else {
                     // Remove backdrop class
                     switcher.classList.remove('dropdown-open');
@@ -432,6 +446,7 @@
                     document.body.style.overflow = '';
                     document.body.style.position = '';
                     document.body.style.width = '';
+                    console.log('📱 Mobile: Dropdown closed, body unlocked');
                 }
             }
         });
