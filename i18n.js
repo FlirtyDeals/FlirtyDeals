@@ -421,25 +421,52 @@
         
         dropdownBtn.addEventListener('click', (e) => {
             e.preventDefault();
-            const isOpen = dropdown.classList.toggle('show');
             
-            console.log('🔄 Dropdown toggled:', isOpen ? 'OPENING' : 'CLOSING');
+            const willOpen = !dropdown.classList.contains('show');
             
-            // Mobile specific handling
-            if (window.innerWidth <= 480) {
-                if (isOpen) {
+            console.log('🔄 Dropdown will:', willOpen ? 'OPEN' : 'CLOSE');
+            
+            if (willOpen) {
+                // NUCLEAR OPTION: Temporarily remove active class to prevent auto-scroll
+                const activeOption = dropdown.querySelector('.lang-option.active');
+                const hadActive = !!activeOption;
+                if (activeOption) {
+                    activeOption.classList.remove('active');
+                    console.log('🎯 Removed active class temporarily');
+                }
+                
+                // CRITICAL: Set scroll to 0 BEFORE showing dropdown (prevent auto-scroll)
+                dropdown.scrollTop = 0;
+                dropdown.scrollTo(0, 0);
+                
+                // Now open the dropdown
+                dropdown.classList.add('show');
+                
+                // Mobile specific handling
+                if (window.innerWidth <= 480) {
                     // Add backdrop class
                     switcher.classList.add('dropdown-open');
                     
-                    // CRITICAL: Force scroll to top AFTER dropdown is visible
-                    // Use requestAnimationFrame to ensure it happens after render
+                    // Triple-ensure scroll is at top with multiple methods
+                    dropdown.scrollTop = 0;
+                    dropdown.scrollTo({ top: 0, behavior: 'instant' });
+                    
+                    // And again after render
                     requestAnimationFrame(() => {
+                        dropdown.scrollTop = 0;
+                        dropdown.scrollTo(0, 0);
+                        
                         requestAnimationFrame(() => {
-                            dropdown.scrollTo({
-                                top: 0,
-                                behavior: 'instant'
-                            });
-                            console.log('📜 Forced scroll to top, scrollTop =', dropdown.scrollTop);
+                            dropdown.scrollTop = 0;
+                            dropdown.scrollTo({ top: 0, behavior: 'instant' });
+                            
+                            // Restore active class AFTER scroll is set
+                            if (hadActive && activeOption) {
+                                activeOption.classList.add('active');
+                                console.log('🎯 Restored active class');
+                            }
+                            
+                            console.log('📜 Final scroll position:', dropdown.scrollTop);
                         });
                     });
                     
@@ -449,6 +476,16 @@
                     document.body.style.width = '100%';
                     console.log('📱 Mobile: Dropdown opened, body locked');
                 } else {
+                    // On desktop, restore active class immediately
+                    if (hadActive && activeOption) {
+                        activeOption.classList.add('active');
+                    }
+                }
+            } else {
+                // Closing
+                dropdown.classList.remove('show');
+                
+                if (window.innerWidth <= 480) {
                     // Remove backdrop class
                     switcher.classList.remove('dropdown-open');
                     // Restore body scroll
@@ -495,8 +532,14 @@
         // Language selection
         const langOptions = dropdown.querySelectorAll('.lang-option');
         langOptions.forEach(option => {
+            // Prevent focus on active element (focus can cause auto-scroll)
+            if (option.classList.contains('active')) {
+                option.setAttribute('tabindex', '-1');
+            }
+            
             option.addEventListener('click', (e) => {
                 e.preventDefault();
+                e.stopPropagation();
                 const newLang = option.getAttribute('data-lang');
                 
                 if (newLang !== currentLang) {

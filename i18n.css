@@ -380,9 +380,10 @@ body.rtl .lang-dropdown.show .lang-btn i {
         visibility: hidden;
         pointer-events: none;
         z-index: 10001;
-        /* Prevent auto-scroll to active element */
+        /* Aggressively prevent auto-scroll */
         overflow-anchor: none;
         scroll-behavior: auto;
+        scroll-snap-type: none;
     }
     
     /* Visual drag handle */
@@ -411,19 +412,33 @@ body.rtl .lang-dropdown.show .lang-btn i {
         right: 0;
     }
     
-    /* Prevent active option from forcing scroll position */
-    .lang-option.active {
-        scroll-margin: 0;
-        scroll-snap-align: none;
-    }
-    
-    /* Larger tap targets for mobile */
+    /* Prevent ALL scroll-affecting properties on lang options */
     .lang-option {
         min-height: 60px;
         padding: 16px 24px;
         font-size: 16px;
         touch-action: manipulation;
         -webkit-tap-highlight-color: rgba(214, 0, 110, 0.1);
+        /* Prevent this element from affecting scroll */
+        scroll-margin: 0 !important;
+        scroll-margin-top: 0 !important;
+        scroll-margin-bottom: 0 !important;
+        scroll-snap-align: none !important;
+        scroll-snap-stop: normal !important;
+    }
+    
+    /* Extra enforcement for active option */
+    .lang-option.active {
+        scroll-margin: 0 !important;
+        scroll-snap-align: none !important;
+        /* Prevent focus scroll */
+        scroll-margin-block: 0 !important;
+        scroll-margin-inline: 0 !important;
+    }
+    
+    /* Prevent any anchor links from scrolling */
+    .lang-option:target {
+        scroll-margin-top: 0 !important;
     }
     
     .lang-option:first-child {
