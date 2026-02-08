@@ -385,9 +385,9 @@
                 dropdown.style.left = '50%';
                 dropdown.style.right = 'auto';
             } else {
-                // On desktop, align to right edge of button
-                dropdown.style.left = 'auto';
-                dropdown.style.right = (window.innerWidth - btnRect.right) + 'px';
+                // On desktop, align to LEFT edge of button
+                dropdown.style.left = btnRect.left + 'px';
+                dropdown.style.right = 'auto';
             }
             
             console.log('Dropdown:', isOpen ? 'OPEN' : 'CLOSED');
@@ -403,8 +403,8 @@
                     dropdown.style.left = '50%';
                     dropdown.style.right = 'auto';
                 } else {
-                    dropdown.style.left = 'auto';
-                    dropdown.style.right = (window.innerWidth - btnRect.right) + 'px';
+                    dropdown.style.left = btnRect.left + 'px';
+                    dropdown.style.right = 'auto';
                 }
             }
         });

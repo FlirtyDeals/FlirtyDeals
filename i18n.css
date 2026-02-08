@@ -1,7 +1,8 @@
 /* Language Switcher - Simple Dropdown (ALL DEVICES) */
 .language-switcher {
-    position: relative;
+    position: static;
     z-index: 100;
+    overflow: visible !important;
 }
 
 .lang-btn {
@@ -39,12 +40,13 @@
     transition: transform 0.2s ease;
 }
 
-/* Dropdown Menu - SAME ON ALL DEVICES */
+/* Dropdown Menu - ALWAYS FIXED POSITION TO BREAK OUT OF NAVBAR */
 .lang-dropdown {
-    /* CRITICAL: These 3 lines make it appear BELOW the button */
-    position: absolute;
-    top: calc(100% + 8px);  /* 8px below button */
-    right: 0;
+    /* FIXED positioning to escape navbar */
+    position: fixed;
+    top: auto; /* Will be set by JavaScript */
+    right: auto; /* Will be set by JavaScript */
+    left: auto; /* Will be set by JavaScript */
     
     /* Styling */
     background: #1a1a1a;
@@ -71,42 +73,26 @@
     transform: translateY(-10px);
     transition: all 0.2s ease;
     
-    /* Make sure it's on top */
-    z-index: 10001;
+    /* Make sure it's ABOVE everything */
+    z-index: 999999;
 }
 
-/* Mobile: Center the dropdown IN THE MIDDLE OF THE SCREEN */
-@media (max-width: 480px) {
-    .language-switcher {
-        position: static;
-    }
-    
+/* Mobile: Center the dropdown */
+@media (max-width: 768px) {
     .lang-dropdown {
-        /* Use FIXED positioning with left/right auto margins */
-        position: fixed;
-        left: 5vw !important;
-        right: 5vw !important;
-        top: auto; /* Will be set dynamically by JS */
-        transform: translateY(-10px);
+        /* Center it horizontally */
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) translateY(-10px);
         
-        /* Let it auto-size within the margins */
+        /* Adjust width for mobile */
         width: 90vw;
         min-width: auto;
         max-width: 90vw;
-        margin: 0 auto;
-        
-        /* Super high z-index for mobile */
-        z-index: 99999;
     }
     
     .lang-dropdown.show {
-        transform: translateY(0);
-    }
-    
-    /* RTL support on mobile */
-    body.rtl .lang-dropdown {
-        left: 5vw !important;
-        right: 5vw !important;
+        transform: translateX(-50%) translateY(0);
     }
 }
 
@@ -377,7 +363,7 @@ body.rtl .footer-bottom {
     }
     
     .current-lang-flag {
-        font-size: 1.1rem;
+        font-size: 1rem;
     }
     
     .current-lang-name {
@@ -386,12 +372,6 @@ body.rtl .footer-bottom {
     
     .lang-btn i {
         font-size: 0.7rem;
-    }
-    
-    /* Still opens below button - just adjust width */
-    .lang-dropdown {
-        min-width: 200px;
-        max-width: 260px;
     }
     
     body.rtl .nav-container {
