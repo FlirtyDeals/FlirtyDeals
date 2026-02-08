@@ -1,20 +1,321 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<urlset
-      xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
-      xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-      xsi:schemaLocation="http://www.sitemaps.org/schemas/sitemap/0.9
-            http://www.sitemaps.org/schemas/sitemap/0.9/sitemap.xsd">
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9"
+        xmlns:xhtml="http://www.w3.org/1999/xhtml">
 
-  <url>
-    <loc>https://flirtydeals.com</loc>
-    <lastmod>2024-10-03T17:22:09+00:00</lastmod>
-    <priority>1.00</priority>
-  </url>
+<!-- Homepage (English) -->
+<url>
+  <loc>https://flirtydeals.com</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>1.0</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
 
-  <url>
-    <loc>https://flirtydeals.com/dirty_word_guesser</loc>
-    <lastmod>2024-10-03T17:22:09+00:00</lastmod>
-    <priority>0.80</priority>
-  </url>
+<!-- Arabic -->
+<url>
+  <loc>https://flirtydeals.com/ar</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Bengali -->
+<url>
+  <loc>https://flirtydeals.com/bn</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- German -->
+<url>
+  <loc>https://flirtydeals.com/de</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Spanish -->
+<url>
+  <loc>https://flirtydeals.com/es</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- French -->
+<url>
+  <loc>https://flirtydeals.com/fr</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Hindi -->
+<url>
+  <loc>https://flirtydeals.com/hi</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Indonesian -->
+<url>
+  <loc>https://flirtydeals.com/id</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Japanese -->
+<url>
+  <loc>https://flirtydeals.com/ja</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Punjabi -->
+<url>
+  <loc>https://flirtydeals.com/pa</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Portuguese -->
+<url>
+  <loc>https://flirtydeals.com/pt</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Russian -->
+<url>
+  <loc>https://flirtydeals.com/ru</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Urdu -->
+<url>
+  <loc>https://flirtydeals.com/ur</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Chinese -->
+<url>
+  <loc>https://flirtydeals.com/zh</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>daily</changefreq>
+  <priority>0.9</priority>
+  <xhtml:link rel="alternate" hreflang="en" href="https://flirtydeals.com"/>
+  <xhtml:link rel="alternate" hreflang="ar" href="https://flirtydeals.com/ar"/>
+  <xhtml:link rel="alternate" hreflang="bn" href="https://flirtydeals.com/bn"/>
+  <xhtml:link rel="alternate" hreflang="de" href="https://flirtydeals.com/de"/>
+  <xhtml:link rel="alternate" hreflang="es" href="https://flirtydeals.com/es"/>
+  <xhtml:link rel="alternate" hreflang="fr" href="https://flirtydeals.com/fr"/>
+  <xhtml:link rel="alternate" hreflang="hi" href="https://flirtydeals.com/hi"/>
+  <xhtml:link rel="alternate" hreflang="id" href="https://flirtydeals.com/id"/>
+  <xhtml:link rel="alternate" hreflang="ja" href="https://flirtydeals.com/ja"/>
+  <xhtml:link rel="alternate" hreflang="pa" href="https://flirtydeals.com/pa"/>
+  <xhtml:link rel="alternate" hreflang="pt" href="https://flirtydeals.com/pt"/>
+  <xhtml:link rel="alternate" hreflang="ru" href="https://flirtydeals.com/ru"/>
+  <xhtml:link rel="alternate" hreflang="ur" href="https://flirtydeals.com/ur"/>
+  <xhtml:link rel="alternate" hreflang="zh" href="https://flirtydeals.com/zh"/>
+</url>
+
+<!-- Dirty Word Guesser (Game/Tool) -->
+<url>
+  <loc>https://flirtydeals.com/dirty_word_guesser</loc>
+  <lastmod>2026-02-08</lastmod>
+  <changefreq>weekly</changefreq>
+  <priority>0.7</priority>
+</url>
 
 </urlset>

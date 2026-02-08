@@ -8,18 +8,18 @@
 
     // Language configuration
     const LANGUAGES = {
-        'en': { name: 'English', flag: '🇺🇸', currency: 'USD' },
+        'en': { name: 'English', flag: '🇬🇧', currency: 'USD' },
         'zh': { name: '中文', flag: '🇨🇳', currency: 'CNY' },
         'hi': { name: 'हिन्दी', flag: '🇮🇳', currency: 'INR' },
         'es': { name: 'Español', flag: '🇪🇸', currency: 'EUR' },
         'ar': { name: 'العربية', flag: '🇸🇦', currency: 'AED', rtl: true },
         'bn': { name: 'বাংলা', flag: '🇧🇩', currency: 'BDT' },
-        'pt': { name: 'Português', flag: '🇧🇷', currency: 'BRL' },
+        'pt': { name: 'Português', flag: '🇵🇹', currency: 'BRL' },
         'ru': { name: 'Русский', flag: '🇷🇺', currency: 'RUB' },
         'id': { name: 'Bahasa', flag: '🇮🇩', currency: 'IDR' },
         'ur': { name: 'اردو', flag: '🇵🇰', currency: 'PKR', rtl: true },
         'ja': { name: '日本語', flag: '🇯🇵', currency: 'JPY' },
-        'pa': { name: 'ਪੰਜਾਬੀ', flag: '🇮🇳', currency: 'INR' },
+        'pa': { name: 'پنجابی', flag: '🇵🇰', currency: 'PKR', rtl: true },
         'fr': { name: 'Français', flag: '🇫🇷', currency: 'EUR' },
         'de': { name: 'Deutsch', flag: '🇩🇪', currency: 'EUR' }
     };
@@ -149,19 +149,19 @@
     async function loadExchangeRates() {
         console.log('🔄 Loading exchange rates...');
         
-        const fallbackRates = {
-            'USD': 1.0,
-            'CNY': 7.2,
-            'INR': 83.0,
-            'EUR': 0.92,
-            'AED': 3.67,
-            'BDT': 110.0,
-            'BRL': 5.6,
-            'RUB': 90.0,
-            'IDR': 16000.0,
-            'PKR': 280.0,
-            'JPY': 150.0
-        };
+            const fallbackRates = {
+                'USD': 1.0,
+                'CNY': 7.2,
+                'INR': 83.0,
+                'EUR': 0.92,
+                'AED': 3.67,
+                'BDT': 110.0,
+                'BRL': 5.6,
+                'RUB': 90.0,
+                'IDR': 16000.0,
+                'PKR': 280.0,
+                'JPY': 150.0
+            };
         
         const currencies = [...new Set(Object.values(LANGUAGES).map(lang => lang.currency))];
         const targetCurrencies = currencies.filter(curr => curr !== 'USD');
