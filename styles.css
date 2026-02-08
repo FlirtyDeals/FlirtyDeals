@@ -111,7 +111,7 @@ body {
 /* Mobile Styles - all mobile rules must be inside this block */
 @media (max-width: 768px) {
     .navbar {
-        height: 120px !important;
+        height: 110px !important;
         padding: 0 1rem !important;
         overflow: hidden !important;
     }
@@ -206,7 +206,7 @@ body {
     position: relative;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 0px 40px rgba(214, 0, 110, 0.4), 0 0 40px rgba(255, 20, 147, 0.2);
+    box-shadow: 0 20px 60px rgba(214, 0, 110, 0.4), 0 0 40px rgba(255, 20, 147, 0.2);
 }
 .hero-video video {
     width: 100%;
@@ -240,16 +240,6 @@ body.age-verified .hero-video video {
     background: rgba(255, 255, 255, 0.5);
     border-radius: 20px;
     backdrop-filter: blur(10px);
-}
-
-/* Mobile only */
-@media (max-width: 768px) {
-    .filter-bar {
-        max-width: 90%;
-        width: 90%;
-        margin: 1rem auto;
-        padding: 1rem 1rem;
-    }
 }
 
 .filter-btn {
