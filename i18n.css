@@ -371,8 +371,11 @@ body.rtl .footer-bottom {
         -webkit-user-select: none;
         user-select: none;
         touch-action: manipulation;
-        min-height: auto !important;
-        height: auto !important;
+        /* Match other button heights */
+        min-height: 38px !important;
+        height: 38px !important;
+        display: flex !important;
+        align-items: center !important;
     }
     
     .lang-btn:hover {
