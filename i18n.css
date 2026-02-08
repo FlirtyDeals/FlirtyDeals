@@ -77,6 +77,27 @@
     z-index: 999999999 !important;
 }
 
+/* CRITICAL FIX: Force navbar to show dropdown on mobile */
+@media (max-width: 768px) {
+    /* Override navbar overflow when dropdown is open */
+    body:has(.lang-dropdown.show) .navbar {
+        overflow: visible !important;
+    }
+    
+    body:has(.lang-dropdown.show) .nav-container {
+        overflow: visible !important;
+    }
+    
+    /* Fallback: Use class-based approach if :has() not supported */
+    .navbar.dropdown-open {
+        overflow: visible !important;
+    }
+    
+    .nav-container.dropdown-open {
+        overflow: visible !important;
+    }
+}
+
 /* Mobile: Center the dropdown */
 @media (max-width: 768px) {
     .lang-dropdown {

@@ -368,12 +368,27 @@
         const dropdownBtn = document.getElementById('langDropdownBtn');
         const dropdown = document.getElementById('langDropdown');
         
+        // Get navbar and nav-container for overflow fix
+        const navbarElement = document.querySelector('.navbar');
+        const navContainer = document.querySelector('.nav-container');
+        
         // Toggle dropdown
         dropdownBtn.addEventListener('click', (e) => {
             e.preventDefault();
             e.stopPropagation();
             
             const isOpen = dropdown.classList.toggle('show');
+            
+            // CRITICAL FIX: Toggle overflow on navbar for mobile
+            if (isOpen) {
+                // Add classes to allow dropdown to show on mobile
+                if (navbarElement) navbarElement.classList.add('dropdown-open');
+                if (navContainer) navContainer.classList.add('dropdown-open');
+            } else {
+                // Remove classes when dropdown closes
+                if (navbarElement) navbarElement.classList.remove('dropdown-open');
+                if (navContainer) navContainer.classList.remove('dropdown-open');
+            }
             
             // ALWAYS position dropdown using fixed positioning to escape navbar
             const btnRect = dropdownBtn.getBoundingClientRect();
@@ -413,6 +428,9 @@
         document.addEventListener('click', (e) => {
             if (!switcher.contains(e.target)) {
                 dropdown.classList.remove('show');
+                // Remove overflow classes when dropdown closes
+                if (navbarElement) navbarElement.classList.remove('dropdown-open');
+                if (navContainer) navContainer.classList.remove('dropdown-open');
             }
         });
         
