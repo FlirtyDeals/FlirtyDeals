@@ -26,12 +26,11 @@ body {
     background: linear-gradient(135deg, #d6006e 0%, #ff1493 50%, #ff69b4 100%);
     padding: 1rem 2rem;
     box-shadow: 0 4px 30px rgba(214, 0, 110, 0.5);
-    position: relative; /* CHANGED from sticky */
+    position: relative;
     z-index: 100;
     backdrop-filter: blur(10px);
     border-bottom: 2px solid rgba(255, 255, 255, 0.2);
 }
-
 .nav-container {
     max-width: 1400px;
     margin: 0 auto;
@@ -41,7 +40,6 @@ body {
     gap: 2rem;
     position: relative;
 }
-
 .nav-logo {
     position: relative;
     z-index: 1;
@@ -55,7 +53,6 @@ body {
     -webkit-backdrop-filter: blur(6px);
     transition: transform 0.2s ease;
 }
-
 .nav-logo::before {
     content: "";
     position: absolute;
@@ -63,25 +60,20 @@ body {
     left: 0;
     right: 0;
     transform: translateY(-50%);
-    height: calc(100% + 4px); /* <-- change this for taller background */
+    height: calc(100% + 4px);
     border-radius: 15px;
     background: rgba(0,0,0,0.15);
     z-index: 0;
 }
-
-
 .nav-logo img {
     height: 50px;
     width: auto;
     display: block;
 }
-
-
 .nav-center {
     flex: 1;
     text-align: center;
 }
-
 .nav-title {
     font-size: 1.8rem;
     font-weight: 700;
@@ -89,17 +81,14 @@ body {
     text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
     margin-bottom: 0.3rem;
 }
-
 .nav-subtitle {
     font-size: 0.9rem;
     color: rgba(255,255,255,0.95);
 }
-
 .nav-actions {
     display: flex;
     gap: 1rem;
 }
-
 .nav-btn {
     background: white;
     color: #8b0045;
@@ -113,12 +102,94 @@ body {
     align-items: center;
     gap: 0.5rem;
 }
-
 .nav-btn:hover {
     transform: translateY(-2px);
     box-shadow: 0 6px 20px rgba(0,0,0,0.2);
     background: #ffe6f0;
 }
+
+/* Mobile Styles - all mobile rules must be inside this block */
+@media (max-width: 768px) {
+    .navbar {
+        height: 110px !important;
+        padding: 0 1rem !important;
+        overflow: hidden !important;
+    }
+
+    .nav-container {
+        height: 100% !important;
+    }
+
+    /* Hide title and subtitle on mobile */
+    .nav-title,
+    .nav-subtitle {
+        display: none;
+    }
+
+    /* Reduce logo size */
+    .nav-logo {
+        height: 48px;
+        padding: 0 8px;
+        border-radius: 12px;
+        margin-top: 6px;
+    }
+
+    .nav-logo img {
+        height: 34px;
+    }
+
+    /* Make buttons smaller and set mobile interaction states */
+    .nav-btn {
+        padding: 0.35rem 0.8rem;
+        font-size: 0.85rem;
+        gap: 0.25rem;
+        transform: translateY(-20px) scale(0.85); /* resting state on mobile */
+        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
+        -webkit-tap-highlight-color: transparent;
+        -webkit-user-select: none;
+        user-select: none;
+        touch-action: manipulation;
+    }
+
+    .nav-btn i {
+        font-size: 0.95rem;
+    }
+
+    /* Prevent desktop hover from changing mobile resting transform */
+    .nav-btn:hover {
+        transform: translateY(-20px) scale(0.85);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        background: white;
+    }
+
+    /* Tapping and keyboard focus feedback */
+    .nav-btn:active,
+    .nav-btn:focus {
+        transform: translateY(-16px) scale(0.85);
+        box-shadow: 0 3px 10px rgba(0,0,0,0.12);
+        background: #ffe6f0;
+        outline: none;
+    }
+
+    /* If you need the action area to take less horizontal space */
+    .nav-actions {
+        gap: 0.5rem;
+    }
+}
+
+/* Extra safety for touch-only devices */
+@media (hover: none) and (pointer: coarse) {
+    .nav-btn:hover {
+        transform: translateY(-20px) scale(0.85);
+        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
+        background: white;
+    }
+    .nav-btn:active {
+        transform: translateY(-16px) scale(0.85);
+    }
+}
+
+
 
 /* Hero Section */
 .hero {
@@ -126,20 +197,25 @@ body {
     margin: 2rem auto;
     padding: 0 2rem;
 }
-
 .hero-video {
     position: relative;
     border-radius: 20px;
     overflow: hidden;
     box-shadow: 0 20px 60px rgba(214, 0, 110, 0.4), 0 0 40px rgba(255, 20, 147, 0.2);
 }
-
 .hero-video video {
     width: 100%;
     height: auto;
     display: block;
     filter: blur(25px);
     transition: filter 0.3s;
+}
+
+/* Hide hero section on mobile */
+@media (max-width: 768px) {
+    .hero {
+        display: none;
+    }
 }
 
 /* Reveal hero after age verification */
