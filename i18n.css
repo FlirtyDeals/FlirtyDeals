@@ -98,13 +98,21 @@
     }
 }
 
+/* Dropdown show state - DEFAULT (desktop) */
+.lang-dropdown.show {
+    opacity: 1;
+    visibility: visible;
+    pointer-events: auto;
+    transform: translateY(0);
+}
+
 /* Mobile: Center the dropdown */
 @media (max-width: 768px) {
     .lang-dropdown {
         /* Center it horizontally */
         left: 50% !important;
         right: auto !important;
-        transform: translateX(-50%) translateY(-10px);
+        transform: translateX(-50%) translateY(-10px) !important;
         
         /* Adjust width for mobile */
         width: 90vw;
@@ -117,15 +125,8 @@
     }
     
     .lang-dropdown.show {
-        transform: translateX(-50%) translateY(0);
+        transform: translateX(-50%) translateY(0) !important;
     }
-}
-
-.lang-dropdown.show {
-    opacity: 1;
-    visibility: visible;
-    pointer-events: auto;
-    transform: translateY(0);
 }
 
 /* Language Options */

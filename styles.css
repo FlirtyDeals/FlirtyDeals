@@ -111,7 +111,7 @@ body {
 /* Mobile Styles - all mobile rules must be inside this block */
 @media (max-width: 768px) {
     .navbar {
-        height: 110px !important;
+        height: 120px !important;
         padding: 0 1rem !important;
         overflow: hidden !important;
     }
