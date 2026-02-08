@@ -505,6 +505,28 @@ function filterDeals(category, clickedButton) {
             });
         });
 
+// Night Mode
+
+        // Check for saved theme preference or default to light mode
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.body.classList.add('dark-mode');
+        }
+
+        // Night mode toggle functionality
+        const nightModeToggle = document.getElementById('nightModeToggle');
+        
+        nightModeToggle.addEventListener('click', function() {
+            document.body.classList.toggle('dark-mode');
+            
+            // Save the user's preference
+            if (document.body.classList.contains('dark-mode')) {
+                localStorage.setItem('theme', 'dark');
+            } else {
+                localStorage.setItem('theme', 'light');
+            }
+        });
+
 // Scroll to Top Button
         const scrollToTopBtn = document.getElementById('scrollToTop');
         

@@ -111,7 +111,7 @@ body {
 /* Mobile Styles - all mobile rules must be inside this block */
 @media (max-width: 768px) {
     .navbar {
-        height: 110px !important;
+        height: 120px !important;
         padding: 0 1rem !important;
         overflow: hidden !important;
     }
@@ -153,6 +153,11 @@ body {
 
     .nav-btn i {
         font-size: 0.95rem;
+    }
+
+    /* Larger icon for night mode button on mobile */
+    #nightModeToggle i {
+        font-size: 1.2rem;
     }
 
     /* Prevent desktop hover from changing mobile resting transform */
@@ -201,7 +206,7 @@ body {
     position: relative;
     border-radius: 20px;
     overflow: hidden;
-    box-shadow: 0 20px 60px rgba(214, 0, 110, 0.4), 0 0 40px rgba(255, 20, 147, 0.2);
+    box-shadow: 0 0px 40px rgba(214, 0, 110, 0.4), 0 0 40px rgba(255, 20, 147, 0.2);
 }
 .hero-video video {
     width: 100%;
@@ -227,11 +232,24 @@ body.age-verified .hero-video video {
 .filter-bar {
     max-width: 1400px;
     margin: 2rem auto;
-    padding: 0 2rem;
+    padding: 1.5rem 2rem;
     display: flex;
     gap: 1rem;
     flex-wrap: wrap;
     justify-content: center;
+    background: rgba(255, 255, 255, 0.5);
+    border-radius: 20px;
+    backdrop-filter: blur(10px);
+}
+
+/* Mobile only */
+@media (max-width: 768px) {
+    .filter-bar {
+        max-width: 90%;
+        width: 90%;
+        margin: 1rem auto;
+        padding: 1rem 1rem;
+    }
 }
 
 .filter-btn {
@@ -832,4 +850,221 @@ footer {
         align-items: flex-start;
         padding-top: 11vh; /* Change this value - lower number = higher position */
     }
+}
+/* ========================================
+   NIGHT MODE / DARK THEME STYLES
+   ======================================== */
+
+/* Night mode button styling */
+#nightModeToggle {
+    border: none;
+    cursor: pointer;
+    position: relative;
+    padding: 0.7rem 1rem;
+    min-width: auto;
+}
+
+#nightModeToggle i {
+    font-size: 1.4rem;
+    transition: transform 0.3s ease;
+}
+
+#nightModeToggle:hover i {
+    transform: rotate(20deg);
+}
+
+/* Dark theme variables and overrides */
+body.dark-mode {
+    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f1629 50%, #1a1a2e 75%, #16213e 100%);
+    background-size: 200% 200%;
+    animation: gradientShift 15s ease infinite;
+}
+
+/* Dark mode navbar */
+body.dark-mode .navbar {
+    background: linear-gradient(135deg, #0f1629 0%, #1a1a2e 50%, #16213e 100%);
+    border-bottom: 2px solid rgba(255, 105, 180, 0.3);
+}
+
+/* Dark mode nav button */
+body.dark-mode .nav-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+    border: 1px solid rgba(255, 105, 180, 0.3);
+}
+
+body.dark-mode .nav-btn:hover {
+    background: rgba(255, 105, 180, 0.2);
+    border-color: rgba(255, 105, 180, 0.5);
+}
+
+/* Update icon in night mode */
+body.dark-mode #nightModeToggle i.fa-moon::before {
+    content: "\f185"; /* sun icon */
+}
+
+/* Dark mode filter bar */
+body.dark-mode .filter-bar {
+    background: rgba(26, 26, 46, 0.95);
+    border-bottom: 2px solid rgba(255, 105, 180, 0.2);
+}
+
+body.dark-mode .filter-btn {
+    color: #fff;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 105, 180, 0.2);
+}
+
+body.dark-mode .filter-btn:hover {
+    background: rgba(255, 105, 180, 0.2);
+    border-color: rgba(255, 105, 180, 0.4);
+}
+
+body.dark-mode .filter-btn.active {
+    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
+    color: white;
+    border-color: #ff1493;
+}
+
+/* Dark mode deal cards */
+body.dark-mode .deal-card {
+    background: rgba(26, 26, 46, 0.9);
+    border: 1px solid rgba(255, 105, 180, 0.2);
+}
+
+body.dark-mode .deal-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 12px 40px rgba(255, 20, 147, 0.4);
+    border-color: rgba(255, 105, 180, 0.5);
+}
+
+body.dark-mode .deal-title {
+    color: #fff;
+}
+
+body.dark-mode .deal-description {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.dark-mode .deal-btn {
+    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
+    color: white;
+}
+
+body.dark-mode .deal-btn:hover {
+    background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
+    box-shadow: 0 6px 25px rgba(255, 20, 147, 0.5);
+}
+
+/* Dark mode section titles */
+body.dark-mode .section-title {
+    color: #fff;
+    text-shadow: 2px 2px 8px rgba(255, 20, 147, 0.5);
+}
+
+/* Dark mode separator */
+body.dark-mode .separator {
+    background: linear-gradient(90deg, 
+        transparent 0%, 
+        rgba(255, 105, 180, 0.3) 50%, 
+        transparent 100%);
+}
+
+/* Dark mode footer */
+body.dark-mode footer {
+    background: linear-gradient(135deg, #0f1629 0%, #1a1a2e 100%);
+    border-top: 2px solid rgba(255, 105, 180, 0.2);
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.dark-mode footer h4 {
+    color: #ff69b4;
+}
+
+body.dark-mode footer a {
+    color: rgba(255, 255, 255, 0.8);
+}
+
+body.dark-mode footer a:hover {
+    color: #ff69b4;
+}
+
+body.dark-mode .footer-bottom {
+    border-top: 1px solid rgba(255, 105, 180, 0.2);
+}
+
+/* Dark mode scroll to top button */
+body.dark-mode .scroll-to-top {
+    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
+    box-shadow: 0 4px 15px rgba(255, 20, 147, 0.6);
+}
+
+body.dark-mode .scroll-to-top:hover {
+    box-shadow: 0 8px 25px rgba(255, 20, 147, 0.8);
+}
+
+/* Dark mode modals */
+body.dark-mode .modal-content {
+    background: rgba(26, 26, 46, 0.98);
+    border: 2px solid rgba(255, 105, 180, 0.3);
+    color: #fff;
+}
+
+body.dark-mode .modal-title {
+    color: #ff69b4;
+}
+
+body.dark-mode .modal-text {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.dark-mode .modal-btn {
+    border: 1px solid rgba(255, 105, 180, 0.3);
+}
+
+body.dark-mode .accept-btn {
+    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
+}
+
+body.dark-mode .exit-btn {
+    background: rgba(255, 255, 255, 0.1);
+    color: #fff;
+}
+
+/* Dark mode cookie banner */
+body.dark-mode #cookie-banner {
+    background: rgba(26, 26, 46, 0.98);
+    border: 1px solid rgba(255, 105, 180, 0.3);
+}
+
+body.dark-mode .cookie-message {
+    color: rgba(255, 255, 255, 0.9);
+}
+
+body.dark-mode .cookie-text-link {
+    color: #ff69b4;
+}
+
+body.dark-mode .cookie-text-link:hover {
+    color: #ff1493;
+}
+
+/* Dark mode price styling */
+body.dark-mode .old-price {
+    color: rgba(255, 255, 255, 0.5);
+}
+
+body.dark-mode .new-price {
+    color: #00ff88;
+}
+
+/* Smooth transitions for theme switching */
+body,
+.navbar,
+.filter-bar,
+.deal-card,
+footer,
+.modal-content,
+#cookie-banner {
+    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
 }
