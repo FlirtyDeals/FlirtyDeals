@@ -375,13 +375,19 @@
             
             const isOpen = dropdown.classList.toggle('show');
             
-            // On mobile, position dropdown below button
-            if (window.innerWidth <= 480) {
-                const btnRect = dropdownBtn.getBoundingClientRect();
-                dropdown.style.top = (btnRect.bottom + 8) + 'px';
+            // ALWAYS position dropdown using fixed positioning to escape navbar
+            const btnRect = dropdownBtn.getBoundingClientRect();
+            dropdown.style.top = (btnRect.bottom + 8) + 'px';
+            
+            // On mobile (768px and below), center it
+            if (window.innerWidth <= 768) {
+                // Center is handled by CSS transform
+                dropdown.style.left = '50%';
+                dropdown.style.right = 'auto';
             } else {
-                // Reset to CSS default on desktop
-                dropdown.style.top = '';
+                // On desktop, align to right edge of button
+                dropdown.style.left = 'auto';
+                dropdown.style.right = (window.innerWidth - btnRect.right) + 'px';
             }
             
             console.log('Dropdown:', isOpen ? 'OPEN' : 'CLOSED');
@@ -389,11 +395,17 @@
         
         // Handle window resize
         window.addEventListener('resize', () => {
-            if (dropdown.classList.contains('show') && window.innerWidth <= 480) {
+            if (dropdown.classList.contains('show')) {
                 const btnRect = dropdownBtn.getBoundingClientRect();
                 dropdown.style.top = (btnRect.bottom + 8) + 'px';
-            } else {
-                dropdown.style.top = '';
+                
+                if (window.innerWidth <= 768) {
+                    dropdown.style.left = '50%';
+                    dropdown.style.right = 'auto';
+                } else {
+                    dropdown.style.left = 'auto';
+                    dropdown.style.right = (window.innerWidth - btnRect.right) + 'px';
+                }
             }
         });
         
