@@ -75,7 +75,342 @@
 
 <!-- Site styles -->
 <link rel="stylesheet" href="styles.css">
-<link rel="stylesheet" href="cookie-consent.css">
+<style id="cookie-consent-styles">
+* {
+    box-sizing: border-box;
+}
+
+/* Cookie Banner - Elegant & Compact */
+#cookie-banner {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: rgba(255, 255, 255, 0.98);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 105, 180, 0.3);
+    border-radius: 16px;
+    box-shadow: 0 8px 32px rgba(255, 105, 180, 0.15), 0 2px 8px rgba(0, 0, 0, 0.1);
+    padding: 18px 45px 18px 18px;
+    max-width: 440px;
+    z-index: 10000;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
+    display: none;
+}
+
+/* Mobile adjustments */
+@media (max-width: 768px) {
+    #cookie-banner {
+        left: 10px;
+        right: 10px;
+        bottom: 10px;
+        max-width: none;
+        padding: 14px 40px 14px 14px;
+        border-radius: 12px;
+    }
+
+    #cookie-banner.show {
+        animation: slideInMobile 0.3s ease-out;
+    }
+
+    .cookie-content {
+        gap: 10px;
+    }
+
+    .cookie-icon {
+        font-size: 26px;
+    }
+
+    .cookie-message {
+        font-size: 13px;
+        margin-bottom: 10px;
+    }
+
+    .cookie-links {
+        gap: 6px;
+        justify-content: flex-start;
+    }
+
+    .cookie-text-link {
+        font-size: 13px;
+        padding: 6px 12px;
+        flex: 0 0 auto;
+    }
+
+    .close-banner {
+        top: 10px;
+        right: 10px;
+        font-size: 22px;
+    }
+}
+
+/* Extra small mobile */
+@media (max-width: 360px) {
+    .cookie-text-link {
+        font-size: 12px;
+        padding: 5px 10px;
+    }
+}
+
+#cookie-banner.show {
+    display: block;
+    animation: slideIn 0.3s ease-out;
+}
+
+@keyframes slideIn {
+    from {
+        transform: translateX(450px);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes slideInMobile {
+    from {
+        transform: translateY(100px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.cookie-content {
+    display: flex;
+    align-items: flex-start;
+    gap: 14px;
+}
+
+.cookie-icon {
+    font-size: 28px;
+    line-height: 1;
+    margin-top: 2px;
+    flex-shrink: 0;
+    filter: drop-shadow(0 2px 4px rgba(255, 105, 180, 0.3));
+}
+
+.cookie-text-wrapper {
+    flex: 1;
+}
+
+.cookie-message {
+    margin: 0 0 10px 0;
+    color: #333;
+    font-size: 15px;
+    line-height: 1.5;
+    font-weight: 400;
+}
+
+.cookie-links {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 8px;
+}
+
+.cookie-text-link {
+    color: #ff69b4;
+    font-weight: 600;
+    text-decoration: none;
+    transition: all 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+    background: white;
+    border: 1.5px solid rgba(255, 105, 180, 0.3);
+}
+
+.cookie-text-link:hover {
+    background: rgba(255, 105, 180, 0.05);
+    border-color: #ff69b4;
+    transform: translateY(-1px);
+}
+
+.close-banner {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: none;
+    border: none;
+    font-size: 26px;
+    color: #ccc;
+    cursor: pointer;
+    line-height: 1;
+    padding: 0;
+    width: 26px;
+    height: 26px;
+    transition: all 0.2s;
+    border-radius: 6px;
+}
+
+.close-banner:hover {
+    color: #999;
+    background: rgba(0, 0, 0, 0.05);
+    transform: rotate(90deg);
+}
+
+/* Settings Modal */
+#cookie-settings-modal {
+    display: none;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.5);
+    z-index: 10001;
+    align-items: center;
+    justify-content: center;
+}
+
+#cookie-settings-modal.show {
+    display: flex;
+}
+
+.modal-content {
+    background: white;
+    border-radius: 12px;
+    padding: 30px;
+    max-width: 500px;
+    width: 90%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
+}
+
+.modal-content h2 {
+    margin: 0 0 20px 0;
+    color: #ff69b4;
+    font-size: 24px;
+}
+
+.cookie-category {
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 16px;
+    margin-bottom: 12px;
+}
+
+.category-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+}
+
+.category-header h4 {
+    margin: 0;
+    color: #333;
+    font-size: 16px;
+}
+
+.category-description {
+    color: #666;
+    font-size: 13px;
+    line-height: 1.4;
+}
+
+/* Toggle Switch */
+.toggle-switch {
+    position: relative;
+    width: 50px;
+    height: 26px;
+}
+
+.toggle-switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+}
+
+.slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #ccc;
+    transition: 0.3s;
+    border-radius: 26px;
+}
+
+.slider:before {
+    position: absolute;
+    content: "";
+    height: 20px;
+    width: 20px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: 0.3s;
+    border-radius: 50%;
+}
+
+input:checked + .slider {
+    background-color: #ff69b4;
+}
+
+input:checked + .slider:before {
+    transform: translateX(24px);
+}
+
+input:disabled + .slider {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.modal-buttons {
+    display: flex;
+    gap: 10px;
+    margin-top: 20px;
+}
+
+/* Settings Button (Always visible in corner) */
+#cookie-settings-btn {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #ff69b4;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+    font-size: 20px;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(255, 105, 180, 0.4);
+    z-index: 9999;
+    display: none;
+    transition: all 0.2s;
+}
+
+#cookie-settings-btn:hover {
+    background: #ff1493;
+    transform: scale(1.1);
+}
+
+/* Mobile adjustments for settings button */
+@media (max-width: 768px) {
+    #cookie-settings-btn {
+        bottom: 10px;
+        right: 10px;
+        width: 45px;
+        height: 45px;
+        font-size: 18px;
+    }
+
+    #cookie-settings-btn.show {
+        display: block;
+    }
+}
+</style>
 <link rel="stylesheet" href="i18n.css">
 
 <script>
@@ -1524,7 +1859,149 @@ Your premium portal to the best deals in adult entertainment. Secure, private, a
 
 <script src="i18n.js"></script>
 <script src="main.js"></script>
-<script src="cookie-consent.js"></script>
+<script id="cookie-consent-script">
+// ============================================
+// CONFIGURATION - CHANGE THIS!
+// ============================================
+const GA_MEASUREMENT_ID = 'G-MKQEWDMLP3'; // Replace with your Google Analytics ID
+
+// ============================================
+// Cookie Consent Manager
+// ============================================
+
+const CONSENT_KEY = 'cookie_consent';
+
+// Check if user has already made a choice
+function hasConsent() {
+    return localStorage.getItem(CONSENT_KEY) !== null;
+}
+
+// Get current consent preferences
+function getConsent() {
+    const stored = localStorage.getItem(CONSENT_KEY);
+    if (!stored) {
+        return { necessary: true, analytics: false };
+    }
+    return JSON.parse(stored);
+}
+
+// Save consent preferences
+function saveConsent(preferences) {
+    localStorage.setItem(CONSENT_KEY, JSON.stringify(preferences));
+    applyConsent(preferences);
+}
+
+// Apply consent (load/block scripts)
+function applyConsent(preferences) {
+    if (preferences.analytics) {
+        loadGoogleAnalytics();
+    }
+    // Add other tracking scripts here if needed
+}
+
+// Load Google Analytics
+function loadGoogleAnalytics() {
+    // Check if already loaded
+    if (window.gtag) return;
+
+    // Create script tag
+    const script = document.createElement('script');
+    script.async = true;
+    script.src = `https://www.googletagmanager.com/gtag/js?id=${GA_MEASUREMENT_ID}`;
+    document.head.appendChild(script);
+
+    // Initialize gtag
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    window.gtag = gtag;
+    gtag('js', new Date());
+    gtag('config', GA_MEASUREMENT_ID);
+
+    console.log('✅ Google Analytics loaded');
+}
+
+// ============================================
+// UI Functions
+// ============================================
+
+function showBanner() {
+    document.getElementById('cookie-banner').classList.add('show');
+}
+
+function hideBanner() {
+    document.getElementById('cookie-banner').classList.remove('show');
+}
+
+function showSettingsButton() {
+    document.getElementById('cookie-settings-btn').classList.add('show');
+}
+
+function openSettings() {
+    const consent = getConsent();
+    document.getElementById('analytics-toggle').checked = consent.analytics;
+    document.getElementById('cookie-settings-modal').classList.add('show');
+    hideBanner();
+}
+
+function closeSettings() {
+    document.getElementById('cookie-settings-modal').classList.remove('show');
+}
+
+// ============================================
+// User Actions
+// ============================================
+
+function acceptAllCookies() {
+    saveConsent({ necessary: true, analytics: true });
+    hideBanner();
+    showSettingsButton();
+}
+
+function rejectCookies() {
+    saveConsent({ necessary: true, analytics: false });
+    hideBanner();
+    showSettingsButton();
+}
+
+function acceptAllFromModal() {
+    saveConsent({ necessary: true, analytics: true });
+    closeSettings();
+}
+
+function savePreferences() {
+    const analytics = document.getElementById('analytics-toggle').checked;
+    saveConsent({ necessary: true, analytics });
+    closeSettings();
+}
+
+function updatePreferences() {
+    // This is called when toggles change, but we don't auto-save
+    // User must click "Save Preferences"
+}
+
+// Close modal when clicking outside
+document.getElementById('cookie-settings-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeSettings();
+    }
+});
+
+// ============================================
+// Initialize on page load
+// ============================================
+
+window.addEventListener('load', function() {
+    if (hasConsent()) {
+        // User has already consented, apply their preferences
+        const consent = getConsent();
+        applyConsent(consent);
+        showSettingsButton();
+    } else {
+        // First visit, show banner
+        showBanner();
+    }
+});
+</script>
 
 
 </body>
