@@ -81,7 +81,7 @@
 }
 
 /* Cookie Banner - Elegant & Compact */
-#cookie-banner {
+#fd-notice {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -99,7 +99,7 @@
 
 /* Mobile adjustments */
 @media (max-width: 768px) {
-    #cookie-banner {
+    #fd-notice {
         left: 10px;
         right: 10px;
         bottom: 10px;
@@ -108,35 +108,35 @@
         border-radius: 12px;
     }
 
-    #cookie-banner.show {
+    #fd-notice.show {
         animation: slideInMobile 0.3s ease-out;
     }
 
-    .cookie-content {
+    .fd-notice-content {
         gap: 10px;
     }
 
-    .cookie-icon {
+    .fd-notice-icon {
         font-size: 26px;
     }
 
-    .cookie-message {
+    .fd-notice-message {
         font-size: 13px;
         margin-bottom: 10px;
     }
 
-    .cookie-links {
+    .fd-notice-actions {
         gap: 6px;
         justify-content: flex-start;
     }
 
-    .cookie-text-link {
+    .fd-action-link {
         font-size: 13px;
         padding: 6px 12px;
         flex: 0 0 auto;
     }
 
-    .close-banner {
+    .fd-notice-close {
         top: 10px;
         right: 10px;
         font-size: 22px;
@@ -145,13 +145,13 @@
 
 /* Extra small mobile */
 @media (max-width: 360px) {
-    .cookie-text-link {
+    .fd-action-link {
         font-size: 12px;
         padding: 5px 10px;
     }
 }
 
-#cookie-banner.show {
+#fd-notice.show {
     display: block;
     animation: slideIn 0.3s ease-out;
 }
@@ -178,13 +178,13 @@
     }
 }
 
-.cookie-content {
+.fd-notice-content {
     display: flex;
     align-items: flex-start;
     gap: 14px;
 }
 
-.cookie-icon {
+.fd-notice-icon {
     font-size: 28px;
     line-height: 1;
     margin-top: 2px;
@@ -192,11 +192,11 @@
     filter: drop-shadow(0 2px 4px rgba(255, 105, 180, 0.3));
 }
 
-.cookie-text-wrapper {
+.fd-notice-text {
     flex: 1;
 }
 
-.cookie-message {
+.fd-notice-message {
     margin: 0 0 10px 0;
     color: #333;
     font-size: 15px;
@@ -204,14 +204,14 @@
     font-weight: 400;
 }
 
-.cookie-links {
+.fd-notice-actions {
     display: flex;
     align-items: center;
     flex-wrap: wrap;
     gap: 8px;
 }
 
-.cookie-text-link {
+.fd-action-link {
     color: #ff69b4;
     font-weight: 600;
     text-decoration: none;
@@ -226,13 +226,13 @@
     border: 1.5px solid rgba(255, 105, 180, 0.3);
 }
 
-.cookie-text-link:hover {
+.fd-action-link:hover {
     background: rgba(255, 105, 180, 0.05);
     border-color: #ff69b4;
     transform: translateY(-1px);
 }
 
-.close-banner {
+.fd-notice-close {
     position: absolute;
     top: 12px;
     right: 12px;
@@ -249,14 +249,14 @@
     border-radius: 6px;
 }
 
-.close-banner:hover {
+.fd-notice-close:hover {
     color: #999;
     background: rgba(0, 0, 0, 0.05);
     transform: rotate(90deg);
 }
 
 /* Settings Modal */
-#cookie-settings-modal {
+#fd-prefs-modal {
     display: none;
     position: fixed;
     top: 0;
@@ -269,11 +269,11 @@
     justify-content: center;
 }
 
-#cookie-settings-modal.show {
+#fd-prefs-modal.show {
     display: flex;
 }
 
-.modal-content {
+.fd-modal-content {
     background: white;
     border-radius: 12px;
     padding: 30px;
@@ -284,46 +284,46 @@
     box-shadow: 0 10px 40px rgba(0, 0, 0, 0.3);
 }
 
-.modal-content h2 {
+.fd-modal-content h2 {
     margin: 0 0 20px 0;
     color: #ff69b4;
     font-size: 24px;
 }
 
-.cookie-category {
+.fd-pref-category {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 16px;
     margin-bottom: 12px;
 }
 
-.category-header {
+.fd-pref-header {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 8px;
 }
 
-.category-header h4 {
+.fd-pref-header h4 {
     margin: 0;
     color: #333;
     font-size: 16px;
 }
 
-.category-description {
+.fd-pref-desc {
     color: #666;
     font-size: 13px;
     line-height: 1.4;
 }
 
 /* Toggle Switch */
-.toggle-switch {
+.fd-toggle {
     position: relative;
     width: 50px;
     height: 26px;
 }
 
-.toggle-switch input {
+.fd-toggle input {
     opacity: 0;
     width: 0;
     height: 0;
@@ -366,14 +366,14 @@ input:disabled + .slider {
     cursor: not-allowed;
 }
 
-.modal-buttons {
+.fd-modal-actions {
     display: flex;
     gap: 10px;
     margin-top: 20px;
 }
 
 /* Settings Button (Always visible in corner) */
-#cookie-settings-btn {
+#fd-prefs-btn {
     position: fixed;
     bottom: 20px;
     right: 20px;
@@ -391,14 +391,14 @@ input:disabled + .slider {
     transition: all 0.2s;
 }
 
-#cookie-settings-btn:hover {
+#fd-prefs-btn:hover {
     background: #ff1493;
     transform: scale(1.1);
 }
 
 /* Mobile adjustments for settings button */
 @media (max-width: 768px) {
-    #cookie-settings-btn {
+    #fd-prefs-btn {
         bottom: 10px;
         right: 10px;
         width: 45px;
@@ -406,7 +406,7 @@ input:disabled + .slider {
         font-size: 18px;
     }
 
-    #cookie-settings-btn.show {
+    #fd-prefs-btn.show {
         display: block;
     }
 }
@@ -431,54 +431,54 @@ input:disabled + .slider {
 <body class="bg-surface dark:bg-gradient-to-br dark:from-[#0f172a] dark:to-[#1e293b] text-gray-900 dark:text-white font-body-md min-h-screen flex flex-col pt-16">
 
 <!-- Cookie Consent Banner -->
-<div id="cookie-banner">
-  <button class="close-banner" onclick="rejectCookies()">&times;</button>
-  <div class="cookie-content">
-    <span class="cookie-icon">🍪</span>
-    <div class="cookie-text-wrapper">
-      <p class="cookie-message" data-i18n="cookie.message">We use cookies to enhance your browsing experience and analyze our traffic.</p>
-      <div class="cookie-links">
-        <a href="#" class="cookie-text-link cookie-link-accept" data-i18n="cookie.accept" onclick="acceptAllCookies(); return false;">✓ Accept</a>
-        <a href="#" class="cookie-text-link cookie-link-reject" data-i18n="cookie.reject" onclick="rejectCookies(); return false;">✗ Reject</a>
-        <a href="#" class="cookie-text-link cookie-link-customize" data-i18n="cookie.customize" onclick="openSettings(); return false;">⚙ Customize</a>
+<div id="fd-notice">
+  <button class="fd-notice-close" onclick="rejectCookies()">&times;</button>
+  <div class="fd-notice-content">
+    <span class="fd-notice-icon">🍪</span>
+    <div class="fd-notice-text">
+      <p class="fd-notice-message" data-i18n="cookie.message">We use cookies to enhance your browsing experience and analyze our traffic.</p>
+      <div class="fd-notice-actions">
+        <a href="#" class="fd-action-link fd-action-accept" data-i18n="cookie.accept" onclick="acceptAllCookies(); return false;">✓ Accept</a>
+        <a href="#" class="fd-action-link fd-action-reject" data-i18n="cookie.reject" onclick="rejectCookies(); return false;">✗ Reject</a>
+        <a href="#" class="fd-action-link fd-action-customize" data-i18n="cookie.customize" onclick="openSettings(); return false;">⚙ Customize</a>
       </div>
     </div>
   </div>
 </div>
 
 <!-- Cookie Settings Modal -->
-<div id="cookie-settings-modal">
-  <div class="modal-content">
+<div id="fd-prefs-modal">
+  <div class="fd-modal-content">
     <h2 data-i18n="cookie.preferences-title">Cookie Preferences</h2>
-    <div class="cookie-category">
-      <div class="category-header">
+    <div class="fd-pref-category">
+      <div class="fd-pref-header">
         <h4 data-i18n="cookie.necessary-title">✅ Necessary Cookies</h4>
-        <label class="toggle-switch">
+        <label class="fd-toggle">
           <input type="checkbox" checked disabled>
           <span class="slider"></span>
         </label>
       </div>
-      <p class="category-description" data-i18n="cookie.necessary-description">These cookies are essential for the website to function properly. They cannot be disabled.</p>
+      <p class="fd-pref-desc" data-i18n="cookie.necessary-description">These cookies are essential for the website to function properly. They cannot be disabled.</p>
     </div>
-    <div class="cookie-category">
-      <div class="category-header">
+    <div class="fd-pref-category">
+      <div class="fd-pref-header">
         <h4 data-i18n="cookie.analytics-title">📊 Analytics Cookies</h4>
-        <label class="toggle-switch">
-          <input type="checkbox" id="analytics-toggle" onchange="updatePreferences()">
+        <label class="fd-toggle">
+          <input type="checkbox" id="fd-analytics-toggle" onchange="updatePreferences()">
           <span class="slider"></span>
         </label>
       </div>
-      <p class="category-description" data-i18n="cookie.analytics-description">These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously (Google Analytics).</p>
+      <p class="fd-pref-desc" data-i18n="cookie.analytics-description">These cookies help us understand how visitors interact with our website by collecting and reporting information anonymously (Google Analytics).</p>
     </div>
-    <div class="modal-buttons">
-      <a href="#" class="cookie-text-link" data-i18n="cookie.save-preferences" onclick="savePreferences(); return false;">Save Preferences</a>
-      <a href="#" class="cookie-text-link" data-i18n="cookie.accept-all" onclick="acceptAllFromModal(); return false;">Accept All</a>
+    <div class="fd-modal-actions">
+      <a href="#" class="fd-action-link" data-i18n="cookie.save-preferences" onclick="savePreferences(); return false;">Save Preferences</a>
+      <a href="#" class="fd-action-link" data-i18n="cookie.accept-all" onclick="acceptAllFromModal(); return false;">Accept All</a>
     </div>
   </div>
 </div>
 
 <!-- Cookie Settings Button (shown after a choice has been made) -->
-<button id="cookie-settings-btn" onclick="openSettings()" aria-label="Cookie settings" data-i18n-aria="cookie.settings-btn-label">⚙</button>
+<button id="fd-prefs-btn" onclick="openSettings()" aria-label="Cookie settings" data-i18n-aria="cookie.settings-btn-label">⚙</button>
 
 <!-- Age Verification Modal -->
 <div class="fixed inset-0 z-[100] flex items-center justify-center bg-black/80 backdrop-blur-sm" id="ageModal">
@@ -1941,26 +1941,26 @@ function loadGoogleAnalytics() {
 // ============================================
 
 function showBanner() {
-    document.getElementById('cookie-banner').classList.add('show');
+    document.getElementById('fd-notice').classList.add('show');
 }
 
 function hideBanner() {
-    document.getElementById('cookie-banner').classList.remove('show');
+    document.getElementById('fd-notice').classList.remove('show');
 }
 
 function showSettingsButton() {
-    document.getElementById('cookie-settings-btn').classList.add('show');
+    document.getElementById('fd-prefs-btn').classList.add('show');
 }
 
 function openSettings() {
     const consent = getConsent();
-    document.getElementById('analytics-toggle').checked = consent.analytics;
-    document.getElementById('cookie-settings-modal').classList.add('show');
+    document.getElementById('fd-analytics-toggle').checked = consent.analytics;
+    document.getElementById('fd-prefs-modal').classList.add('show');
     hideBanner();
 }
 
 function closeSettings() {
-    document.getElementById('cookie-settings-modal').classList.remove('show');
+    document.getElementById('fd-prefs-modal').classList.remove('show');
 }
 
 // ============================================
@@ -1985,7 +1985,7 @@ function acceptAllFromModal() {
 }
 
 function savePreferences() {
-    const analytics = document.getElementById('analytics-toggle').checked;
+    const analytics = document.getElementById('fd-analytics-toggle').checked;
     saveConsent({ necessary: true, analytics });
     closeSettings();
 }
@@ -1996,7 +1996,7 @@ function updatePreferences() {
 }
 
 // Close modal when clicking outside
-document.getElementById('cookie-settings-modal').addEventListener('click', function(e) {
+document.getElementById('fd-prefs-modal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeSettings();
     }

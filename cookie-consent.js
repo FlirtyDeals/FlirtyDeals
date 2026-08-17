@@ -79,26 +79,26 @@ function loadGoogleAnalytics() {
 // ============================================
 
 function showBanner() {
-    document.getElementById('cookie-banner').classList.add('show');
+    document.getElementById('fd-notice').classList.add('show');
 }
 
 function hideBanner() {
-    document.getElementById('cookie-banner').classList.remove('show');
+    document.getElementById('fd-notice').classList.remove('show');
 }
 
 function showSettingsButton() {
-    document.getElementById('cookie-settings-btn').classList.add('show');
+    document.getElementById('fd-prefs-btn').classList.add('show');
 }
 
 function openSettings() {
     const consent = getConsent();
-    document.getElementById('analytics-toggle').checked = consent.analytics;
-    document.getElementById('cookie-settings-modal').classList.add('show');
+    document.getElementById('fd-analytics-toggle').checked = consent.analytics;
+    document.getElementById('fd-prefs-modal').classList.add('show');
     hideBanner();
 }
 
 function closeSettings() {
-    document.getElementById('cookie-settings-modal').classList.remove('show');
+    document.getElementById('fd-prefs-modal').classList.remove('show');
 }
 
 // ============================================
@@ -123,7 +123,7 @@ function acceptAllFromModal() {
 }
 
 function savePreferences() {
-    const analytics = document.getElementById('analytics-toggle').checked;
+    const analytics = document.getElementById('fd-analytics-toggle').checked;
     saveConsent({ necessary: true, analytics });
     closeSettings();
 }
@@ -134,7 +134,7 @@ function updatePreferences() {
 }
 
 // Close modal when clicking outside
-document.getElementById('cookie-settings-modal').addEventListener('click', function(e) {
+document.getElementById('fd-prefs-modal').addEventListener('click', function(e) {
     if (e.target === this) {
         closeSettings();
     }
