@@ -40,110 +40,81 @@
     transition: transform 0.2s ease;
 }
 
-/* Dropdown Menu - ALWAYS FIXED POSITION TO BREAK OUT OF NAVBAR */
+/* Dropdown Menu - Works with relative parent container */
 .lang-dropdown {
-    /* FIXED positioning to escape navbar */
-    position: fixed !important;
-    top: auto; /* Will be set by JavaScript */
-    right: auto; /* Will be set by JavaScript */
-    left: auto; /* Will be set by JavaScript */
+    position: absolute;
+    top: calc(100% + 8px);
+    right: 0;
     
     /* Styling */
-    background: #1a1a1a;
-    border: 1px solid rgba(255, 255, 255, 0.1);
-    border-radius: 8px;
+    background: white;
+    border: 1px solid rgba(255, 105, 180, 0.25);
+    border-radius: 12px;
     
     /* Size */
-    min-width: 220px;
+    min-width: 180px;
     width: max-content;
     max-width: 280px;
     
     /* Scrolling */
-    max-height: 400px;
+    max-height: 320px;
     overflow-y: auto;
     overflow-x: hidden;
     
     /* Effects */
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+    padding: 6px;
     
     /* Hidden by default */
+    display: none;
     opacity: 0;
     visibility: hidden;
     pointer-events: none;
     transform: translateY(-10px);
     transition: all 0.2s ease;
     
-    /* Make sure it's ABOVE everything */
-    z-index: 999999999 !important;
+    /* Make sure it's visible when shown */
+    z-index: 1000;
 }
 
-/* CRITICAL FIX: Force navbar to show dropdown on mobile */
-@media (max-width: 768px) {
-    /* Override navbar overflow when dropdown is open */
-    body:has(.lang-dropdown.show) .navbar {
-        overflow: visible !important;
-    }
-    
-    body:has(.lang-dropdown.show) .nav-container {
-        overflow: visible !important;
-    }
-    
-    /* Fallback: Use class-based approach if :has() not supported */
-    .navbar.dropdown-open {
-        overflow: visible !important;
-    }
-    
-    .nav-container.dropdown-open {
-        overflow: visible !important;
-    }
+/* Dark mode dropdown */
+.dark .lang-dropdown {
+    background: #1e293b;
+    border-color: rgba(255, 105, 180, 0.3);
 }
 
-/* Dropdown show state - DEFAULT (desktop) */
+/* No navbar overflow fixes needed with absolute positioning */
+
+/* Dropdown show state */
 .lang-dropdown.show {
+    display: block;
     opacity: 1;
     visibility: visible;
     pointer-events: auto;
     transform: translateY(0);
 }
 
-/* Mobile: Center the dropdown */
-@media (max-width: 768px) {
-    .lang-dropdown {
-        /* Center it horizontally */
-        left: 50% !important;
-        right: auto !important;
-        transform: translateX(-50%) translateY(-10px) !important;
-        
-        /* Adjust width for mobile */
-        width: 90vw;
-        min-width: auto;
-        max-width: 90vw;
-        
-        /* ABSOLUTE MAXIMUM z-index to appear above navbar */
-        z-index: 999999999 !important;
-        position: fixed !important;
-    }
-    
-    .lang-dropdown.show {
-        transform: translateX(-50%) translateY(0) !important;
-    }
-}
-
 /* Language Options */
 .lang-option {
     display: flex;
     align-items: center;
-    gap: 12px;
+    gap: 10px;
     width: 100%;
-    padding: 12px 16px;
+    padding: 10px 12px;
     background: transparent;
     border: none;
-    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
-    color: white;
+    border-bottom: 1px solid rgba(255, 105, 180, 0.1);
+    color: #333;
     text-align: left;
     cursor: pointer;
     transition: background 0.15s ease;
-    font-size: 14px;
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.dark .lang-option {
+    color: #e2e8f0;
+    border-bottom-color: rgba(255, 105, 180, 0.1);
 }
 
 .lang-option:last-child {
@@ -151,12 +122,22 @@
 }
 
 .lang-option:hover {
-    background: rgba(214, 0, 110, 0.1);
+    background: rgba(255, 105, 180, 0.1);
+}
+
+.dark .lang-option:hover {
+    background: rgba(255, 105, 180, 0.2);
 }
 
 .lang-option.active {
-    background: rgba(214, 0, 110, 0.2);
+    background: rgba(255, 105, 180, 0.15);
+    color: #ff00a8;
     font-weight: 600;
+}
+
+.dark .lang-option.active {
+    background: rgba(214, 0, 110, 0.3);
+    color: #ff00a8;
 }
 
 .lang-flag {
@@ -169,23 +150,36 @@
     white-space: nowrap;
 }
 
-/* Scrollbar */
+/* Scrollbar - Light mode */
 .lang-dropdown::-webkit-scrollbar {
     width: 6px;
 }
 
 .lang-dropdown::-webkit-scrollbar-track {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(0, 0, 0, 0.05);
     border-radius: 4px;
 }
 
 .lang-dropdown::-webkit-scrollbar-thumb {
-    background: rgba(214, 0, 110, 0.5);
+    background: rgba(255, 105, 180, 0.4);
     border-radius: 4px;
 }
 
 .lang-dropdown::-webkit-scrollbar-thumb:hover {
-    background: rgba(214, 0, 110, 0.7);
+    background: rgba(255, 105, 180, 0.6);
+}
+
+/* Scrollbar - Dark mode */
+.dark .lang-dropdown::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+}
+
+.dark .lang-dropdown::-webkit-scrollbar-thumb {
+    background: rgba(255, 105, 180, 0.5);
+}
+
+.dark .lang-dropdown::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 105, 180, 0.7);
 }
 
 /* RTL Support */
@@ -209,6 +203,7 @@ body.rtl .language-switcher {
 body.rtl .lang-dropdown {
     right: auto;
     left: 0;
+    direction: ltr;
 }
 
 body.rtl .lang-option {
@@ -405,9 +400,15 @@ body.rtl .footer-bottom {
         font-size: 0.7rem !important;
     }
     
-    /* CRITICAL: Dropdown MUST escape navbar */
+    /* CRITICAL: Dropdown MUST escape navbar, centered on screen */
     .lang-dropdown {
         position: fixed !important;
+        top: 70px !important;
+        left: 50% !important;
+        right: auto !important;
+        transform: translateX(-50%) !important;
+        width: 90vw !important;
+        max-width: 260px !important;
         z-index: 999999999 !important;
     }
     

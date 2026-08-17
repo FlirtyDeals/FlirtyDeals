@@ -1,1062 +1,249 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800&display=swap');
+/* ==========================================================================
+   FlirtyDeals.com - custom.css
+   Rules that don't fit cleanly as Tailwind utility classes. Everything
+   else is styled directly in index.html with Tailwind classes, matching
+   the Stitch-generated design system (see assets/js/tailwind-config.js).
+   ========================================================================== */
 
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
+/* ---- Card shadows / hover treatment (from the Stitch build) ---- */
+.premium-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -8px rgba(178, 0, 116, 0.1);
+}
+.premium-shadow:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025), 0 20px 25px -5px rgba(178, 0, 116, 0.15);
 }
 
-body {
-    font-family: 'Poppins', sans-serif;
-    background: linear-gradient(135deg, #fff0f7 0%, #ffe6f5 25%, #ffd1e8 50%, #ffbddf 75%, #ffa8d6 100%);
-    background-size: 200% 200%;
-    animation: gradientShift 15s ease infinite;
-    min-height: 100vh;
-    overflow-x: hidden;
+/* Blur all deal cards on first visit until age verification */
+.deal-card img {
+  filter: blur(15px);
+  transition: filter 0.3s ease;
 }
 
-@keyframes gradientShift {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
+/* Once age verified, remove blur from all images */
+html.age-verified .deal-card img {
+  filter: none !important;
 }
 
-/* Navigation - Hot pink theme */
-.navbar {
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 50%, #ff69b4 100%);
-    padding: 1rem 2rem;
-    box-shadow: 0 4px 30px rgba(214, 0, 110, 0.5);
-    position: relative;
-    z-index: 100;
-    backdrop-filter: blur(10px);
-    border-bottom: 2px solid rgba(255, 255, 255, 0.2);
+/* ---- Deal card grids: flexbox with flex-grow instead of CSS grid.
+   Grid keeps every row at a fixed column width, so an incomplete last
+   row (e.g. 3 cards left over in a 4-column layout) sits left-aligned
+   and narrow. Flex-grow lets leftover cards expand to fill the row,
+   and justify-content: center keeps them centered. align-items:
+   stretch still equalizes card heights within each row. ---- */
+.deal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.5rem;
 }
-.nav-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    gap: 2rem;
-    position: relative;
+.deal-grid .deal-card {
+  flex: 1 1 100%;
+  /* Tailwind's h-full class (height: 100%) is a specified height, which
+     opts the card OUT of flexbox's align-items: stretch behavior in
+     some browsers - it sizes to its own content instead of the row's
+     tallest card. That's why "Free" cards (no strikethrough price
+     line) were shorter. Forcing height: auto hands sizing back to
+     flex stretch. */
+  height: auto !important;
 }
-.nav-logo {
-    position: relative;
-    z-index: 1;
-    height: 50px;
-    display: inline-flex;
-    align-items: center;
-    padding: 0 10px;
-    border-radius: 15px;
-    background: rgba(0,0,0,0.10);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    transition: transform 0.2s ease;
+@media (min-width: 640px) {
+  .deal-grid .deal-card { flex: 1 1 calc(50% - 0.75rem); }
 }
-.nav-logo::before {
-    content: "";
-    position: absolute;
-    top: 50%;
-    left: 0;
-    right: 0;
-    transform: translateY(-50%);
-    height: calc(100% + 4px);
-    border-radius: 15px;
-    background: rgba(0,0,0,0.15);
-    z-index: 0;
+@media (min-width: 1024px) {
+  .deal-grid .deal-card { flex: 1 1 calc(33.333% - 1rem); }
 }
-.nav-logo img {
-    height: 50px;
-    width: auto;
-    display: block;
-}
-.nav-center {
-    flex: 1;
-    text-align: center;
-}
-.nav-title {
-    font-size: 1.8rem;
-    font-weight: 700;
-    color: white;
-    text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
-    margin-bottom: 0.3rem;
-}
-.nav-subtitle {
-    font-size: 0.9rem;
-    color: rgba(255,255,255,0.95);
-}
-.nav-actions {
-    display: flex;
-    gap: 1rem;
-}
-.nav-btn {
-    background: white;
-    color: #8b0045;
-    padding: 0.7rem 1.5rem;
-    border-radius: 50px;
-    text-decoration: none;
-    font-weight: 600;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-.nav-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(0,0,0,0.2);
-    background: #ffe6f0;
+@media (min-width: 1280px) {
+  .deal-grid .deal-card { flex: 1 1 calc(25% - 1.125rem); }
 }
 
-/* Mobile Styles - all mobile rules must be inside this block */
-@media (max-width: 768px) {
-    .navbar {
-        height: 120px !important;
-        padding: 0 1rem !important;
-        overflow: hidden !important;
-    }
-
-    .nav-container {
-        height: 100% !important;
-        overflow: visible !important;
-    }
-
-    /* Hide title and subtitle on mobile */
-    .nav-title,
-    .nav-subtitle {
-        display: none;
-    }
-
-    /* Reduce logo size */
-    .nav-logo {
-        height: 48px;
-        padding: 0 8px;
-        border-radius: 12px;
-        margin-top: 6px;
-    }
-
-    .nav-logo img {
-        height: 34px;
-    }
-
-    /* Make buttons smaller and set mobile interaction states */
-    .nav-btn {
-        padding: 0.35rem 0.8rem;
-        font-size: 0.85rem;
-        gap: 0.25rem;
-        transform: translateY(-20px) scale(0.85); /* resting state on mobile */
-        transition: transform 160ms ease, box-shadow 160ms ease, background 160ms ease;
-        -webkit-tap-highlight-color: transparent;
-        -webkit-user-select: none;
-        user-select: none;
-        touch-action: manipulation;
-    }
-
-    .nav-btn i {
-        font-size: 0.95rem;
-    }
-
-    /* Larger icon for night mode button on mobile */
-    #nightModeToggle i {
-        font-size: 1.2rem;
-    }
-
-    /* Prevent desktop hover from changing mobile resting transform */
-    .nav-btn:hover {
-        transform: translateY(-20px) scale(0.85);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        background: white;
-    }
-
-    /* Tapping and keyboard focus feedback */
-    .nav-btn:active,
-    .nav-btn:focus {
-        transform: translateY(-16px) scale(0.85);
-        box-shadow: 0 3px 10px rgba(0,0,0,0.12);
-        background: #ffe6f0;
-        outline: none;
-    }
-
-    /* If you need the action area to take less horizontal space */
-    .nav-actions {
-        gap: 0.5rem;
-        overflow: visible !important;
-    }
+/* Filtered results (#filtered-grid): unlike the per-category sections
+   above, cards here shouldn't grow to fill an incomplete last row or
+   sit centered - they should stay a uniform size and pack to the
+   left, like a normal left-to-right grid. The #id selector outranks
+   the .deal-grid .deal-card rules above regardless of source order,
+   so this cleanly overrides just flex-grow (keeping the same
+   flex-basis widths from the breakpoints above) without duplicating
+   them. */
+#filtered-grid {
+  justify-content: flex-start;
+}
+#filtered-grid .deal-card {
+  flex-grow: 0;
 }
 
-/* Extra safety for touch-only devices */
-@media (hover: none) and (pointer: coarse) {
-    .nav-btn:hover {
-        transform: translateY(-20px) scale(0.85);
-        box-shadow: 0 4px 12px rgba(0,0,0,0.12);
-        background: white;
-    }
-    .nav-btn:active {
-        transform: translateY(-16px) scale(0.85);
-    }
+/* Cards with a single "Free" line in the price block are naturally
+   shorter than cards with a strikethrough price + sale price (two
+   lines). align-items: stretch only equalizes cards within the SAME
+   row/section - it can't match a "Free Content" section (all short
+   cards) against a "Top Deals" section (mixed heights) since those
+   are separate flex containers. Reserving fixed space for the price
+   block makes every card the same height regardless of section. */
+.deal-card .mt-auto > div:first-child {
+  min-height: 2.75rem;
+  justify-content: flex-end;
 }
 
-
-
-/* Hero Section */
-.hero {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-}
-.hero-video {
-    position: relative;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 20px 60px rgba(214, 0, 110, 0.4), 0 0 40px rgba(255, 20, 147, 0.2);
-}
-.hero-video video {
-    width: 100%;
-    height: auto;
-    display: block;
-    filter: blur(25px);
-    transition: filter 0.3s;
+/* Bigger cause of the height mismatch: line-clamp-2 only caps
+   descriptions at a MAXIMUM of 2 lines - it doesn't pad a short
+   description that only wraps to 1 line up to that height. Reserving
+   2 lines' worth of height (in em, so it scales with the paragraph's
+   own font-size) keeps every card's description block the same
+   height whether the text fills 1 line or 2. */
+.deal-card p.line-clamp-2 {
+  min-height: 3em;
 }
 
-/* Hide hero section on mobile */
-@media (max-width: 768px) {
-    .hero {
-        display: none;
-    }
+/* ---- "Click to reveal" overlay used on the Shemale/Trans cards ---- */
+.shemale-card .deal-image {
+  cursor: pointer;
 }
-
-/* Reveal hero after age verification */
-body.age-verified .hero-video video {
-    filter: blur(0);
+.shemale-card .deal-image img {
+  filter: blur(15px);
+  transition: filter 0.3s ease;
 }
-
-/* Filter Bar */
-.filter-bar {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 1.5rem 2rem;
-    display: flex;
-    gap: 1rem;
-    flex-wrap: wrap;
-    justify-content: center;
-    background: rgba(255, 255, 255, 0.5);
-    border-radius: 20px;
-    backdrop-filter: blur(10px);
+.reveal-overlay {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
 }
-
-.filter-btn {
-    background: white;
-    color: #d6006e;
-    padding: 0.7rem 1.5rem;
-    border-radius: 50px;
-    border: 2px solid #d6006e;
-    font-weight: 600;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
+.dark .reveal-overlay {
+  background-color: rgba(15, 23, 42, 0.7);
 }
-
-.filter-btn:hover,
-.filter-btn.active {
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-    color: white;
-    transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(214, 0, 110, 0.4);
+/* Once revealed, hide the overlay and un-blur the image */
+.deal-image.revealed .reveal-overlay {
+  display: none;
 }
-
-/* Deals Grid */
-.deals-container {
-    max-width: 1400px;
-    margin: 2rem auto;
-    padding: 0 2rem;
-}
-
-.section-title {
-    text-align: center;
-    font-size: 2rem;
-    color: #d6006e;
-    margin-bottom: 2rem;
-    font-weight: 700;
-}
-
-.deals-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-    justify-items: center;
-    align-items: stretch;
-}
-
-#filteredGrid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-    gap: 2rem;
-    margin-bottom: 3rem;
-    justify-items: center;
-    align-items: stretch;
-}
-
-#filteredGrid .deal-card {
-    margin: 0;
-    vertical-align: top;
-    align-self: start;
-}
-
-#filteredGrid .deal-image {
-    height: 200px;
-}
-
-.deal-card {
-    background: white;
-    border-radius: 20px;
-    overflow: hidden;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-    transition: all 0.3s;
-    position: relative;
-    width: 100%;
-    max-width: 350px;
-    display: flex;
-    flex-direction: column;
-    height: 100%;
-}
-
-.deal-card:hover {
-    transform: translateY(-10px);
-    box-shadow: 0 20px 50px rgba(214, 0, 110, 0.4), 0 0 30px rgba(255, 20, 147, 0.2);
-}
-
-.deal-card.featured {
-    border: 3px solid #d6006e;
-}
-
-.deal-image {
-    position: relative;
-    overflow: hidden;
-    height: 200px;
-}
-
-.deal-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    transition: all 0.3s;
-    /* All images blurred by default */
-    filter: blur(25px);
-}
-
-/* Reveal all images after age verification */
-body.age-verified .deal-image img {
-    filter: blur(0);
-}
-
-/* Shemale cards still need blur overlay even after age verification */
-body.age-verified .shemale-card .deal-image img {
-    filter: blur(25px);
-}
-
 .deal-image.revealed img {
-    filter: blur(0) !important;
+  filter: none !important;
 }
 
-.deal-overlay {
-    position: absolute;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(214, 0, 110, 0.7);
-    display: flex;
-    align-items: center;
+/* ---- Section separators ---- */
+.separator-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 168, 0.3), transparent);
+  position: relative;
+  margin: 3rem 0;
+}
+.separator-glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 4px;
+  background: #ff00a8;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255, 0, 168, 0.5);
+}
+
+/* ---- Filter bar scrollbar (hide on mobile horizontal scroll) ---- */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* The filter bar row is a flex item inside the filter <section> (also
+   flex). Flex items default to min-width: auto, meaning they refuse
+   to shrink below their content's natural width - so without this,
+   the row just grows wider than the viewport instead of respecting
+   the container. Needed for the wrap behavior below to actually
+   kick in on mobile instead of the row silently overflowing. */
+.hide-scrollbar {
+  min-width: 0;
+}
+
+/* On mobile, wrap the filter buttons onto multiple lines instead of
+   scrolling horizontally, so all of them are visible at once without
+   needing to swipe. The doubled class boosts specificity just enough
+   to reliably win over Tailwind's .overflow-x-auto utility class
+   regardless of stylesheet load order. */
+@media (max-width: 639px) {
+  .hide-scrollbar.hide-scrollbar {
+    flex-wrap: wrap;
+    overflow-x: visible;
     justify-content: center;
-    transition: opacity 0.3s;
-    cursor: pointer;
+  }
 }
 
-.deal-image.revealed .deal-overlay {
-    opacity: 0; /* INVISIBLE by default */
-    pointer-events: auto; /* But still CLICKABLE */
-    transition: opacity 0.2s;
+/* ---- Language switcher dropdown ---- */
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid rgba(255, 105, 180, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 6px;
+  min-width: 180px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 60;
+  display: none;
 }
-
-/* Desktop - show on hover */
-@media (hover: hover) and (pointer: fine) {
-    .deal-image.revealed .deal-overlay:hover {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.6);
-    }
-
-    .deal-image.revealed .deal-overlay:hover::after {
-        content: 'Click to Hide';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-    
-    /* Hide the original "Click to Reveal" text on hover */
-    .deal-image.revealed .deal-overlay:hover .reveal-text {
-        display: none;
-    }
+.dark .lang-dropdown {
+  background: #1e293b;
+  border-color: rgba(255, 105, 180, 0.3);
 }
-
-/* Mobile - show subtle hint always, full feedback when pressing */
-@media (hover: none) and (pointer: coarse) {
-    /* Show a subtle hint at bottom that it's tappable */
-    .deal-image.revealed .deal-overlay::before {
-        content: 'Tap to hide';
-        position: absolute;
-        bottom: 10px;
-        left: 50%;
-        transform: translateX(-50%);
-        color: rgba(255, 255, 255, 0.7);
-        font-size: 0.75rem;
-        font-weight: 500;
-        background: rgba(0, 0, 0, 0.5);
-        padding: 5px 12px;
-        border-radius: 15px;
-        pointer-events: none;
-    }
-
-    /* Full overlay feedback when pressing */
-    .deal-image.revealed .deal-overlay:active {
-        opacity: 1;
-        background: rgba(0, 0, 0, 0.6);
-    }
-
-    .deal-image.revealed .deal-overlay:active::after {
-        content: 'Release to Hide';
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        color: white;
-        font-size: 0.9rem;
-        font-weight: 600;
-    }
-    
-    /* Hide the bottom hint when actively pressing */
-    .deal-image.revealed .deal-overlay:active::before {
-        display: none;
-    }
-    
-    /* Hide the original "Click to Reveal" text when pressing */
-    .deal-image.revealed .deal-overlay:active .reveal-text {
-        display: none;
-    }
+.lang-dropdown.show { display: block; }
+.lang-dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
 }
+.dark .lang-dropdown button { color: #e2e8f0; }
+.lang-dropdown button:hover { background: rgba(255, 105, 180, 0.1); }
+.lang-dropdown button.active { color: #ff00a8; }
 
-.shemale-overlay {
-    background: rgba(0, 0, 0, 0.6);
-    backdrop-filter: blur(10px);
+/* ---- Scroll-to-top button (restored old-site feature) ---- */
+#scrollToTop {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: white;
+  border: 1.5px solid rgba(255, 105, 180, 0.3);
+  color: #ff00a8;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 9998;
+  transition: all 0.2s ease;
 }
-
-.reveal-text {
-    color: white;
-    font-weight: 600;
-    font-size: 0.9rem;
-    text-align: center;
-}
-
-.reveal-text small {
-    font-size: 0.7rem;
-    display: block;
-    margin-top: 0.3rem;
-}
-
-.discount-badge {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-    color: white;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 15px rgba(214, 0, 110, 0.4);
-    z-index: 10;
-}
-
-.discount-badge.left {
-    right: auto;
-    left: 10px;
-}
-
-.featured-badge {
-    position: absolute;
-    top: 10px;
-    left: 10px;
-    background: linear-gradient(135deg, white 0%, #ffe6f5 100%);
-    color: #d6006e;
-    padding: 0.5rem 1rem;
-    border-radius: 50px;
-    font-weight: 700;
-    font-size: 0.9rem;
-    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.5);
-    z-index: 10;
-    border: 2px solid #d6006e;
-}
-
-.deal-content {
-    padding: 1.5rem;
-    display: flex;
-    flex-direction: column;
-    flex: 1;
-}
-
-.deal-title {
-    font-size: 1.3rem;
-    color: #333;
-    margin-bottom: 0.5rem;
-    font-weight: 700;
-}
-
-.deal-description {
-    color: #666;
-    font-size: 0.9rem;
-    margin-bottom: 1rem;
-    line-height: 1.5;
-    flex-grow: 1;
-}
-
-.price-section {
-    display: flex;
-    align-items: center;
-    gap: 1rem;
-    margin-bottom: 1rem;
-}
-
-.old-price {
-    text-decoration: line-through;
-    color: #999;
-    font-size: 1.1rem;
-}
-
-.new-price {
-    color: #d6006e;
-    font-size: 1.5rem;
-    font-weight: 700;
-}
-
-.rating {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-}
-
-.stars {
-    color: #d6006e;
-}
-
-.rating-text {
-    color: #666;
-    font-size: 0.9rem;
-}
-
-.deal-btn {
-    width: 100%;
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 50%, #e84d9d 100%);
-    color: white;
-    padding: 1rem;
-    border-radius: 50px;
-    text-align: center;
-    text-decoration: none;
-    font-weight: 700;
-    display: block;
-    transition: all 0.3s;
-    box-shadow: 0 4px 15px rgba(214, 0, 110, 0.4);
-    margin-top: auto;
-}
-
-.deal-btn:hover {
-    transform: translateY(-2px);
-    box-shadow: 0 8px 25px rgba(214, 0, 110, 0.5), 0 0 20px rgba(255, 20, 147, 0.3);
-}
-
-/* Separator */
-.separator {
-    width: 100%;
-    height: 3px;
-    background: linear-gradient(90deg, transparent, #d6006e 20%, #ff1493 50%, #d6006e 80%, transparent);
-    margin: 3rem 0;
-    box-shadow: 0 0 20px rgba(214, 0, 110, 0.3);
-}
-
-/* Age Verification Modal */
-.modal {
-    display: none; /* Changed from display: none; */
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0,0,0,0.9);
-    z-index: 1000;
-    align-items: center;
-    justify-content: center;
-}
-
-.modal.active {
-    display: flex !important; /* Add !important */
-}
-
-.modal-content {
-    background: white;
-    padding: 3rem;
-    border-radius: 20px;
-    max-width: 500px;
-    text-align: center;
-    box-shadow: 0 20px 60px rgba(0,0,0,0.4), 0 0 40px rgba(214, 0, 110, 0.3);
-    border: 2px solid rgba(214, 0, 110, 0.2);
-}
-
-.modal-title {
-    font-size: 2rem;
-    color: #d6006e;
-    margin-bottom: 1rem;
-}
-
-.modal-text {
-    color: #666;
-    margin-bottom: 2rem;
-    line-height: 1.6;
-}
-
-.modal-buttons {
-    display: flex;
-    gap: 1rem;
-    justify-content: center;
-}
-
-.modal-btn {
-    padding: 1rem 2rem;
-    border-radius: 50px;
-    font-weight: 700;
-    border: none;
-    cursor: pointer;
-    transition: all 0.3s;
-    font-family: 'Poppins', sans-serif;
-    font-size: 1rem;
-}
-
-.accept-btn {
-    background: #28a745;
-    color: white;
-}
-
-.accept-btn:hover {
-    background: #218838;
-    transform: translateY(-2px);
-}
-
-.exit-btn {
-    background: #dc3545;
-    color: white;
-}
-
-.exit-btn:hover {
-    background: #c82333;
-    transform: translateY(-2px);
-}
-
-/* Footer */
-footer {
-    background: linear-gradient(135deg, #1a0009 0%, #2B0015 50%, #3d001f 100%);
-    color: white;
-    padding: 3rem 2rem 1rem;
-    margin-top: 4rem;
-    box-shadow: 0 -10px 40px rgba(214, 0, 110, 0.2);
-}
-
-.footer-container {
-    max-width: 1400px;
-    margin: 0 auto;
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-    gap: 2rem;
-    margin-bottom: 2rem;
-}
-
-.footer-section h4 {
-    color: #d6006e;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-}
-
-.footer-section ul {
-    list-style: none;
-}
-
-.footer-section a {
-    color: rgba(255,255,255,0.8);
-    text-decoration: none;
-    display: block;
-    margin-bottom: 0.5rem;
-    transition: color 0.3s;
-}
-
-.footer-section a:hover {
-    color: #d6006e;
-}
-
-.social-links {
-    display: flex;
-    flex-direction: column;
-    gap: 0.5rem;
-}
-
-.social-links a {
-    display: flex;
-    align-items: center;
-    gap: 0.5rem;
-}
-
-.footer-bottom {
-    text-align: center;
-    padding-top: 2rem;
-    border-top: 1px solid rgba(255,255,255,0.1);
-    color: rgba(255,255,255,0.6);
-}
-
-/* Responsive */
-@media (max-width: 1024px) {
-    .deals-grid {
-        grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-        gap: 1.5rem;
-    }
-}
+.dark #scrollToTop { background: #1e293b; }
+#scrollToTop.show { display: flex; }
+#scrollToTop:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18); }
 
 @media (max-width: 768px) {
-    .nav-container {
-        flex-direction: column;
-        text-align: center;
-        gap: 1rem;
-    }
-    
-    .nav-title {
-        font-size: 1.3rem;
-    }
-    
-    .nav-subtitle {
-        font-size: 0.8rem;
-    }
-    
-    .section-title {
-        font-size: 1.5rem;
-    }
-    
-    .deals-grid {
-        grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-        gap: 1.5rem;
-    }
-    
-    .filter-bar {
-        gap: 0.5rem;
-    }
-    
-    .filter-btn {
-        padding: 0.5rem 1rem;
-        font-size: 0.9rem;
-    }
+  #scrollToTop { bottom: 10px; left: 10px; width: 42px; height: 42px; }
 }
 
-@media (max-width: 480px) {
-    .hero {
-        padding: 0 1rem;
-    }
-    
-    .deals-container {
-        padding: 0 1rem;
-    }
-    
-    .deals-grid {
-        grid-template-columns: 1fr;
-    }
-    
-    .modal-content {
-        padding: 2rem;
-        margin: 1rem;
-    }
-    
-    .modal-title {
-        font-size: 1.5rem;
-    }
-    
-    .modal-buttons {
-        flex-direction: column;
-    }
-    
-    .modal-btn {
-        width: 100%;
-    }
+/* ---- i18n flash-of-untranslated-content prevention ----
+   main.js removes this class from <html> once translations are applied. */
+html.i18n-loading body { visibility: hidden; }
+
+/* ---- Hero video ---- */
+#heroVideo video,
+#heroImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(15px);
 }
 
-/* Scroll to Top Button */
-.scroll-to-top {
-    position: fixed;
-    bottom: 30px;
-    right: 30px;
-    width: 50px;
-    height: 50px;
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-    color: white;
-    border: none;
-    border-radius: 50%;
-    font-size: 1.2rem;
-    cursor: pointer;
-    box-shadow: 0 4px 15px rgba(214, 0, 110, 0.4);
-    z-index: 999;
-    opacity: 0;
-    visibility: hidden;
-    transition: all 0.3s ease;
-}
-
-.scroll-to-top.show {
-    opacity: 1;
-    visibility: visible;
-}
-
-.scroll-to-top:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 8px 25px rgba(214, 0, 110, 0.6);
-}
-
-@media (max-width: 768px) {
-    .scroll-to-top {
-        bottom: 20px;
-        right: 20px;
-        width: 45px;
-        height: 45px;
-        font-size: 1rem;
-    }
-}
-
-@media (max-width: 768px) {
-    .modal {
-        align-items: flex-start;
-        padding-top: 11vh; /* Change this value - lower number = higher position */
-    }
-}
-/* ========================================
-   NIGHT MODE / DARK THEME STYLES
-   ======================================== */
-
-/* Night mode button styling */
-#nightModeToggle {
-    border: none;
-    cursor: pointer;
-    position: relative;
-    padding: 0.7rem 1rem;
-    min-width: auto;
-}
-
-#nightModeToggle i {
-    font-size: 1.4rem;
-    transition: transform 0.3s ease;
-}
-
-#nightModeToggle:hover i {
-    transform: rotate(20deg);
-}
-
-/* Dark theme variables and overrides */
-body.dark-mode {
-    background: linear-gradient(135deg, #1a1a2e 0%, #16213e 25%, #0f1629 50%, #1a1a2e 75%, #16213e 100%);
-    background-size: 200% 200%;
-    animation: gradientShift 15s ease infinite;
-}
-
-/* Dark mode navbar */
-body.dark-mode .navbar {
-    background: linear-gradient(135deg, #0f1629 0%, #1a1a2e 50%, #16213e 100%);
-    border-bottom: 2px solid rgba(255, 105, 180, 0.3);
-}
-
-/* Dark mode nav button */
-body.dark-mode .nav-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-    border: 1px solid rgba(255, 105, 180, 0.3);
-}
-
-body.dark-mode .nav-btn:hover {
-    background: rgba(255, 105, 180, 0.2);
-    border-color: rgba(255, 105, 180, 0.5);
-}
-
-/* Update icon in night mode */
-body.dark-mode #nightModeToggle i.fa-moon::before {
-    content: "\f185"; /* sun icon */
-}
-
-/* Dark mode filter bar */
-body.dark-mode .filter-bar {
-    background: rgba(26, 26, 46, 0.95);
-    border-bottom: 2px solid rgba(255, 105, 180, 0.2);
-}
-
-body.dark-mode .filter-btn {
-    color: #fff;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid rgba(255, 105, 180, 0.2);
-}
-
-body.dark-mode .filter-btn:hover {
-    background: rgba(255, 105, 180, 0.2);
-    border-color: rgba(255, 105, 180, 0.4);
-}
-
-body.dark-mode .filter-btn.active {
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-    color: white;
-    border-color: #ff1493;
-}
-
-/* Dark mode deal cards */
-body.dark-mode .deal-card {
-    background: rgba(26, 26, 46, 0.9);
-    border: 1px solid rgba(255, 105, 180, 0.2);
-}
-
-body.dark-mode .deal-card:hover {
-    transform: translateY(-8px);
-    box-shadow: 0 12px 40px rgba(255, 20, 147, 0.4);
-    border-color: rgba(255, 105, 180, 0.5);
-}
-
-body.dark-mode .deal-title {
-    color: #fff;
-}
-
-body.dark-mode .deal-description {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-body.dark-mode .deal-btn {
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-    color: white;
-}
-
-body.dark-mode .deal-btn:hover {
-    background: linear-gradient(135deg, #ff1493 0%, #ff69b4 100%);
-    box-shadow: 0 6px 25px rgba(255, 20, 147, 0.5);
-}
-
-/* Dark mode section titles */
-body.dark-mode .section-title {
-    color: #fff;
-    text-shadow: 2px 2px 8px rgba(255, 20, 147, 0.5);
-}
-
-/* Dark mode separator */
-body.dark-mode .separator {
-    background: linear-gradient(90deg, 
-        transparent 0%, 
-        rgba(255, 105, 180, 0.3) 50%, 
-        transparent 100%);
-}
-
-/* Dark mode footer */
-body.dark-mode footer {
-    background: linear-gradient(135deg, #0f1629 0%, #1a1a2e 100%);
-    border-top: 2px solid rgba(255, 105, 180, 0.2);
-    color: rgba(255, 255, 255, 0.9);
-}
-
-body.dark-mode footer h4 {
-    color: #ff69b4;
-}
-
-body.dark-mode footer a {
-    color: rgba(255, 255, 255, 0.8);
-}
-
-body.dark-mode footer a:hover {
-    color: #ff69b4;
-}
-
-body.dark-mode .footer-bottom {
-    border-top: 1px solid rgba(255, 105, 180, 0.2);
-}
-
-/* Dark mode scroll to top button */
-body.dark-mode .scroll-to-top {
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-    box-shadow: 0 4px 15px rgba(255, 20, 147, 0.6);
-}
-
-body.dark-mode .scroll-to-top:hover {
-    box-shadow: 0 8px 25px rgba(255, 20, 147, 0.8);
-}
-
-/* Dark mode modals */
-body.dark-mode .modal-content {
-    background: rgba(26, 26, 46, 0.98);
-    border: 2px solid rgba(255, 105, 180, 0.3);
-    color: #fff;
-}
-
-body.dark-mode .modal-title {
-    color: #ff69b4;
-}
-
-body.dark-mode .modal-text {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-body.dark-mode .modal-btn {
-    border: 1px solid rgba(255, 105, 180, 0.3);
-}
-
-body.dark-mode .accept-btn {
-    background: linear-gradient(135deg, #d6006e 0%, #ff1493 100%);
-}
-
-body.dark-mode .exit-btn {
-    background: rgba(255, 255, 255, 0.1);
-    color: #fff;
-}
-
-/* Dark mode cookie banner */
-body.dark-mode #cookie-banner {
-    background: rgba(26, 26, 46, 0.98);
-    border: 1px solid rgba(255, 105, 180, 0.3);
-}
-
-body.dark-mode .cookie-message {
-    color: rgba(255, 255, 255, 0.9);
-}
-
-body.dark-mode .cookie-text-link {
-    color: #ff69b4;
-}
-
-body.dark-mode .cookie-text-link:hover {
-    color: #ff1493;
-}
-
-/* Dark mode price styling */
-body.dark-mode .old-price {
-    color: rgba(255, 255, 255, 0.5);
-}
-
-body.dark-mode .new-price {
-    color: #00ff88;
-}
-
-/* Smooth transitions for theme switching */
-body,
-.navbar,
-.filter-bar,
-.deal-card,
-footer,
-.modal-content,
-#cookie-banner {
-    transition: background 0.3s ease, color 0.3s ease, border-color 0.3s ease;
+html.age-verified #heroVideo video,
+html.age-verified #heroImage img {
+  filter: none !important;
 }
