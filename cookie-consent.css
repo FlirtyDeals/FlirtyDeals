@@ -315,10 +315,6 @@ input:disabled + .slider {
     transition: all 0.2s;
 }
 
-#cookie-settings-btn.show {
-    display: block;
-}
-
 #cookie-settings-btn:hover {
     background: #ff1493;
     transform: scale(1.1);
@@ -332,5 +328,9 @@ input:disabled + .slider {
         width: 45px;
         height: 45px;
         font-size: 18px;
+    }
+
+    #cookie-settings-btn.show {
+        display: block;
     }
 }
