@@ -33,8 +33,24 @@ function saveConsent(preferences) {
 function applyConsent(preferences) {
     if (preferences.analytics) {
         loadGoogleAnalytics();
+        loadCloudflareAnalytics();
     }
     // Add other tracking scripts here if needed
+}
+
+// Load Cloudflare Web Analytics
+function loadCloudflareAnalytics() {
+    // Check if already loaded
+    if (document.getElementById('cf-beacon-script')) return;
+
+    const script = document.createElement('script');
+    script.id = 'cf-beacon-script';
+    script.type = 'module';
+    script.src = 'https://static.cloudflareinsights.com/beacon.min.js';
+    script.setAttribute('data-cf-beacon', '{"token": "d92799592cda4446974d43ac1e1ff943"}');
+    document.head.appendChild(script);
+
+    console.log('✅ Cloudflare Web Analytics loaded');
 }
 
 // Load Google Analytics
