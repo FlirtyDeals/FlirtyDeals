@@ -175,9 +175,9 @@
           },
           "hero": {
               "eyebrow": "Exclusive",
-              "title-line1": "Unlock Premium Access for",
-              "title-price": "Only $1.00",
-              "subtitle": "Get instant access to top-tier adult content platforms for a fraction of the cost. Limited time offer.",
+              "title-line1": "Get Brazzers Premium",
+              "title-price": "For Only $1.00",
+              "subtitle": "Get instant access to top-tier adult content for a fraction of the cost. Limited time offer.",
               "cta": "View Deal"
           }
       },
