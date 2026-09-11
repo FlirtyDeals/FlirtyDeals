@@ -1,7 +1,9 @@
 User-agent: *
+Disallow: /compliance/
+Disallow: /favicon/
+Disallow: /fonts/
 Disallow: /information/
 Disallow: /support/
-Disallow: /compliance/
-Disallow: /en
+Disallow: /thumbnails/
 
 Sitemap: https://flirtydeals.com/sitemap.xml
