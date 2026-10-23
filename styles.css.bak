@@ -1,0 +1,256 @@
+/* ==========================================================================
+   FlirtyDeals.com - custom.css
+   Rules that don't fit cleanly as Tailwind utility classes. Everything
+   else is styled directly in index.html with Tailwind classes, matching
+   the Stitch-generated design system (see assets/js/tailwind-config.js).
+   ========================================================================== */
+
+/* ---- Card shadows / hover treatment (from the Stitch build) ---- */
+.premium-shadow {
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -8px rgba(178, 0, 116, 0.1);
+}
+.premium-shadow:hover {
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025), 0 20px 25px -5px rgba(178, 0, 116, 0.15);
+}
+
+/* Blur all deal cards on first visit until age verification */
+.deal-card img {
+  filter: blur(15px);
+  transition: filter 0.3s ease;
+}
+
+/* Once age verified, remove blur from all images */
+html.age-verified .deal-card img {
+  filter: none !important;
+}
+
+/* ---- Deal card grids: flexbox with flex-grow instead of CSS grid.
+   Grid keeps every row at a fixed column width, so an incomplete last
+   row (e.g. 3 cards left over in a 4-column layout) sits left-aligned
+   and narrow. Flex-grow lets leftover cards expand to fill the row,
+   and justify-content: center keeps them centered. align-items:
+   stretch still equalizes card heights within each row. ---- */
+.deal-grid {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+.deal-grid .deal-card {
+  flex: 1 1 100%;
+  /* Tailwind's h-full class (height: 100%) is a specified height, which
+     opts the card OUT of flexbox's align-items: stretch behavior in
+     some browsers - it sizes to its own content instead of the row's
+     tallest card. That's why "Free" cards (no strikethrough price
+     line) were shorter. Forcing height: auto hands sizing back to
+     flex stretch. */
+  height: auto !important;
+}
+@media (min-width: 640px) {
+  .deal-grid .deal-card { flex: 1 1 calc(50% - 0.75rem); }
+}
+@media (min-width: 1024px) {
+  .deal-grid .deal-card { flex: 1 1 calc(33.333% - 1rem); }
+}
+@media (min-width: 1280px) {
+  .deal-grid .deal-card { flex: 1 1 calc(25% - 1.125rem); }
+}
+
+/* Sections with only 1-2 cards: keep normal card size instead of
+   stretching to fill the row. 3+ cards grow to fill the row as usual. */
+.deal-grid:has(> .deal-card:nth-child(2):last-child) .deal-card,
+.deal-grid:has(> .deal-card:only-child) .deal-card {
+  flex-grow: 0;
+}
+
+/* Filtered results (#filtered-grid): unlike the per-category sections
+   above, cards here shouldn't grow to fill an incomplete last row or
+   sit centered - they should stay a uniform size and pack to the
+   left, like a normal left-to-right grid. The #id selector outranks
+   the .deal-grid .deal-card rules above regardless of source order,
+   so this cleanly overrides just flex-grow (keeping the same
+   flex-basis widths from the breakpoints above) without duplicating
+   them. */
+#filtered-grid {
+  justify-content: flex-start;
+}
+#filtered-grid .deal-card {
+  flex-grow: 0;
+}
+
+/* Cards with a single "Free" line in the price block are naturally
+   shorter than cards with a strikethrough price + sale price (two
+   lines). align-items: stretch only equalizes cards within the SAME
+   row/section - it can't match a "Free Content" section (all short
+   cards) against a "Top Deals" section (mixed heights) since those
+   are separate flex containers. Reserving fixed space for the price
+   block makes every card the same height regardless of section. */
+.deal-card .mt-auto > div:first-child {
+  min-height: 2.75rem;
+  justify-content: flex-end;
+}
+
+/* Bigger cause of the height mismatch: line-clamp-2 only caps
+   descriptions at a MAXIMUM of 2 lines - it doesn't pad a short
+   description that only wraps to 1 line up to that height. Reserving
+   2 lines' worth of height (in em, so it scales with the paragraph's
+   own font-size) keeps every card's description block the same
+   height whether the text fills 1 line or 2. */
+.deal-card p.line-clamp-2 {
+  min-height: 3em;
+}
+
+/* ---- "Click to reveal" overlay used on the Shemale/Trans cards ---- */
+.shemale-card .deal-image {
+  cursor: pointer;
+}
+.shemale-card .deal-image img {
+  filter: blur(15px);
+  transition: filter 0.3s ease;
+}
+.reveal-overlay {
+  backdrop-filter: blur(8px);
+  background-color: rgba(255, 255, 255, 0.8);
+  transition: all 0.3s ease;
+}
+.dark .reveal-overlay {
+  background-color: rgba(15, 23, 42, 0.7);
+}
+/* Once revealed, hide the overlay and un-blur the image */
+.deal-image.revealed .reveal-overlay {
+  display: none;
+}
+.deal-image.revealed img {
+  filter: none !important;
+}
+
+/* ---- Section separators ---- */
+.separator-glow {
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(255, 0, 168, 0.3), transparent);
+  position: relative;
+  margin: 3rem 0;
+}
+.separator-glow::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 40px;
+  height: 4px;
+  background: #ff00a8;
+  border-radius: 4px;
+  box-shadow: 0 0 10px rgba(255, 0, 168, 0.5);
+}
+
+/* ---- Filter bar scrollbar (hide on mobile horizontal scroll) ---- */
+.hide-scrollbar::-webkit-scrollbar { display: none; }
+.hide-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+
+/* The filter bar row is a flex item inside the filter <section> (also
+   flex). Flex items default to min-width: auto, meaning they refuse
+   to shrink below their content's natural width - so without this,
+   the row just grows wider than the viewport instead of respecting
+   the container. Needed for the wrap behavior below to actually
+   kick in on mobile instead of the row silently overflowing. */
+.hide-scrollbar {
+  min-width: 0;
+}
+
+/* On mobile, wrap the filter buttons onto multiple lines instead of
+   scrolling horizontally, so all of them are visible at once without
+   needing to swipe. The doubled class boosts specificity just enough
+   to reliably win over Tailwind's .overflow-x-auto utility class
+   regardless of stylesheet load order. */
+@media (max-width: 639px) {
+  .hide-scrollbar.hide-scrollbar {
+    flex-wrap: wrap;
+    overflow-x: visible;
+    justify-content: center;
+  }
+}
+
+/* ---- Language switcher dropdown ---- */
+.lang-dropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  background: white;
+  border: 1px solid rgba(255, 105, 180, 0.25);
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 6px;
+  min-width: 180px;
+  max-height: 320px;
+  overflow-y: auto;
+  z-index: 60;
+  display: none;
+}
+.dark .lang-dropdown {
+  background: #1e293b;
+  border-color: rgba(255, 105, 180, 0.3);
+}
+.lang-dropdown.show { display: block; }
+.lang-dropdown button {
+  width: 100%;
+  text-align: left;
+  padding: 8px 10px;
+  border-radius: 8px;
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+  background: none;
+  border: none;
+  cursor: pointer;
+}
+.dark .lang-dropdown button { color: #e2e8f0; }
+.lang-dropdown button:hover { background: rgba(255, 105, 180, 0.1); }
+.lang-dropdown button.active { color: #ff00a8; }
+
+/* ---- Scroll-to-top button (restored old-site feature) ---- */
+#scrollToTop {
+  position: fixed;
+  bottom: 20px;
+  left: 20px;
+  width: 46px;
+  height: 46px;
+  border-radius: 50%;
+  background: white;
+  border: 1.5px solid rgba(255, 105, 180, 0.3);
+  color: #ff00a8;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  cursor: pointer;
+  z-index: 9998;
+  transition: all 0.2s ease;
+}
+.dark #scrollToTop { background: #1e293b; }
+#scrollToTop.show { display: flex; }
+#scrollToTop:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18); }
+
+@media (max-width: 768px) {
+  #scrollToTop { bottom: 10px; left: 10px; width: 42px; height: 42px; }
+}
+
+/* ---- i18n flash-of-untranslated-content prevention ----
+   main.js removes this class from <html> once translations are applied. */
+html.i18n-loading body { visibility: hidden; }
+
+/* ---- Hero video ---- */
+#heroVideo video,
+#heroImage img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  filter: blur(15px);
+}
+
+html.age-verified #heroVideo video,
+html.age-verified #heroImage img {
+  filter: none !important;
+}

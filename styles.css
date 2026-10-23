@@ -57,6 +57,13 @@ html.age-verified .deal-card img {
   .deal-grid .deal-card { flex: 1 1 calc(25% - 1.125rem); }
 }
 
+/* Sections with only 1-2 cards: keep normal card size instead of
+   stretching to fill the row. 3+ cards grow to fill the row as usual. */
+.deal-grid:has(> .deal-card:nth-child(2):last-child) .deal-card,
+.deal-grid:has(> .deal-card:only-child) .deal-card {
+  flex-grow: 0;
+}
+
 /* Filtered results (#filtered-grid): unlike the per-category sections
    above, cards here shouldn't grow to fill an incomplete last row or
    sit centered - they should stay a uniform size and pack to the
@@ -246,4 +253,90 @@ html.i18n-loading body { visibility: hidden; }
 html.age-verified #heroVideo video,
 html.age-verified #heroImage img {
   filter: none !important;
+}
+
+/* ==========================================================================
+   TOP DEALS: premium card design
+   Pink border, soft depth, calm hover.
+   No looping animation, so the cards feel polished instead of busy.
+   ========================================================================== */
+.top-deal-card {
+  position: relative;
+  border: 2px solid transparent !important;
+  background:
+    linear-gradient(#ffffff, #ffffff) padding-box,
+    linear-gradient(145deg, #ff00a8, #d6006e) border-box !important;
+  box-shadow:
+    0 1px 2px rgba(0, 0, 0, 0.06),
+    0 14px 34px -14px rgba(255, 0, 168, 0.45) !important;
+  transition: transform 0.3s ease, box-shadow 0.3s ease !important;
+}
+.dark .top-deal-card {
+  background:
+    linear-gradient(#1e293b, #1e293b) padding-box,
+    linear-gradient(145deg, #ff00a8, #d6006e) border-box !important;
+}
+.top-deal-card:hover {
+  transform: translateY(-6px);
+  box-shadow:
+    0 2px 4px rgba(0, 0, 0, 0.08),
+    0 24px 44px -14px rgba(255, 0, 168, 0.6) !important;
+}
+
+/* Title: normal text colour with a short pink accent bar */
+.top-deal-card h3 {
+  font-size: 1.3rem;
+  letter-spacing: -0.01em;
+}
+.top-deal-card h3::after {
+  content: '';
+  display: block;
+  width: 34px;
+  height: 3px;
+  margin-top: 6px;
+  border-radius: 3px;
+  background: #ff00a8;
+}
+
+/* Price sits in a soft tinted pill */
+.top-deal-card .mt-auto > div:first-child {
+  align-self: flex-end;
+  padding: 6px 12px;
+  border-radius: 12px;
+  background: rgba(5, 150, 105, 0.08);
+}
+.dark .top-deal-card .mt-auto > div:first-child {
+  background: rgba(0, 255, 136, 0.08);
+}
+.top-deal-card .font-price-display {
+  font-size: 1.5rem;
+}
+
+/* Call to action: solid gradient, light sweep only on hover */
+.top-deal-card .deal-btn {
+  position: relative;
+  overflow: hidden;
+  background-image: linear-gradient(90deg, #ff00a8, #d6006e) !important;
+  box-shadow: 0 8px 18px -6px rgba(255, 0, 168, 0.55) !important;
+  transform: scale(1) !important;
+  letter-spacing: 0.04em;
+}
+.top-deal-card .deal-btn::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -75%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(90deg, rgba(255, 255, 255, 0), rgba(255, 255, 255, 0.4), rgba(255, 255, 255, 0));
+  transform: skewX(-20deg);
+  transition: left 0.6s ease;
+}
+.top-deal-card .deal-btn:hover::after {
+  left: 130%;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .top-deal-card, .top-deal-card .deal-btn::after { transition: none !important; }
+  .top-deal-card:hover { transform: none; }
 }
