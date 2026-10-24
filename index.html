@@ -74,7 +74,7 @@
 <script src="tailwind-config.js"></script>
 
 <!-- Site styles -->
-<link rel="stylesheet" href="styles.css">
+<link rel="stylesheet" href="styles.css?v=6">
 <style id="cookie-consent-styles">
 * {
     box-sizing: border-box;
@@ -565,14 +565,75 @@ View Deals
 </video>-->
 <div class="md:w-1/2 mt-stack-lg md:mt-0 flex justify-center z-10">
   <div class="relative w-full max-w-xl rounded-lg overflow-hidden premium-shadow transform rotate-2 hover:rotate-0 transition-transform duration-300" id="heroImage">
-    <img 
-      src="thumbnails/mofos_porn.webp" 
-      alt="Mofos preview" 
-      class="w-full h-auto object-cover" 
-      loading="eager"
-    />
+    <img id="heroImgA" alt="Mofos preview" class="w-full h-auto object-cover" loading="eager" />
+    <img id="heroImgB" alt="" aria-hidden="true" class="absolute inset-0 w-full h-full object-cover" style="opacity:0;" />
   </div>
 </div>
+<script>
+// Hero thumbnail rotator: random order every visit, switches every 3s.
+// Shuffled "bag": each round shows every picture once, a new round never
+// starts with the picture just shown, and never repeats the previous
+// round's order. Pictures load one at a time as they are needed.
+(function () {
+  var base = 'thumbnails/hero_section/Mofos%20-%20Kiki%27s%20Hungry%20for%20Dick%20at%20the%20Dock%20%28';
+  var pics = [];
+  for (var n = 1; n <= 37; n++) pics.push(base + n + '%29.jpg');
+  var INTERVAL = 3000, FADE = 700;
+  var a = document.getElementById('heroImgA'), b = document.getElementById('heroImgB');
+  if (!a || !b) return;
+
+  function shuffle(arr) {
+    arr = arr.slice();
+    for (var i = arr.length - 1; i > 0; i--) {
+      var j = Math.floor(Math.random() * (i + 1));
+      var t = arr[i]; arr[i] = arr[j]; arr[j] = t;
+    }
+    return arr;
+  }
+  var lastRound = null, queue = [], current = null;
+  function nextRound() {
+    var round, tries = 0;
+    do {
+      round = shuffle(pics);
+      tries++;
+    } while (tries < 50 && (
+      (current !== null && round[0] === current) ||
+      (lastRound && round.join() === lastRound.join())
+    ));
+    lastRound = round;
+    queue = round.slice();
+  }
+  function nextPic() {
+    if (!queue.length) nextRound();
+    current = queue.shift();
+    return current;
+  }
+
+  // First picture is set during parsing so nothing flashes.
+  a.src = nextPic();
+
+  var reduce = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var busy = false;
+  setInterval(function () {
+    if (busy || document.hidden) return;
+    busy = true;
+    var url = nextPic();
+    var pre = new Image();
+    pre.onload = pre.onerror = function () {
+      b.src = url;
+      b.style.transition = reduce ? 'none' : 'opacity ' + FADE + 'ms ease';
+      b.style.opacity = '1';
+      setTimeout(function () {
+        a.src = url;
+        b.style.transition = 'none';
+        b.style.opacity = '0';
+        busy = false;
+      }, reduce ? 0 : FADE + 50);
+    };
+    pre.src = url;
+  }, INTERVAL);
+})();
+</script>
 <div class="absolute top-2 left-2 bg-hot-pink text-white px-2 py-1 rounded font-label-md text-[10px] uppercase tracking-wider font-bold shadow-sm" data-i18n="hero.eyebrow">Exclusive</div>
 </div>
 </div>
@@ -596,10 +657,11 @@ View Deals
 <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-gray-900 dark:text-white font-extrabold" data-i18n="section.top">Top Deals</h2>
 </div>
 <div class="deal-grid gap-stack-md" id="deals-grid">
-<div class="deal-card top-deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium trending">
+<div class="deal-card top-deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium trending" data-preview="thumbnails/Mofos%20-%20Kiki%27s%20Hungry%20for%20Dick%20at%20the%20Dock.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mofos" src="thumbnails/mofos_porn.webp">
+<img class="w-full h-full object-cover" alt="Mofos" src="thumbnails/Mofos%20-%20Kiki%27s%20Hungry%20for%20Dick%20at%20the%20Dock.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
+<span class="bg-black/90 text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.featured">Top Deal</span>
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -625,9 +687,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card top-deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free trending">
+<div class="deal-card top-deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free trending" data-preview="thumbnails/Candy.Ai%20-%20My%20Step-Sister%E2%80%99s%20Dormitory.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Candy.ai" src="thumbnails/candy.ai.webp">
+<img class="w-full h-full object-cover" alt="Candy.ai" src="thumbnails/Candy.Ai%20-%20My%20Step-Sister%E2%80%99s%20Dormitory.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.free">Free</span>
 </div>
@@ -653,11 +715,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card top-deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium trending">
+<div class="deal-card top-deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium trending" data-preview="thumbnails/Brazzers%20-%20Fuck%20Your%20Wife%2C%20Have%20My%20Ass%21.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Brazzers Deal" src="thumbnails/brazzers.jpg">
-<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
-<span class="bg-black/90 text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.featured">Top Deal</span>
+<img class="w-full h-full object-cover" alt="Brazzers Deal" src="thumbnails/Brazzers%20-%20Fuck%20Your%20Wife%2C%20Have%20My%20Ass%21.jpg">
+<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -693,10 +754,10 @@ View Deals
 <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-gray-900 dark:text-white font-extrabold" data-i18n="section.premium">Premium Sites</h2>
 </div>
 <div class="deal-grid gap-stack-md" id="premium-grid">
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/My%20Pervy%20Family%20-%20My%20Gamer%20Stepsister%20Wants%20a%20Turn%20Too%21.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="My Pervy Family" src="thumbnails/MyPervyFamily.jpg">
-<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
+<img class="w-full h-full object-cover" alt="My Pervy Family" src="thumbnails/My%20Pervy%20Family%20-%20My%20Gamer%20Stepsister%20Wants%20a%20Turn%20Too%21.jpg">
+<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -722,9 +783,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Touch%20My%20Wife%20-%20Can%20Have%20Her%20Pussy%2C%20But%20Her%20Heart%20Belongs%20To%20Me.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Touch My Wife" src="thumbnails/TouchMyWife.jpg">
+<img class="w-full h-full object-cover" alt="Touch My Wife" src="thumbnails/Touch%20My%20Wife%20-%20Can%20Have%20Her%20Pussy%2C%20But%20Her%20Heart%20Belongs%20To%20Me%20-%20long.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -751,15 +812,15 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Lets%20Doe%20It%20-%20She%20Wants%20Moore%20Anal.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="LetsDoeIt" src="thumbnails/LetsDoeIt.jpg">
+<img class="w-full h-full object-cover" alt="Lets Doe It" src="thumbnails/Lets%20Doe%20It%20-%20She%20Wants%20Moore%20Anal.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
 <div class="p-stack-md flex-grow flex flex-col relative z-10 bg-transparent">
-<h3 class="font-headline-sm text-headline-sm text-gray-900 dark:text-white mb-1 font-bold">LetsDoeIt</h3>
+<h3 class="font-headline-sm text-headline-sm text-gray-900 dark:text-white mb-1 font-bold">Lets Doe It</h3>
 <p class="font-body-md text-[13px] text-gray-600 dark:text-gray-300 line-clamp-2 mb-3" data-i18n="desc.letsdoeit_amateur_7a1d">Hardcore Amateur-Style Scenes with Real Couples &amp; Hot Newcomers</p>
 <div class="mt-auto flex items-end justify-between mb-4">
 <div class="flex flex-col">
@@ -780,9 +841,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Hentai%20Pros%20-%20I%20Was%20a%20Horny%20High%20School%20Virgin%2C%20Now%20I%20Have%20a%20Harem%21.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Hentai Pros" src="thumbnails/hentai_pros_porn.webp">
+<img class="w-full h-full object-cover" alt="Hentai Pros" src="thumbnails/Hentai%20Pros%20-%20I%20Was%20a%20Horny%20High%20School%20Virgin%2C%20Now%20I%20Have%20a%20Harem%21.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -809,9 +870,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Bang%20Bros%20-%20Watch%20And%20Learn.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Bang Bros" src="thumbnails/bang_bros_porn.webp">
+<img class="w-full h-full object-cover" alt="Bang Bros" src="thumbnails/Bang%20Bros%20-%20Watch%20And%20Learn.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -838,9 +899,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Twistys%20-%20Mountain%20Bike%20Bang.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Twistys" src="thumbnails/twistys_porn.webp">
+<img class="w-full h-full object-cover" alt="Twistys" src="thumbnails/Twistys%20-%20Mountain%20Bike%20Bang.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -867,9 +928,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Sweetheart%20Video%20-%20Squirting%20Lesbians%203%20Scene%202%20-%20Bed%20Wetter.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Sweetheart Video" src="thumbnails/sweetheart_video_porn.webp">
+<img class="w-full h-full object-cover" alt="Sweetheart Video" src="thumbnails/Sweetheart%20Video%20-%20Squirting%20Lesbians%203%20Scene%202%20-%20Bed%20Wetter.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -896,9 +957,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Sweet%20Sinner%20-%20Family%20Holiday%20Volume%203%20Scene%204.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Sweet Sinner" src="thumbnails/sweet_sinner_porn.webp">
+<img class="w-full h-full object-cover" alt="Sweet Sinner" src="thumbnails/Sweet%20Sinner%20-%20Family%20Holiday%20Volume%203%20Scene%204.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -925,10 +986,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Babes%20-%20Foxy.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Babes" src="thumbnails/babes_porn.webp">
-<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
+<img class="w-full h-full object-cover" alt="Babes" src="thumbnails/Babes%20-%20Foxy.jpg">
+<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -954,9 +1015,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Reality%20Kings%20-%20Public%20Fun%20In%20The%20Sun.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Reality Kings" src="thumbnails/reality_kings_porn.webp">
+<img class="w-full h-full object-cover" alt="Reality Kings" src="thumbnails/Reality%20Kings%20-%20Public%20Fun%20In%20The%20Sun.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
@@ -983,10 +1044,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Doghouse%20Digital%20-%204%20On%201%20Gang%20Bangs%20%2312%20Scene%201.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Doghouse Digital" src="thumbnails/doghouse_digital_porn.webp">
-<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
+<img class="w-full h-full object-cover" alt="Doghouse Digital" src="thumbnails/Doghouse%20Digital%20-%204%20On%201%20Gang%20Bangs%20%2312%20Scene%201.jpg">
+<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -1012,10 +1073,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Digital%20Playground%20-%20Wellness%20%26%20Enlightenment.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Digital Playground" src="thumbnails/digital_playground_porn.webp">
-<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
+<img class="w-full h-full object-cover" alt="Digital Playground" src="thumbnails/Digital%20Playground%20-%20Wellness%20%26%20Enlightenment.jpg">
+<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -1041,9 +1102,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Sex%20Selector-%20Sexy%20Tutor.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Sex Selector" src="thumbnails/sex_selector_porn.webp">
+<img class="w-full h-full object-cover" alt="Sex Selector" src="thumbnails/Sex%20Selector-%20Sexy%20Tutor.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
@@ -1070,9 +1131,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Erito%20-%20Bikini%20Babe%20Squirt%20Party%20-%20Asian%20HD%20Porn.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Erito" src="thumbnails/erito_porn.webp">
+<img class="w-full h-full object-cover" alt="Erito" src="thumbnails/Erito%20-%20Bikini%20Babe%20Squirt%20Party%20-%20Asian%20HD%20Porn.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1099,10 +1160,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Mile%20High%20Media%20-%20Babe%20Natalie%20Knight%20kissing%20each%20other.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Mile High Media" src="thumbnails/mile_high_media_porn.webp">
-<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
+<img class="w-full h-full object-cover" alt="Mile High Media" src="thumbnails/Mile%20High%20Media%20-%20Babe%20Natalie%20Knight%20kissing%20each%20other.jpg">
+<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -1128,9 +1189,10 @@ View Deals
 </a>
 </div>
 </div>
+<!--
 <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="BiEmpire" src="thumbnails/biempire_porn.webp">
+<img class="w-full h-full object-cover" alt="BiEmpire" src="thumbnails/biempire_porn.webp">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1157,9 +1219,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+-->
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/True%20Amateurs%20-%20Brunette%20Venus%20Valkyrie%20%26%20Van%20Film%20a%20Private%20Bedroom%20Sex%20Tape%20with%20a%20Facial%20%26%20Cum%20Shot.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="True Amateurs" src="thumbnails/true_amateurs_porn.webp">
+<img class="w-full h-full object-cover" alt="True Amateurs" src="thumbnails/True%20Amateurs%20-%20Brunette%20Venus%20Valkyrie%20%26%20Van%20Film%20a%20Private%20Bedroom%20Sex%20Tape%20with%20a%20Facial%20%26%20Cum%20Shot.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-90">90% Off</span>
 </div>
@@ -1186,9 +1249,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Reality%20Junkies%20-%20Aiding%20The%20Teacher%27s%20Aid.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Reality Junkies" src="thumbnails/reality_junkies_porn.webp">
+<img class="w-full h-full object-cover" alt="Reality Junkies" src="thumbnails/Reality%20Junkies%20-%20Aiding%20The%20Teacher%27s%20Aid.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1218,7 +1281,7 @@ View Deals
 <!-- HIDDEN: removed from Adultforce (checked 2026-10-23), restore if it returns -->
 <!-- <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="LilHumpers" src="thumbnails/lilhumpers_porn.webp">
+<img class="w-full h-full object-cover" alt="LilHumpers" src="thumbnails/lilhumpers_porn.webp">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1248,7 +1311,7 @@ View Deals
 <!-- HIDDEN: removed from Adultforce (checked 2026-10-23), restore if it returns -->
 <!-- <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Lezdombliss" src="thumbnails/lezdombliss_porn.webp">
+<img class="w-full h-full object-cover" alt="Lezdombliss" src="thumbnails/lezdombliss_porn.webp">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1275,9 +1338,9 @@ View Deals
 </a>
 </div>
 </div> -->
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/House%20Humpers-%20Happy%20Birthday.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="House Humpers" src="thumbnails/house_humpers_porn.webp">
+<img class="w-full h-full object-cover" alt="House Humpers" src="thumbnails/House%20Humpers-%20Happy%20Birthday.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1304,9 +1367,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Virtual%20Porn%20-%20Sunscreen%20to%20Seduction.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Virtual Porn" src="thumbnails/virtual_porn_porn.webp">
+<img class="w-full h-full object-cover" alt="Virtual Porn" src="thumbnails/Virtual%20Porn%20-%20Sunscreen%20to%20Seduction.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
@@ -1333,9 +1396,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Culioneros%20-%20Horny%20Babe%20Julia%20De%20Lucia%20Gets%20Her%20Asshole%20Fucked%20In%20Every%20Position%20And%20She%20Still%20Begs.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Culioneros" src="thumbnails/culioneros_porn.webp">
+<img class="w-full h-full object-cover" alt="Culioneros" src="thumbnails/Culioneros%20-%20Horny%20Babe%20Julia%20De%20Lucia%20Gets%20Her%20Asshole%20Fucked%20In%20Every%20Position%20And%20She%20Still%20Begs.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
@@ -1362,10 +1425,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Dancing%20Bear%20-%20Its%20Party%20Time%21.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Dancing Bear" src="thumbnails/dancing_bear_porn.webp">
-<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
+<img class="w-full h-full object-cover" alt="Dancing Bear" src="thumbnails/Dancing%20Bear%20-%20Its%20Party%20Time%21.jpg">
+<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
 </div>
@@ -1391,10 +1454,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/College%20Rules%20-%20Adriana%20Sephora%20%26%20Cassandra%20Nix%20%26%20more%20Can%E2%80%99t%20Get%20Enough%20Of%20That%20Dick.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="College Rules" src="thumbnails/college_rules_porn.webp">
-<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
+<img class="w-full h-full object-cover" alt="College Rules" src="thumbnails/College%20Rules%20-%20Adriana%20Sephora%20%26%20Cassandra%20Nix%20%26%20more%20Can%E2%80%99t%20Get%20Enough%20Of%20That%20Dick.jpg">
+<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
 </div>
@@ -1420,9 +1483,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/MyGF%20-%20Sean%20Lawless%20%26%20Sofie%20Reyez%20Can%E2%80%99t%20Get%20Enough%20Of%20That%20Dick.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="MyGF" src="thumbnails/mygf_porn.webp">
+<img class="w-full h-full object-cover" alt="MyGF" src="thumbnails/MyGF%20-%20Sean%20Lawless%20%26%20Sofie%20Reyez%20Can%E2%80%99t%20Get%20Enough%20Of%20That%20Dick.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-96">96% Off</span>
 </div>
@@ -1449,9 +1512,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Fakehub%20-%20My%20Tits%20are%20my%20Payment.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Fakehub" src="thumbnails/fakehub_porn.webp">
+<img class="w-full h-full object-cover" alt="Fakehub" src="thumbnails/Fakehub%20-%20My%20Tits%20are%20my%20Payment.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1478,10 +1541,10 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Sexyhub%20-%20Ballet%20Teachers%20Secret%20Threesome.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="SexyHub" src="thumbnails/sexyhub_porn.webp">
-<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
+<img class="w-full h-full object-cover" alt="SexyHub" src="thumbnails/Sexyhub%20-%20Ballet%20Teachers%20Secret%20Threesome.jpg">
+<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -1510,7 +1573,7 @@ View Deals
 <!-- HIDDEN: removed from Adultforce (checked 2026-10-23), restore if it returns -->
 <!-- <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Look At Her Now" src="thumbnails/look_at_her_now_porn.webp">
+<img class="w-full h-full object-cover" alt="Look At Her Now" src="thumbnails/look_at_her_now_porn.webp">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1537,10 +1600,10 @@ View Deals
 </a>
 </div>
 </div> -->
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Milfed%20-%20Meow%2C%20Cat%20Fight%21%20Scene%203.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Milfed" src="thumbnails/milfed_porn.webp">
-<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
+<img class="w-full h-full object-cover" alt="Milfed" src="thumbnails/Milfed%20-%20Meow%2C%20Cat%20Fight%21%20Scene%203.jpg">
+<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
 </div>
@@ -1566,9 +1629,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Property%20Sex%20-%20The%20Filthy%20Office.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Property Sex" src="thumbnails/property_sex_porn.webp">
+<img class="w-full h-full object-cover" alt="Property Sex" src="thumbnails/Property%20Sex%20-%20The%20Filthy%20Office.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1595,9 +1658,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Squirted%20-%20Kenzie%20Wants%20It%20Balls%20Deep.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Squirted" src="thumbnails/squirted_porn.webp">
+<img class="w-full h-full object-cover" alt="Squirted" src="thumbnails/Squirted%20-%20Kenzie%20Wants%20It%20Balls%20Deep.jpg">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1624,9 +1687,9 @@ View Deals
 </a>
 </div>
 </div>
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="premium" data-preview="thumbnails/Family%20Sinners%20-%20Blonde%20teen%20Demi%20Hawks%20feels%20a%20long%20penis%20in%20her%20wet%20shaved%20pussy.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Family Sinners" src="thumbnails/family_sinners_porn.webp">
+<img class="w-full h-full object-cover" alt="Family Sinners" src="thumbnails/Family%20Sinners%20-%20Blonde%20teen%20Demi%20Hawks%20feels%20a%20long%20penis%20in%20her%20wet%20shaved%20pussy.jpg">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.discount-97">97% Off</span>
 </div>
@@ -1665,7 +1728,7 @@ View Deals
 <div class="deal-grid gap-stack-md" id="free-grid">
 <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free trending">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="AI Girlfriend" src="thumbnails/ai_girlfriend.webp">
+<img class="w-full h-full object-cover" alt="AI Girlfriend" src="thumbnails/ai_girlfriend.webp">
 <div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.free">Free</span>
 </div>
@@ -1694,7 +1757,7 @@ View Deals
 <!-- HIDDEN: removed from Adultforce (checked 2026-10-23), restore if it returns -->
 <!-- <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Spicevids" src="thumbnails/spicevids_porn.webp">
+<img class="w-full h-full object-cover" alt="Spicevids" src="thumbnails/spicevids_porn.webp">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.free">Free</span>
 </div>
@@ -1720,10 +1783,10 @@ View Deals
 </a>
 </div>
 </div> -->
-<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free">
+<div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free" data-preview="thumbnails/My%20Dirty%20Hobby%20-%20Mary%20Haze%20Risking%20It%20Where%20Anyone%20Could%20Walk%20In.mp4">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="MyDirtyHobby" src="thumbnails/mydirtyhobby_porn.webp">
-<div class="absolute top-0 left-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-start">
+<img class="w-full h-full object-cover" alt="MyDirtyHobby" src="thumbnails/My%20Dirty%20Hobby%20-%20Mary%20Haze%20Risking%20It%20Where%20Anyone%20Could%20Walk%20In.jpg">
+<div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.free">Free</span>
 </div>
 </div>
@@ -1750,7 +1813,7 @@ View Deals
 </div>
 <div class="deal-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 backdrop-blur-sm" data-category="free">
 <div class="relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Nutaku" src="thumbnails/nutaku_porn.webp">
+<img class="w-full h-full object-cover" alt="Nutaku" src="thumbnails/nutaku_porn.webp">
 <div class="absolute top-0 right-0 p-2 z-10 pointer-events-none flex flex-col gap-1 items-end">
 <span class="bg-hot-pink text-white px-2 py-1 rounded text-[10px] font-label-md font-bold uppercase shadow-sm" data-i18n="badge.free">Free</span>
 </div>
@@ -1786,9 +1849,9 @@ View Deals
 <h2 class="font-headline-lg text-headline-lg-mobile md:text-headline-lg text-gray-900 dark:text-white font-extrabold text-center" data-i18n="section.shemale">Shemale Porn Deals &amp; Cheap Transgender Discounts</h2>
 </div>
 <div class="deal-grid gap-stack-md" id="shemale-grid">
-<div class="deal-card shemale-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 relative backdrop-blur-sm" data-category="shemale">
+<div class="deal-card shemale-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 relative backdrop-blur-sm" data-category="shemale" data-preview="thumbnails/Tranzz%20-%20She%27s%20A%20Hot%20Mess%20%26%20She%27s%20Horny%20Too.mp4">
 <div class="deal-image relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="Tranzz" src="thumbnails/Tranzz.png">
+<img class="w-full h-full object-cover" alt="Tranzz" src="thumbnails/Tranzz%20-%20She%27s%20A%20Hot%20Mess%20%26%20She%27s%20Horny%20Too.jpg">
 <div class="deal-overlay reveal-overlay absolute inset-0 flex flex-col items-center justify-center p-4 text-center hover:bg-gray-100/80 dark:hover:bg-[#0f172a]/80 transition-colors z-20 cursor-pointer">
 <span class="material-symbols-outlined text-gray-600 dark:text-gray-300 text-3xl mb-2">visibility_off</span>
 <span class="font-label-md text-label-md text-gray-900 dark:text-white font-bold" data-i18n="shemale.mature-label">Mature Content</span>
@@ -1822,7 +1885,7 @@ View Deals
 </div>
 <div class="deal-card shemale-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 relative backdrop-blur-sm" data-category="shemale">
 <div class="deal-image relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="TransAngels" src="thumbnails/transangels_porn.webp">
+<img class="w-full h-full object-cover" alt="TransAngels" src="thumbnails/transangels_porn.webp">
 <div class="deal-overlay reveal-overlay absolute inset-0 flex flex-col items-center justify-center p-4 text-center hover:bg-gray-100/80 dark:hover:bg-[#0f172a]/80 transition-colors z-20 cursor-pointer">
 <span class="material-symbols-outlined text-gray-600 dark:text-gray-300 text-3xl mb-2">visibility_off</span>
 <span class="font-label-md text-label-md text-gray-900 dark:text-white font-bold" data-i18n="shemale.mature-label">Mature Content</span>
@@ -1856,7 +1919,7 @@ View Deals
 </div>
 <div class="deal-card shemale-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 relative backdrop-blur-sm" data-category="shemale">
 <div class="deal-image relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="TransHarder" src="thumbnails/transharder_porn.webp">
+<img class="w-full h-full object-cover" alt="TransHarder" src="thumbnails/transharder_porn.webp">
 <div class="deal-overlay reveal-overlay absolute inset-0 flex flex-col items-center justify-center p-4 text-center hover:bg-gray-100/80 dark:hover:bg-[#0f172a]/80 transition-colors z-20 cursor-pointer">
 <span class="material-symbols-outlined text-gray-600 dark:text-gray-300 text-3xl mb-2">visibility_off</span>
 <span class="font-label-md text-label-md text-gray-900 dark:text-white font-bold" data-i18n="shemale.mature-label">Mature Content</span>
@@ -1890,7 +1953,7 @@ View Deals
 </div>
 <div class="deal-card shemale-card bg-white dark:bg-[#1e293b]/80 rounded-xl border border-gray-200 dark:border-hot-pink/30 overflow-hidden premium-shadow group flex flex-col h-full transition-all duration-300 relative backdrop-blur-sm" data-category="shemale">
 <div class="deal-image relative w-full aspect-video overflow-hidden bg-gray-100 dark:bg-[#0f172a]">
-<img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" alt="TransSensual" src="thumbnails/transsensual_porn.webp">
+<img class="w-full h-full object-cover" alt="TransSensual" src="thumbnails/transsensual_porn.webp">
 <div class="deal-overlay reveal-overlay absolute inset-0 flex flex-col items-center justify-center p-4 text-center hover:bg-gray-100/80 dark:hover:bg-[#0f172a]/80 transition-colors z-20 cursor-pointer">
 <span class="material-symbols-outlined text-gray-600 dark:text-gray-300 text-3xl mb-2">visibility_off</span>
 <span class="font-label-md text-label-md text-gray-900 dark:text-white font-bold" data-i18n="shemale.mature-label">Mature Content</span>
@@ -1985,7 +2048,8 @@ Your premium portal to the best deals in adult entertainment. Secure, private, a
 </button>
 
 <script src="i18n.js"></script>
-<script src="main.js"></script>
+<script src="main.js?v=6"></script>
+<script src="hover-preview.js?v=6"></script>
 <script id="cookie-consent-script">
 // ============================================
 // CONFIGURATION - CHANGE THIS!

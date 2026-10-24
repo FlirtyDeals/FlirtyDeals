@@ -325,7 +325,7 @@
   // Hero video autoplay fix for mobile browsers
   // ----------------------------------------------------------------------
   function fixVideoAutoplay() {
-    document.querySelectorAll('video').forEach((video) => {
+    document.querySelectorAll('video:not(.card-preview)').forEach((video) => {
       const p = video.play();
       if (p !== undefined) p.catch(() => {});
     });
