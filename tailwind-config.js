@@ -7,7 +7,7 @@ tailwind.config = {
   theme: {
     extend: {
       colors: {
-        "hot-pink": "#ff00a8",
+        "hot-pink": "#e11d69",
         "primary-fixed-dim": "#ffafd2",
         "error-container": "#ffdad6",
         "on-tertiary-fixed-variant": "#005137",
@@ -17,7 +17,7 @@ tailwind.config = {
         "secondary-container": "#dae2fd",
         "on-secondary-fixed": "#131b2e",
         "outline": "#8e6e7b",
-        "primary": "#b20074",
+        "primary": "#b8134f",
         "surface-tint": "#b60077",
         "surface-container-highest": "#f9dbe5",
         "surface": "#fff8f8",

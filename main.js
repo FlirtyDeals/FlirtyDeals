@@ -172,10 +172,10 @@
   function filterDeals(category, clickedButton) {
     document.querySelectorAll('.filter-btn').forEach((btn) => {
       btn.classList.remove('bg-hot-pink', 'text-white');
-      btn.classList.add('bg-gray-100', 'dark:bg-[#1e293b]', 'text-gray-700', 'dark:text-white');
+      btn.classList.add('bg-gray-100', 'dark:bg-[#401a4d]', 'text-gray-700', 'dark:text-white');
     });
     if (clickedButton) {
-      clickedButton.classList.remove('bg-gray-100', 'dark:bg-[#1e293b]', 'text-gray-700', 'dark:text-white');
+      clickedButton.classList.remove('bg-gray-100', 'dark:bg-[#401a4d]', 'text-gray-700', 'dark:text-white');
       clickedButton.classList.add('bg-hot-pink', 'text-white');
     }
 
@@ -363,6 +363,6 @@
     window.addEventListener('load', fixVideoAutoplay);
     window.addEventListener('orientationchange', fixVideoAutoplay);
 
-    console.log('%c🌸 FlirtyDeals.com 🌸', 'color: #d6006e; font-size: 20px; font-weight: bold;');
+    console.log('%c🌸 FlirtyDeals.com 🌸', 'color: #b8134f; font-size: 20px; font-weight: bold;');
   });
 })();

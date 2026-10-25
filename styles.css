@@ -7,10 +7,10 @@
 
 /* ---- Card shadows / hover treatment (from the Stitch build) ---- */
 .premium-shadow {
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -8px rgba(178, 0, 116, 0.1);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03), 0 12px 24px -8px rgba(225, 29, 105, 0.1);
 }
 .premium-shadow:hover {
-  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025), 0 20px 25px -5px rgba(178, 0, 116, 0.15);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.025), 0 20px 25px -5px rgba(225, 29, 105, 0.15);
 }
 
 /* Blur all deal cards on first visit until age verification */
@@ -223,7 +223,7 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   transition: all 0.3s ease;
 }
 .dark .reveal-overlay {
-  background-color: rgba(15, 23, 42, 0.7);
+  background-color: rgba(43, 16, 51, 0.7);
 }
 /* Once revealed, hide the overlay and un-blur the image */
 .deal-image.revealed .reveal-overlay {
@@ -236,7 +236,7 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
 /* ---- Section separators ---- */
 .separator-glow {
   height: 1px;
-  background: linear-gradient(90deg, transparent, rgba(255, 0, 168, 0.3), transparent);
+  background: linear-gradient(90deg, transparent, rgba(225, 29, 105, 0.3), transparent);
   position: relative;
   margin: 3rem 0;
 }
@@ -248,9 +248,9 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   transform: translate(-50%, -50%);
   width: 40px;
   height: 4px;
-  background: #ff00a8;
+  background: #e11d69;
   border-radius: 4px;
-  box-shadow: 0 0 10px rgba(255, 0, 168, 0.5);
+  box-shadow: 0 0 10px rgba(225, 29, 105, 0.5);
 }
 
 /* ---- Filter bar scrollbar (hide on mobile horizontal scroll) ---- */
@@ -286,7 +286,7 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   top: calc(100% + 8px);
   right: 0;
   background: white;
-  border: 1px solid rgba(255, 105, 180, 0.25);
+  border: 1px solid rgba(225, 29, 105, 0.25);
   border-radius: 12px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
   padding: 6px;
@@ -297,8 +297,8 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   display: none;
 }
 .dark .lang-dropdown {
-  background: #1e293b;
-  border-color: rgba(255, 105, 180, 0.3);
+  background: #401a4d;
+  border-color: rgba(225, 29, 105, 0.3);
 }
 .lang-dropdown.show { display: block; }
 .lang-dropdown button {
@@ -314,8 +314,8 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   cursor: pointer;
 }
 .dark .lang-dropdown button { color: #e2e8f0; }
-.lang-dropdown button:hover { background: rgba(255, 105, 180, 0.1); }
-.lang-dropdown button.active { color: #ff00a8; }
+.lang-dropdown button:hover { background: rgba(225, 29, 105, 0.1); }
+.lang-dropdown button.active { color: #e11d69; }
 
 /* ---- Scroll-to-top button (restored old-site feature) ---- */
 #scrollToTop {
@@ -326,8 +326,8 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   height: 46px;
   border-radius: 50%;
   background: white;
-  border: 1.5px solid rgba(255, 105, 180, 0.3);
-  color: #ff00a8;
+  border: 1.5px solid rgba(225, 29, 105, 0.3);
+  color: #e11d69;
   display: none;
   align-items: center;
   justify-content: center;
@@ -336,7 +336,7 @@ html.touch-previews .deal-card .aspect-video[role="button"] {
   z-index: 9998;
   transition: all 0.2s ease;
 }
-.dark #scrollToTop { background: #1e293b; }
+.dark #scrollToTop { background: #401a4d; }
 #scrollToTop.show { display: flex; }
 #scrollToTop:hover { transform: translateY(-2px); box-shadow: 0 6px 16px rgba(0, 0, 0, 0.18); }
 
@@ -373,22 +373,22 @@ html.age-verified #heroImage img {
   border: 2px solid transparent !important;
   background:
     linear-gradient(#ffffff, #ffffff) padding-box,
-    linear-gradient(145deg, #ff00a8, #d6006e) border-box !important;
+    linear-gradient(145deg, #e11d69, #b8134f) border-box !important;
   box-shadow:
     0 1px 2px rgba(0, 0, 0, 0.06),
-    0 14px 34px -14px rgba(255, 0, 168, 0.45) !important;
+    0 14px 34px -14px rgba(225, 29, 105, 0.45) !important;
   transition: transform 0.3s ease, box-shadow 0.3s ease !important;
 }
 .dark .top-deal-card {
   background:
-    linear-gradient(#1e293b, #1e293b) padding-box,
-    linear-gradient(145deg, #ff00a8, #d6006e) border-box !important;
+    linear-gradient(#401a4d, #401a4d) padding-box,
+    linear-gradient(145deg, #e11d69, #b8134f) border-box !important;
 }
 .top-deal-card:hover {
   transform: translateY(-6px);
   box-shadow:
     0 2px 4px rgba(0, 0, 0, 0.08),
-    0 24px 44px -14px rgba(255, 0, 168, 0.6) !important;
+    0 24px 44px -14px rgba(225, 29, 105, 0.6) !important;
 }
 
 /* Title: normal text colour with a short pink accent bar */
@@ -403,7 +403,7 @@ html.age-verified #heroImage img {
   height: 3px;
   margin-top: 6px;
   border-radius: 3px;
-  background: #ff00a8;
+  background: #e11d69;
 }
 
 /* Price sits in a soft tinted pill */
@@ -424,8 +424,8 @@ html.age-verified #heroImage img {
 .top-deal-card .deal-btn {
   position: relative;
   overflow: hidden;
-  background-image: linear-gradient(90deg, #ff00a8, #d6006e) !important;
-  box-shadow: 0 8px 18px -6px rgba(255, 0, 168, 0.55) !important;
+  background-image: linear-gradient(90deg, #e11d69, #b8134f) !important;
+  box-shadow: 0 8px 18px -6px rgba(225, 29, 105, 0.55) !important;
   transform: scale(1) !important;
   letter-spacing: 0.04em;
 }
